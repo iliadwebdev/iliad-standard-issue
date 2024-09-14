@@ -52,6 +52,6 @@
       "@types/*": ["./@types/*"]
     }
   },
-  "include": ["src"], // Specifies the directory to include when searching for TypeScript files.
+  "include": ["src", "src/@types"],
   "exclude": ["src/**/__docs__", "src/**/__test__"]
 }

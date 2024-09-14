@@ -1,9 +1,9 @@
 {
   "publishConfig": {
-  "registry": "https://npm.pkg.github.com/@iliad.dev"
-},
-"name": "@iliadwebdev/core",
-  "version": "1.0.0",
+    "registry": "https://npm.pkg.github.com/@iliad.dev"
+  },
+  "name": "@iliad.dev/core",
+  "version": "1.0.2",
   "description": "",
   "type": "module",
   "main": "dist/index.cjs.js",
@@ -12,6 +12,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --ext .ts,.tsx --ignore-path .gitignore --fix",
+    "publish": "node iterate.cjs && npm publish",
     "build": "tsc && vite build"
   },
   "files": [

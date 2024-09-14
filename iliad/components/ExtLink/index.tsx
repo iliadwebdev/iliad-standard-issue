@@ -48,12 +48,12 @@ function transformExtLinkProps(Component: any, microSite: boolean = false) {
           break handleMicroSite;
         }
 
-        // if (process.env.NODE_ENV !== 'production') {
-        //   console.warn(
-        //     `[Iliad] Micro-site root domain is set. Skipping href transformation in development.`
-        //   );
-        //   break handleMicroSite;
-        // }
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(
+            `[Iliad] Micro-site root domain is set. Skipping href transformation in development.`
+          );
+          break handleMicroSite;
+        }
 
         const rootDomain = normalizeRootDomain(
           process.env.NEXT_PUBLIC_MICRO_SITE_ROOT_DOMAIN
