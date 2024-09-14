@@ -1,0 +1,41 @@
+// MOBILE
+@media screen and (max-width: 800px) {
+  .ripple {
+    position: absolute !important;
+    display: unset !important;
+
+    background-color: rgba(255, 255, 255, 0.4);
+    transform-origin: center;
+    border-radius: 999px;
+    pointer-events: none;
+    transform: scale(1);
+    opacity: 1;
+
+    animation: ripple 600ms linear forwards;
+    line-height: 0;
+
+    z-index: 99;
+  }
+}
+
+// DESKTOP
+@media screen and (min-width: 800px) {
+  .ripple {
+    display: none;
+    opacity: 0;
+  }
+}
+
+// COMMON
+.rippleContainer {
+  position: relative;
+  overflow: hidden;
+}
+
+// ANIMATIONS
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}

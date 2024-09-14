@@ -1,0 +1,19 @@
+.mainContainer {
+  --normalized-margin: var(--standard-margin, var(--mobile-margin, 1rem));
+  --normalized-width: var(--standard-width, 106.25rem);
+
+  width: 100%;
+  &[data-local-type='margin'] {
+    max-width: min(var(--w), calc(100% - var(--m)));
+    margin: 0 auto;
+  }
+  &[data-local-type='padding'] {
+    --p: max(calc(calc(100% - min(var(--w), 100%)) / 2), calc(var(--m) / 2));
+    &[data-local-padding*='right'] {
+      padding-right: var(--p);
+    }
+    &[data-local-padding*='left'] {
+      padding-left: var(--p);
+    }
+  }
+}

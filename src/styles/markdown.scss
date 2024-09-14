@@ -1,0 +1,74 @@
+// These styles are used to style the markdown content in the app.
+
+.iliad-Markdown-root {
+  // Utility props
+  &:not([data-full-width='true']) {
+    max-width: 820px;
+  }
+  &[data-center='true'] {
+    margin: 0 auto;
+  }
+
+  // Links
+  .iliad-ExtLink-markdown {
+    color: var(--brand-primary);
+  }
+
+  // Headers
+  .iliad-Title-markdown {
+    margin-bottom: 1rem;
+    &[data-order='1'] {
+      margin-top: 2rem;
+    }
+    &[data-order='2'] {
+      margin-top: 4rem;
+    }
+
+    // H3 is the smallest header we use for the time being.
+    &[data-order='3'] {
+      margin-top: 2rem;
+      color: var(--brand-primary);
+      font-size: var(--mantine-h5-font-size);
+      margin-bottom: 0.5rem;
+    }
+    // ========================
+
+    // &[data-order='3'] {
+    //   margin-top: 4rem;
+    // }
+    // &[data-order='4'] {
+    //   margin-top: 3rem;
+    // }
+    // &[data-order='5'] {
+    //   margin-top: 2rem;
+    // }
+    // &[data-order='6'] {
+    //   margin-top: 1rem;
+    //   color: var(--brand-primary);
+    // }
+  }
+
+  // Text
+  .iliad-Text-markdown {
+    // margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+    line-height: var(--mantine-line-height-xl);
+  }
+
+  // List / ListItem
+  .iliad-List-markdown {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+    list-style: disc;
+  }
+
+  .iliad-ListItem-markdown {
+    margin-bottom: 0.75rem;
+  }
+
+  // Divider
+  .iliad-Divider-markdown {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+}

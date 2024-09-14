@@ -1,0 +1,109 @@
+:root {
+  font-size: calc(16px * var(--scale-coefficient));
+
+  --standard-width: var(--standard-width, 106.25rem);
+  --mobile-margin: var(--mobile-margin, 2.5rem);
+}
+
+// =========================
+// Reset Styles
+* {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+// =========================
+// Utility classes
+
+@media screen and (max-width: 800px) {
+  *[data-global-notouch] {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+
+*[data-no-select] {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+// Utility attributes
+@media screen and (min-width: 56.25rem) {
+  *[data-display-on='mobile'],
+  .displayOnMobileOnly {
+    display: none !important;
+  }
+}
+
+// Mobile Adjustments
+@media screen and (max-width: 56.25rem) {
+  *[data-display-on='desktop'],
+  .displayOnDesktopOnly {
+    display: none !important;
+  }
+}
+
+// =========================
+// Combating Windows Content Scaling
+
+// 100%
+@media (max-resolution: 1.25dppx) and (min-aspect-ratio: 1/1) {
+  :root {
+    --scale-coefficient: 1;
+  }
+}
+
+// 125%
+@media (min-resolution: 1.25dppx) and (max-resolution: 1.5dppx) and (min-aspect-ratio: 1/1) {
+  :root {
+    --scale-coefficient: 0.8;
+  }
+}
+
+// 150% - Above 150% we'll let grandma read
+@media (min-resolution: 1.5dppx) and (min-aspect-ratio: 1/1) {
+  :root {
+    --scale-coefficient: 0.67; //  2/3
+  }
+}
+
+// A less aggressive version for mobile
+
+// 100%
+@media (max-resolution: 1.25dppx) and (max-aspect-ratio: 1/1) {
+  :root {
+    --scale-coefficient: 1;
+  }
+}
+
+// 125%
+@media (min-resolution: 1.25dppx) and (max-resolution: 1.5dppx) and (max-aspect-ratio: 1/1) {
+  :root {
+    --scale-coefficient: 0.8;
+  }
+}
+
+// 150% - Above 150% we'll let grandma read
+@media (min-resolution: 1.5dppx) and (max-aspect-ratio: 1/1) {
+  :root {
+    --scale-coefficient: 0.84;
+  }
+}
