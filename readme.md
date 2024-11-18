@@ -1,86 +1,81 @@
-# Iliad Standard Issue
+# Turborepo starter
 
-Time to put on my big boy pants and turn this into a proper monorepo. Here's how I think I'll organize things:
+This is an official starter Turborepo.
 
-@iliad.dev/ (Easy way to alias to @iliad? Someone took the namespace :/)
-- Monorepo
-  - Packages
-    <!-- These ones are just dynamic-ish exports that fit all /ns/p/<whatever> under the same export.  -->
-    - @types `exports all @types from installed packages`
-    - components `exports all components from installed packages`
-    - hooks `exports all hooks from installed packages`
-    - utils `exports all utils from installed packages`
-    - configs `Configuration files for stuff.`
-    - iliad-stylesheets `Collection of reset sheets, Iliad brand styles, SCSS functions, etc.`
+## Using this example
 
-    @iliad/components
-      - 
+Run the following command:
 
-    
-    red-components
-    blue-components
+```sh
+npx create-turbo@latest
+```
 
-    @iliad/components
-      ...blue
-      ...red
+## What's inside?
 
-    
+This Turborepo includes the following packages/apps:
 
-    - iliad-node `General JS utilities.`
-      - @types
-      - utils
+### Apps and Packages
 
-    - iliad-react `Components / Hooks that will work in vanilla React.`
-      - components
-      - hooks
-      - @types
-      - utils
+- `docs`: a [Next.js](https://nextjs.org/) app
+- `web`: another [Next.js](https://nextjs.org/) app
+- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
+- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
-    - iliad-next `Components / Hooks that will use Next.js functionality. Most may just end up wrapping iliad-react components.`
-      - components
-      - hooks
-      - @types
-      - utils
-      
-    - Primitive-Extensions `A set of methods that extend primitives. Is this stupid? Probably.`
-      - Array
-      - Math
-      - Number
-      - etc.
-    - Hermes `A wrapper on top of a few network adapters that normalizes APIs between them and returns golang-style {data, error} responses.`
-      - Hermes, nuff said
-    - Strapi-Adapter `A client library for interfacing with Strapi. Other ones exist, I just think they aren't very good *and* don't play nicely with Next.js`
-      - ^. Somehow I'll need a way to access ContentTypes that exist in the source project.
-    - Vulcan `Collection of plopfiles for different project types. I'll need to figure out a solid API to specify the type of project to work in.`
-      - templates
-        - react
-        - next
-        - node
-        - etc...
-      - generators
-        - react
-        - next
-        - node
-        - etc...
-    - Hephaestus `NPX script to configure all the above. Never made one of these before so we'll see how it turns out.`
-      - No idea what goes into an npx script tbh
-  - Scripts
+Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
-- Namespace (@iliad/)
-  - next-components
-  - react-components
-  - node-utils
-  - next-utils
-  - react-utils
-  - node-types
-  - next-types
-  - react-types
-  - @types `exports all @types from installed packages`
-  - components `exports all components from installed packages`
-  - hooks `exports all hooks from installed packages`
-  - utils `exports all utils from installed packages`
-  - configs `Configuration files for stuff.`
-  - stylesheets `Collection of reset sheets, Iliad brand styles, SCSS functions, etc.`
-  - Hermes
-  - strapi-adapter
-  - vulcan (dev dependency probably)
+### Utilities
+
+This Turborepo has some additional tools already setup for you:
+
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Prettier](https://prettier.io) for code formatting
+
+### Build
+
+To build all apps and packages, run the following command:
+
+```
+cd my-turborepo
+pnpm build
+```
+
+### Develop
+
+To develop all apps and packages, run the following command:
+
+```
+cd my-turborepo
+pnpm dev
+```
+
+### Remote Caching
+
+Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+
+By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+
+```
+cd my-turborepo
+npx turbo login
+```
+
+This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+
+Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+
+```
+npx turbo link
+```
+
+## Useful Links
+
+Learn more about the power of Turborepo:
+
+- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
+- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
+- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
+- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
+- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
+- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
