@@ -1,0 +1,199 @@
+// These styles are used to style the markdown content in the app.
+
+.iliad-Markdown-root {
+  // Links
+  .iliad-ExtLink-markdown {
+    color: var(--brand-primary);
+  }
+
+  // LH 26.7429px
+  // Headers
+  .iliad-Title-markdown {
+    &[data-order='1'] {
+    }
+    &[data-order='2'] {
+      font-size: 2.125rem;
+      @media screen and (max-width: 800px) {
+        font-size: 2rem;
+      }
+    }
+    &[data-order='3'] {
+      font-size: 1.5rem;
+      @media screen and (max-width: 800px) {
+        font-size: 1.25rem;
+      }
+    }
+    &[data-order='4'] {
+      font-size: 1.1875rem;
+    }
+    &[data-order='5'] {
+      font-size: 1rem;
+    }
+    &[data-order='6'] {
+      font-size: 0.875rem;
+    }
+  }
+
+  // Text
+  .iliad-Text-markdown,
+  .iliad-Text-markdown span,
+  .iliad-ExtLink-markdown,
+  .iliad-Markdown-root .iliad-List-itemLabel {
+    font-size: 1.25rem;
+    @media screen and (max-width: 800px) {
+      font-size: 1rem;
+    }
+    &:not(figcaption) {
+      &:not(:first-of-type, .iliad-EmptyText-markdown) {
+        margin-top: 1.25rem;
+      }
+      &:not(:last-of-type, .iliad-EmptyText-markdown) {
+        margin-bottom: 1.25rem;
+      }
+    }
+
+    line-height: var(--mantine-line-height-xl);
+  }
+
+  > .iliad-Title-markdown {
+    &:not(:first-child, .iliad-EmptyText-markdown) {
+      // margin-top: 1rem;
+    }
+    margin-top: 1rem;
+
+    &:not(:last-child, .iliad-EmptyText-markdown) {
+      margin-bottom: 1rem;
+    }
+  }
+
+  // Style the first letter of the article.
+  > .iliad-Text-markdown:first-child::first-letter {
+    -webkit-initial-letter: 3;
+    letter-spacing: -0.01em;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 0.1em;
+    initial-letter: 3;
+    font-weight: 500;
+    padding: 0.1em;
+    font-size: 3em;
+  }
+
+  // List / ListItem
+  .iliad-List-markdown {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    padding-left: 1.5rem;
+    list-style: disc;
+  }
+
+  .iliad-Blockquote-root {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+
+    > .iliad-Text-markdown:last-child {
+      margin-top: 1rem;
+    }
+  }
+
+  // Non-resized image
+  *:not(.image_resized) {
+    .iliad-Image-markdown {
+      height: auto;
+    }
+  }
+
+  // All images
+
+  figure.image,
+  *:not(figure.image) .iliad-Image-markdown {
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  // Image with caption
+  figure.image_resized:has(.iliad-Image-markdown) {
+    position: relative;
+
+    &::after {
+      pointer-events: none;
+      position: absolute;
+      content: '';
+      left: 0;
+      top: 0;
+
+      height: 100%;
+      width: 100%;
+      z-index: 1;
+
+      background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0) 14%,
+        rgba(0, 0, 0, 0) 55%,
+        rgba(0, 0, 0, 0.57) 79%,
+        rgba(0, 0, 0, 0.68) 100%
+      );
+    }
+
+    figcaption {
+      font-family: var(--mantine-font-family-headings);
+      background-color: rgba(0, 0, 0, 0);
+      transform: translateY(-100%);
+      position: absolute;
+      color: white;
+      width: 100%;
+      z-index: 2;
+      top: 100%;
+    }
+  }
+
+  // Table
+  .iliad-Table-markdown {
+    background-color: var(--gc-transparent);
+    border-radius: 0.5rem;
+    position: relative;
+
+    min-width: min(600px, 100%);
+
+    &::after {
+      // border: 1px solid white;
+      border-radius: 0.5rem;
+      pointer-events: none;
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      content: '';
+      left: 0;
+      top: 0;
+    }
+
+    tbody:not(:not(tbody)),
+    tbody:not(:not(tbody)) * {
+      // border-width: 0px !important;
+    }
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .iliad-Markdown-root {
+    // Table on mobile
+    .iliad-Table-markdown {
+      min-width: min(600px, 100%);
+    }
+
+    // Floated images
+    .image_resized,
+    .image-style-side {
+      min-width: min(600px, 100%) !important;
+      margin-right: auto !important;
+      margin-left: auto !important;
+      width: 100% !important;
+
+      &:not(:last-child) {
+        margin-bottom: 2rem;
+      }
+      // float: unset !important;
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "@iliad.dev/eslint-config",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "private": false,
   "files": [
     "library.js",

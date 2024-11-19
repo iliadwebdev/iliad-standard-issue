@@ -1,6 +1,6 @@
 {
   "name": "@iliad.dev/typescript-config",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "private": false,
   "license": "MIT",
   "publishConfig": {

@@ -1,0 +1,375 @@
+// /* Text */
+// .iliad-Text-root {
+//   font-family: var(--font-family-primary);
+//   &:is(span) {
+//     font-size: inherit;
+//     font-weight: inherit;
+//     line-height: inherit;
+//   }
+// }
+
+// /* Pagination */
+// .iliad-Pagination-control {
+//   border-color: var(--brand-secondary);
+//   background-color: var(--button-dark-background-color);
+// }
+// .iliad-Pagination-control:not([disabled]):hover {
+//   background-color: var(--button-dark-background-color-hover);
+// }
+
+// .iliad-Pagination-item[data-active='true'] {
+//   background-color: var(--pagination-highlight-color);
+// }
+// .iliad-Pagination-item[data-active='true']:hover {
+//   background-color: var(--pagination-highlight-color-hover) !important;
+// }
+
+// /* Loading Overlay */
+// .iliad-LoadingOverlay-root svg {
+//   stroke: var(--loading-spinner-color);
+// }
+
+// /* Progress bar */
+// .iliad-Progress-bar {
+//   background-color: var(--brand-primary);
+// }
+
+// /* Checkbox */
+// .iliad-Checkbox-input:checked {
+//   background-color: var(--brand-primary);
+//   border-color: var(--brand-primary);
+// }
+
+// /* Paper */
+// .iliad-Paper-root {
+//   background-color: var(--paper-background-color);
+// }
+
+// .iliad-Paper-root[data-with-border] {
+//   border-color: var(--paper-border-color);
+// }
+
+// [data-global-theme='dark'] {
+//   .iliad-Paper-root[data-mantine-light-border]:not([data-mantine-dark-border]) {
+//     border: none;
+//   }
+// }
+
+// [data-global-theme='light'] {
+//   .iliad-Paper-root[data-mantine-dark-border]:not([data-mantine-light-border]) {
+//     border: none;
+//   }
+// }
+
+// // Table row
+// .iliad-Table-root[data-hover] tr:hover {
+//   background-color: var(--hover-element-color) !important;
+// }
+
+// // DARK MODE ONLY
+// // Input
+// .iliad-Input-input {
+//   // background-color: rgba(0, 0, 0, 0.05);
+//   border-color: var(--input-border-color);
+//   &:focus {
+//     border-color: var(--brand-primary);
+//   }
+//   &::placeholder {
+//     color: var(--brand-secondary);
+//   }
+// }
+
+// // Checkbox
+// .iliad-Checkbox-input {
+//   background-color: var(--input-background-color);
+//   border-color: var(--input-border-color);
+//   &:focus {
+//     border-color: var(--brand-primary);
+//   }
+//   &:active {
+//     border-color: var(--brand-primary);
+//   }
+//   &:checked {
+//     background-color: var(--brand-primary);
+//   }
+// }
+
+// // Divider
+// .iliad-Divider-root > *::after {
+//   border-color: var(--brand-secondary);
+// }
+// .iliad-Divider-horizontal {
+//   border-color: var(--brand-secondary);
+// }
+
+// // Modal
+// .iliad-Modal-header {
+//   background-color: var(--modal-header-background-color);
+// }
+
+// .iliad-Modal-root {
+//   #free-quote-modal-body {
+//     background-color: white !important;
+//     padding: 2rem;
+
+//     background-image: url('/image/iliad_modal_background.webp');
+//     background-position: center 100%;
+//     background-repeat: no-repeat;
+//     background-size: 100% auto;
+//   }
+// }
+
+// // Stepper
+// [data-mantine-show-steps='false'] {
+//   .iliad-Stepper-steps {
+//     display: none;
+//   }
+//   .iliad-Stepper-content {
+//     padding-top: unset;
+//   }
+// }
+
+// [data-mantine-steps-position='bottom'] {
+//   .iliad-Stepper-root {
+//     display: flex;
+//     flex-direction: column;
+//     .iliad-Stepper-content {
+//       padding-top: unset;
+//     }
+//     .iliad-Stepper-steps {
+//       order: 3;
+//       padding-top: 1rem;
+//     }
+//   }
+// }
+// .iliad-Stepper-stepIcon {
+//   background-color: var(--dom-background);
+//   border-color: var(--brand-secondary);
+//   &[data-progress] {
+//     border-color: var(--brand-primary);
+//   }
+//   &[data-completed] {
+//     border-color: var(--brand-primary);
+//     background: var(--brand-primary);
+//   }
+// }
+
+// .iliad-Stepper-separator {
+//   background-color: var(--brand-primary);
+// }
+
+// // Radio
+// .iliad-Radio-radio {
+//   background-color: var(--input-background-color);
+//   border-color: var(--input-border-color);
+//   &:checked {
+//     background: var(--brand-primary);
+//   }
+// }
+
+// // Select
+// .iliad-Select-itemsWrapper {
+//   background-color: var(--paper-background-color);
+//   border-color: var(--paper-border-color);
+// }
+
+// // THEME
+// // LIGHT : DOYLE
+// // THEME
+
+// [data-global-theme='dark:doyle'] {
+//   /* Text */
+//   .iliad-Text-root {
+//     font-family: var(--font-family-primary);
+//   }
+
+//   /* Pagination */
+//   .iliad-Pagination-control {
+//     border-color: var(--brand-secondary);
+//     background-color: var(--button-dark-background-color);
+//   }
+//   .iliad-Pagination-control:not([data-disabled]):hover {
+//     background-color: var(--button-dark-background-color-hover);
+//   }
+
+//   .iliad-Pagination-control[data-active='true'] {
+//     background-color: var(--pagination-highlight-color);
+//   }
+//   .iliad-Pagination-control[data-active='true']:hover {
+//     background-color: var(--pagination-highlight-color-hover) !important;
+//   }
+
+//   /* Button */
+//   .iliad-Button-root:not(
+//       [data-mantine-colored],
+//       [data-mantine-variant='outline']
+//     ) {
+//     background-color: var(--button-standard-color);
+//   }
+//   .iliad-Button-root[data-mantine-variant='outline'] {
+//     &:not([data-disabled='true']) {
+//       border-color: var(--button-standard-color);
+//       color: var(--button-standard-color);
+//     }
+//   }
+
+//   .iliad-Button-root:hover:not(
+//       [data-mantine-colored],
+//       [data-mantine-variant='outline']
+//     ) {
+//     background-color: var(--button-standard-color-hover);
+//   }
+//   .iliad-Button-root {
+//     &[data-disabled='true'] {
+//       background-color: var(--brand-secondary);
+//       color: var(--dom-background);
+//     }
+//   }
+
+//   /* Loading Overlay */
+//   .iliad-LoadingOverlay-root svg {
+//     stroke: var(--loading-spinner-color);
+//   }
+
+//   /* Progress bar */
+//   .iliad-Progress-bar {
+//     background-color: var(--brand-primary);
+//   }
+
+//   /* Checkbox */
+//   .iliad-Checkbox-input:checked {
+//     background-color: var(--brand-primary);
+//     border-color: var(--brand-primary);
+//   }
+
+//   /* Paper */
+//   .iliad-Paper-root {
+//     background: var(--dom-background);
+//   }
+//   .iliad-Paper-root[data-with-border] {
+//     border-color: var(--paper-border-color);
+//   }
+//   [data-global-theme='dark'] {
+//     .iliad-Paper-root[data-mantine-light-border]:not(
+//         [data-mantine-dark-border]
+//       ) {
+//       border: none;
+//     }
+//   }
+//   [data-global-theme='light'] {
+//     .iliad-Paper-root[data-mantine-dark-border]:not(
+//         [data-mantine-light-border]
+//       ) {
+//       border: none;
+//     }
+//   }
+
+//   // Table row
+//   .iliad-Table-root[data-hover] tr:hover {
+//     background-color: var(--hover-element-color) !important;
+//   }
+
+//   // DARK MODE ONLY
+//   // Input
+//   .iliad-Input-input {
+//     background-color: rgba(0, 0, 0, 0.2);
+//     border-color: var(--input-border-color);
+//     &:focus {
+//       border-color: var(--brand-white);
+//     }
+//     &::placeholder {
+//       color: var(--brand-black-l1);
+//     }
+//   }
+
+//   // Checkbox
+//   .iliad-Checkbox-input {
+//     background-color: var(--input-background-color);
+//     border-color: var(--input-border-color);
+//     &:focus {
+//       border-color: var(--brand-primary);
+//     }
+//     &:active {
+//       border-color: var(--brand-primary);
+//     }
+//     &:checked {
+//       background-color: var(--brand-primary);
+//     }
+//   }
+
+//   // Divider
+//   .iliad-Divider-root > *::after {
+//     border-color: var(--brand-secondary);
+//   }
+
+//   // Modal
+//   .iliad-Modal-header {
+//     background-color: var(--modal-header-background-color);
+//   }
+
+//   // Stepper
+//   [data-mantine-show-steps='false'] {
+//     .iliad-Stepper-steps {
+//       display: none;
+//     }
+//     .iliad-Stepper-content {
+//       padding-top: unset;
+//     }
+//   }
+//   [data-mantine-steps-position='bottom'] {
+//     .iliad-Stepper-root {
+//       display: flex;
+//       flex-direction: column;
+//       .iliad-Stepper-content {
+//         padding-top: unset;
+//       }
+//       .iliad-Stepper-steps {
+//         order: 3;
+//         padding-top: 1rem;
+//       }
+//     }
+//   }
+//   .iliad-Stepper-stepIcon {
+//     background-color: var(--dom-background);
+//     border-color: var(--brand-secondary);
+//     &[data-progress] {
+//       border-color: var(--brand-primary);
+//     }
+//     &[data-completed] {
+//       border-color: var(--brand-primary);
+//       background: var(--brand-primary);
+//     }
+//   }
+
+//   .iliad-Stepper-separator {
+//     background-color: var(--brand-primary);
+//   }
+
+//   // Radio
+//   .iliad-Radio-radio {
+//     background-color: var(--input-background-color);
+//     border-color: var(--input-border-color);
+//     &:checked {
+//       background: var(--brand-primary);
+//     }
+//   }
+
+//   // Select
+//   .iliad-Select-itemsWrapper {
+//     background-color: var(--paper-background-color);
+//     border-color: var(--paper-border-color);
+//   }
+// }
+
+// // Badge
+// .iliad-Badge-root {
+//   background: linear-gradient(135deg, #27d7fe 0%, #2baae1 100%);
+//   color: var(--brand-white);
+// }
+
+// // Blockquote -- Iliad overhaul
+// .iliad-Blockquote-root {
+//   // color: var(--brand-secondary);
+//   border: 0px;
+//   background-color: unset !important;
+// }

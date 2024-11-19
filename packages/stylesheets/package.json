@@ -1,0 +1,16 @@
+{
+  "name": "@iliad.dev/stylesheets",
+  "description": "A collection of reset stylesheets, scss functions, and utility styles.",
+  "version": "0.0.3",
+  "private": false,
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/simple-build.js"
+  }
+}
