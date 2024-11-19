@@ -15,9 +15,7 @@
     "dist"
   ],
   "scripts": {
-    "preinstall": "npm i @iliad.dev/build-scripts@latest --force",
     "_publish": "rollup -c && npm publish",
-    "postinstall": "node ../build-scripts/post-install.js",
     "build": "rollup -c",
     "lint": "tsc"
   },

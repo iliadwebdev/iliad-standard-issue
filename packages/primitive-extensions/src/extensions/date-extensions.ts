@@ -1,30 +1,3 @@
-type Unit = (
-  | "y"
-  | "M"
-  | "w"
-  | "d"
-  | "h"
-  | "m"
-  | "s"
-  | "ms"
-  | "year"
-  | "month"
-  | "week"
-  | "day"
-  | "hour"
-  | "minute"
-  | "second"
-  | "millisecond"
-  | "years"
-  | "months"
-  | "weeks"
-  | "days"
-  | "hours"
-  | "minutes"
-  | "seconds"
-  | "milliseconds"
-) & {};
-
 const msEquivalent = {
   // Short
   y: 31536000000,

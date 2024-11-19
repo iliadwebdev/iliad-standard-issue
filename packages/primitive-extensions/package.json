@@ -1,7 +1,7 @@
 {
   "name": "@iliad.dev/primitive-extensions",
-  "version": "0.0.10",
-  "description": "A collection of TypeScript utilities.",
+  "version": "0.0.23",
+  "description": "Extends primitive types with useful methods.",
   "repository": {
     "type": "git",
     "url": "https://github.com/iliadwebdev/iliad-standard-issue"
@@ -9,20 +9,18 @@
   "license": "ISC",
   "author": "Smoke3785",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
   "types": "dist/global.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "preinstall": "npm i @iliad.dev/build-scripts@latest --force",
     "_publish": "rollup -c && npm publish",
-    "postinstall": "node ../build-scripts/post-install.js",
     "build": "rollup -c",
     "lint": "tsc"
   },
   "dependencies": {
-    "@iliad.dev/build-scripts": "*",
+    "@iliad.dev/ts-utils": "*",
+    "@rollup/plugin-json": "^6.1.0",
     "typescript": "^5.2.2"
   },
   "devDependencies": {

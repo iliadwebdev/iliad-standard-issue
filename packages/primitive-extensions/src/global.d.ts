@@ -1,9 +1,38 @@
+export {};
+
 declare global {
+  type Unit = (
+    | "y"
+    | "M"
+    | "w"
+    | "d"
+    | "h"
+    | "m"
+    | "s"
+    | "ms"
+    | "year"
+    | "month"
+    | "week"
+    | "day"
+    | "hour"
+    | "minute"
+    | "second"
+    | "millisecond"
+    | "years"
+    | "months"
+    | "weeks"
+    | "days"
+    | "hours"
+    | "minutes"
+    | "seconds"
+    | "milliseconds"
+  ) & {};
+
   interface Array<T> {
     insertAtIndex(index: number, element: T): Array<T>;
     getByWrappedIndex(index: number): T;
-    includesAll(arr: Array): boolean;
-    includesAny(arr: Array): boolean;
+    includesAll(arr: Array<T>): boolean;
+    includesAny(arr: Array<T>): boolean;
     randomize(seed?: string | number): Array<T>;
     last(): T;
   }

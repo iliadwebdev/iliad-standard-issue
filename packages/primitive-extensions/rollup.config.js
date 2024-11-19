@@ -2,6 +2,10 @@ const nodeResolve = require("@rollup/plugin-node-resolve");
 const typescript = require("rollup-plugin-typescript2");
 const dts = require("rollup-plugin-dts").default;
 const pkg = require("./package.json");
+const fs = require("fs");
+
+fs.copyFileSync("src/prim-ext.json", "dist/tsconfig.json");
+fs.copyFileSync("src/global.d.ts", "dist/global.d.ts");
 
 module.exports = [
   {
@@ -22,15 +26,6 @@ module.exports = [
         // browser: true,
       }),
     ],
-    plugins: [typescript()],
     external: ["@iliad.dev/hermes", "typescript", "@strapi/strapi", "qs"], // <-- suppresses the warning
-  },
-  {
-    input: `src/global.d.ts`,
-    plugins: [dts(), nodeResolve()],
-    output: {
-      file: `dist/global.d.ts`,
-      format: "es",
-    },
   },
 ];
