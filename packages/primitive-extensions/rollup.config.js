@@ -26,10 +26,10 @@ module.exports = [
     external: ["@iliad.dev/hermes", "typescript", "@strapi/strapi", "qs"], // <-- suppresses the warning
   },
   {
-    input: `src/index.d.ts`,
+    input: `src/global.d.ts`,
     plugins: [dts(), nodeResolve()],
     output: {
-      file: `dist/index.d.ts`,
+      file: `dist/global.d.ts`,
       format: "es",
     },
   },

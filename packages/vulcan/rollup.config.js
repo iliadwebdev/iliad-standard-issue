@@ -29,7 +29,7 @@ module.exports = [
     input: `src/index.d.ts`,
     plugins: [dts(), nodeResolve()],
     output: {
-      file: `dist/strapi.d.ts`,
+      file: `dist/index.d.ts`,
       format: "es",
     },
   },
