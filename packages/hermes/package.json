@@ -12,7 +12,7 @@
     "_publish": "rollup -c && npm publish",
     "test": "rollup -c && node test/index.ts",
     "dev": "nodemon ./src/index.ts",
-    "postinstall": "node @iliad.dev/build-scripts/post-install.js",
+    "postinstall": "node ../build-scripts/post-install.js",
     "lint": "tsc"
   },
   "repository": {
@@ -36,7 +36,6 @@
   },
   "dependencies": {
     "axios": "^1.6.8",
-    "qs": "^6.12.1",
-    "@iliad.dev/build-scripts": "*"
+    "qs": "^6.12.1"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@iliad.dev/ts-utils",
-  "version": "0.0.0",
+  "version": "0.0.10",
   "description": "A collection of TypeScript utilities.",
   "repository": {
     "type": "git",
@@ -15,14 +15,15 @@
     "dist"
   ],
   "scripts": {
+    "preinstall": "npm i @iliad.dev/build-scripts@latest --force",
     "_publish": "rollup -c && npm publish",
-    "postinstall": "node @iliad.dev/build-scripts/post-install.js",
+    "postinstall": "node ../build-scripts/post-install.js",
     "build": "rollup -c",
     "lint": "tsc"
   },
   "dependencies": {
-    "typescript": "^5.2.2",
-    "@iliad.dev/build-scripts": "*"
+    "@iliad.dev/build-scripts": "*",
+    "typescript": "^5.2.2"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",

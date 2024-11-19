@@ -17,10 +17,8 @@
     "typescript": "5.5.4"
   },
   "scripts": {
-    "postinstall": "node @iliad.dev/build-scripts/post-install.js",
+    "postinstall": "node ../build-scripts/post-install.js",
     "build": "node ../build-scripts/simple-build.js"
   },
-  "dependencies": {
-    "@iliad.dev/build-scripts": "*"
-  }
+  "dependencies": {}
 }

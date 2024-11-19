@@ -20,15 +20,14 @@
     "dev": "tsx watch ./src/index.ts",
     "lint": "tsc",
     "test": "rollup -c && node test/index.ts",
-    "postinstall": "node @iliad.dev/build-scripts/post-install.js",
+    "postinstall": "node ../build-scripts/post-install.js",
     "test-": "node test/index.ts"
   },
   "dependencies": {
     "@strapi/strapi": "^4.24.2",
     "qs": "^6.12.1",
     "typescript": "^5.2.2",
-    "@iliad.dev/hermes": "*",
-    "@iliad.dev/build-scripts": "*"
+    "@iliad.dev/hermes": "*"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",

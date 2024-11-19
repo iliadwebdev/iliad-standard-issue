@@ -1,11 +1,12 @@
 {
   "name": "@iliad.dev/build-scripts",
   "description": "A collection of scripts to do naughty and ill-advised things to package in the @iliad.dev namespace.",
-  "version": "0.0.0",
+  "version": "0.0.4",
   "private": false,
   "files": [
     "simple-build.js",
-    "post-install.js"
+    "post-install.js",
+    "start-at-root.js"
   ],
   "devDependencies": {
     "@vercel/style-guide": "^5.2.0",
