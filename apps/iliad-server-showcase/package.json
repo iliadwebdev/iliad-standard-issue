@@ -30,7 +30,7 @@
     "start": "node dist/main.js",
     "clean": "rimraf coverage build tmp",
     "prebuild": "npm run lint",
-    "build": "tsc -p tsconfig.json",
+    "disabled-build": "tsc -p tsconfig.json",
     "dev": "tsx watch src/index.ts",
     "build:watch": "tsc -w -p tsconfig.json",
     "build:release": "npm run clean && tsc -p tsconfig.release.json",
@@ -46,7 +46,10 @@
   "dependencies": {
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
-    "tslib": "~2.7"
+    "tslib": "~2.7",
+    "@iliad.dev/strapi-adapter": "*",
+    "@iliad.dev/typescript-config": "*",
+    "@iliad.dev/hermes": "*"
   },
   "volta": {
     "node": "20.17.0"

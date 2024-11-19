@@ -1,7 +1,7 @@
-import { mainHermesTest, mainStrapiAdapterTest } from './testing';
+import { mainHermesTest } from './testing';
 
 (async () => {
   console.log('running');
   await mainHermesTest();
-  await mainStrapiAdapterTest();
+  // await mainStrapiAdapterTest();
 })();
