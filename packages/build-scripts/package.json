@@ -1,11 +1,11 @@
 {
-  "name": "@iliad.dev/eslint-config",
-  "version": "0.0.5",
+  "name": "@iliad.dev/build-scripts",
+  "description": "A collection of scripts to do naughty and ill-advised things to package in the @iliad.dev namespace.",
+  "version": "0.0.0",
   "private": false,
   "files": [
-    "library.js",
-    "next.js",
-    "react-internal.js"
+    "simple-build.js",
+    "post-install.js"
   ],
   "devDependencies": {
     "@vercel/style-guide": "^5.2.0",
@@ -17,10 +17,6 @@
     "typescript": "5.5.4"
   },
   "scripts": {
-    "postinstall": "node @iliad.dev/build-scripts/post-install.js",
-    "build": "node ../build-scripts/simple-build.js"
-  },
-  "dependencies": {
-    "@iliad.dev/build-scripts": "*"
+    "build": "node ./simple-build.js"
   }
 }

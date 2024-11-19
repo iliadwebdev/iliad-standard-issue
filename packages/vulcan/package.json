@@ -1,7 +1,7 @@
 {
-  "name": "@iliad.dev/ts-utils",
+  "name": "@iliad.dev/vulcan",
   "version": "0.0.0",
-  "description": "A collection of TypeScript utilities.",
+  "description": "Vulcan is a tool for managing generators exposed by Iliad packages.",
   "repository": {
     "type": "git",
     "url": "https://github.com/iliadwebdev/iliad-standard-issue"
@@ -16,13 +16,14 @@
   ],
   "scripts": {
     "_publish": "rollup -c && npm publish",
-    "postinstall": "node @iliad.dev/build-scripts/post-install.js",
     "build": "rollup -c",
+    "postinstall": "node @iliad.dev/build-scripts/post-install.js",
+    "dev": "tsx watch ./src/index.ts",
     "lint": "tsc"
   },
   "dependencies": {
-    "typescript": "^5.2.2",
-    "@iliad.dev/build-scripts": "*"
+    "@iliad.dev/build-scripts": "*",
+    "typescript": "^5.2.2"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",

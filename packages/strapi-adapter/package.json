@@ -4,7 +4,7 @@
   "description": "Utility functions to simplify interactions with Strapi backend.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/iliadwebdev/iliad-strapi-adapter"
+    "url": "https://github.com/iliadwebdev/iliad-standard-issue"
   },
   "license": "ISC",
   "author": "Smoke3785",
@@ -15,18 +15,20 @@
     "dist"
   ],
   "scripts": {
-    "_publish": "node ../../scripts/iterate && rollup -c && npm publish",
+    "_publish": "rollup -c && npm publish",
     "build": "rollup -c",
     "dev": "tsx watch ./src/index.ts",
     "lint": "tsc",
     "test": "rollup -c && node test/index.ts",
+    "postinstall": "node @iliad.dev/build-scripts/post-install.js",
     "test-": "node test/index.ts"
   },
   "dependencies": {
     "@strapi/strapi": "^4.24.2",
     "qs": "^6.12.1",
     "typescript": "^5.2.2",
-    "@iliad.dev/hermes": "*"
+    "@iliad.dev/hermes": "*",
+    "@iliad.dev/build-scripts": "*"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
