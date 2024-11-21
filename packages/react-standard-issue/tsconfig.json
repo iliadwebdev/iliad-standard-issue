@@ -1,12 +1,14 @@
 {
-  // "extends": "@iliad.dev/typescript-config/iliad-react-library.json",
+  "extends": "@iliad.dev/typescript-config/iliad-react-library.json",
   "compilerOptions": {
     "outDir": "lib",
     "declaration": true,
     "declarationMap": true,
     "jsx": "react-jsx"
+    // "moduleResolution": "bundler",
+    // "module": "Preserve"
   },
-  "exclude": ["dist", "build", "node_modules"],
+  "exclude": ["dist", "lib", "@types", "node_modules"],
   "include": [
     "src/**/*",
     "src/@types/**/*",

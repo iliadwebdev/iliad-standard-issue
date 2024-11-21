@@ -1,16 +1,32 @@
 {
   "name": "@iliad.dev/react-standard-issue",
   "version": "1.0.1",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "lib/index.cjs",
+  "module": "lib/index.js",
+  "types": "lib/index.d.ts",
   "type": "module",
   "files": [
-    "src"
+    "lib",
+    "dist",
+    "@types"
   ],
   "exports": {
-    "./*": "./src/*",
-    ".": "./src/index"
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js",
+      "require": "./lib/index.cjs"
+    },
+    "./@types": {
+      "types": "./@types/index.d.ts",
+      "import": "./@types/index.d.ts",
+      "require": "./@types/index.d.ts"
+    }
+  },
+  "scripts": {
+    "ts-types": "tsc",
+    "build:dev": "rimraf lib && tsup --watch",
+    "build:prod": "rimraf dist && env NODE_ENV=production tsup",
+    "build:watch": "tsup --watch"
   },
   "author": "",
   "license": "ISC",
@@ -40,8 +56,10 @@
     "@tiptap/starter-kit": "^2.2.4",
     "babel-plugin-react-compiler": "^19.0.0-beta-63b359f-20241101",
     "clsx": "^2.1.0",
+    "cpx": "^1.5.0",
     "deepmerge": "^4.3.1",
     "embla-carousel-react": "^8.0.0",
+    "esbuild-sass-plugin": "^3.3.1",
     "postcss": "^8.4.31",
     "postcss-preset-mantine": "^1.13.0",
     "postcss-simple-vars": "^7.0.1",
