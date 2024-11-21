@@ -1,6 +1,6 @@
 {
   "name": "@iliad.dev/standard-issue",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "scripts": {
     "build": "echo no build"
   },
