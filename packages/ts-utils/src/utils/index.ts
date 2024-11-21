@@ -1,3 +1,3 @@
-export function tsUtilsTest() {
+export function tsUtilsTest(): string {
   return "ts-utils";
 }

@@ -1,4 +1,3 @@
-export {};
 declare global {
   type Enumerate<
     N extends number,

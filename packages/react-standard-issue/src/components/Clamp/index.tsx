@@ -3,6 +3,9 @@ import styles from "./clamp.module.scss";
 
 import { clsx } from "clsx";
 
+import { tsUtilsTest } from "@iliad.dev/ts-utils";
+import "@iliad.dev/ts-utils/@types";
+
 // Mantine
 import { BoxComponentProps } from "@mantine/core";
 import { Box } from "@mantine/core";

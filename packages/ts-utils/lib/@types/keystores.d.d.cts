@@ -1,4 +1,4 @@
-export type MonthLong =
+type MonthLong =
   | "january"
   | "february"
   | "march"
@@ -12,7 +12,7 @@ export type MonthLong =
   | "november"
   | "december";
 
-export type MonthShort =
+type MonthShort =
   | "jan"
   | "feb"
   | "mar"
@@ -26,6 +26,8 @@ export type MonthShort =
   | "nov"
   | "dec";
 
-export type Month = MonthLong | MonthShort;
+type Month = MonthLong | MonthShort;
 
-export type Year = number;
+type Year = number;
+
+export type { Month, MonthLong, MonthShort, Year };

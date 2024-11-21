@@ -1,9 +1,10 @@
 {
   "name": "@iliad.dev/react-standard-issue",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "type": "module",
   "files": [
     "src"
   ],
@@ -41,12 +42,16 @@
     "clsx": "^2.1.0",
     "deepmerge": "^4.3.1",
     "embla-carousel-react": "^8.0.0",
-    "postcss": "^8.4.38",
+    "postcss": "^8.4.31",
     "postcss-preset-mantine": "^1.13.0",
     "postcss-simple-vars": "^7.0.1",
     "react-fast-compare": "^3.2.2",
     "react-icons": "^5.2.1",
     "sass": "^1.72.0",
     "zustand": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1"
   }
 }

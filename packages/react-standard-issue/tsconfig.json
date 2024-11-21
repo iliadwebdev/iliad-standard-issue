@@ -1,8 +1,16 @@
 {
   "extends": "@iliad.dev/typescript-config/iliad-react-library.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "lib",
+    "allowArbitraryExtensions": true,
+    "declaration": true,
+    "declarationMap": true,
+    "jsx": "react-jsx"
   },
   "exclude": ["dist", "build", "node_modules"],
-  "include": ["src"]
+  "include": [
+    "src/**/*",
+    "src/@types/**/*",
+    "@iliad.dev/ts-utils/@types" // Adjust path if your types are under `dist`
+  ]
 }
