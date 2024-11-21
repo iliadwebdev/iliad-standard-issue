@@ -1,4 +1,4 @@
-import { AxiosInstance, AxiosRequestConfig } from "axios/";
+import { AxiosInstance, AxiosRequestConfig } from "axios";
 
 // Types
 type ErrorMessage = {
@@ -30,7 +30,8 @@ interface HermesMethod {
 
 type StandardResponse<T> = SuccessResponse<T> | ErrorResponse;
 
-interface HermesAxiosInstance extends AxiosInstance {
+interface HermesAxiosInstance
+  extends Omit<AxiosInstance, "get" | "post" | "put" | "delete"> {
   // Custom Axios instance methods
   get<T>(url: string, data: any, options?: any): Promise<StandardResponse<T>>;
   post<T>(url: string, options?: any): Promise<StandardResponse<T>>;

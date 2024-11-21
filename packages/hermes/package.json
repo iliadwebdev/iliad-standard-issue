@@ -2,22 +2,24 @@
   "name": "@iliad.dev/hermes",
   "version": "0.0.13",
   "description": "Normalizes responses from Axios and Fetch for use in Next.js projects.",
-  "main": "dist/index.js",
-  "types": "dist/hermes.d.ts",
+  "main": "lib/index.cjs",
+  "module": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "type": "module",
   "files": [
+    "lib",
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "_publish": "rollup -c && npm publish",
-    "test": "rollup -c && node test/index.ts",
-    "dev": "nodemon ./src/index.ts",
-    "postinstall": "node ../build-scripts/post-install.js",
-    "lint": "tsc"
+    "ts-types": "tsc",
+    "build:dev": "rimraf lib && tsup --watch",
+    "build": "rimraf dist && env NODE_ENV=production tsup",
+    "build:prod": "rimraf dist && env NODE_ENV=production tsup",
+    "build:watch": "tsup --watch"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/iliad/iliad-hermes-ts"
+    "url": "https://github.com/iliad/iliad-standard-issue"
   },
   "author": "Smoke3785",
   "license": "ISC",
@@ -26,16 +28,24 @@
     "@types/qs": "^6.9.15",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
+    "eslint": "^8.16.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
     "nodemon": "^3.1.0",
+    "prettier": "^2.6.2",
+    "rimraf": "^3.0.2",
     "rollup": "^4.17.2",
     "rollup-plugin-dts": "^6.1.0",
     "rollup-plugin-typescript2": "^0.36.0",
     "ts-node": "^10.9.2",
-    "tsup": "^8.0.2",
+    "tsup": "^8.3.5",
     "typescript": "^5.2.2"
   },
   "dependencies": {
     "axios": "^1.6.8",
+    "deepmerge": "^4.3.1",
     "qs": "^6.12.1"
   }
 }

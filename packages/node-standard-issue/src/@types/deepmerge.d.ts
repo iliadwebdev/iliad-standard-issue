@@ -3,6 +3,7 @@ declare function deepmerge<T>(
   y: Partial<T>,
   options?: deepmerge.Options
 ): T;
+
 declare function deepmerge<T1, T2>(
   x: Partial<T1>,
   y: Partial<T2>,
@@ -32,4 +33,4 @@ declare namespace deepmerge {
   export function all<T>(objects: Partial<T>[], options?: Options): T;
 }
 
-export = deepmerge;
+declare function isMergeableObject(value: any): boolean;

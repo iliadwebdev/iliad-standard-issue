@@ -10,8 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "node ../build-scripts/simple-build.js",
-    "postinstall": "node @iliad.dev/build-scripts/post-install.js"
+    "build": "node ../build-scripts/simple-build.js"
   },
   "dependencies": {}
 }

@@ -17,7 +17,6 @@
   "scripts": {
     "_publish": "rollup -c && npm publish",
     "build": "rollup -c",
-    "postinstall": "node ../build-scripts/post-install.js",
     "dev": "tsx watch ./src/index.ts",
     "lint": "tsc"
   },

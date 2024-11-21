@@ -14,5 +14,5 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
   "include": ["src", "src/@types"],
-  "exclude": ["node_modules", "dist", "rollup.config.js"]
+  "exclude": ["node_modules", "dist", "lib"]
 }

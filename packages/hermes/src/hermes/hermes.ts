@@ -1,7 +1,8 @@
 // Dependencies
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
-import merge from "../deepmerge/deepmerge";
 import { parse, stringify } from "qs";
+import merge from "deepmerge";
+
 const qs = { parse, stringify };
 
 // Helper functions

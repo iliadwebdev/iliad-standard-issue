@@ -1,19 +1,12 @@
 {
+  "extends": "@iliad.dev/typescript-config/iliad-ts-library.json",
   "compilerOptions": {
-    /* Language and Environment */
-    "target": "ESNext" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
-    /* Modules */
-    "module": "ESNext" /* Specify what module code is generated. */,
-    "moduleResolution": "Node" /* Determine how modules get resolved. */,
-    "noEmit": true /* Disable emitting files from a compilation. */,
-    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
-    "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
-    /* Type Checking */
-    "strict": true /* Enable all strict type-checking options. */,
-    "noUncheckedIndexedAccess": true /* Add 'undefined' to a type when accessed using an index. */,
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */,
-    "allowJs": true
+    "declarationDir": "dist/types",
+    "outDir": "dist/lib", // Output directory
+    "typeRoots": ["node_modules/@types"],
+    "declaration": true, // Ensure declaration files are generated
+    "declarationMap": true // Optional, for debugging type definitions
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "rollup.config.js"]
+
+  "include": ["src", "src/**/*"]
 }

@@ -1,0 +1,35 @@
+.mainContainer {
+  --normalized-margin: var(--standard-margin, var(--mobile-margin, 1rem));
+  --normalized-width: var(--standard-width, 106.25rem);
+
+  width: 100%;
+
+  --abs-left: calc(
+    calc(100dvw - min(100%, min(var(--w), calc(100% - var(--m))))) / 2
+  );
+  --clamp-x-padding: var(--abs-left);
+
+  --clamp-p: max(
+    calc(calc(100% - min(var(--w), 100%)) / 2),
+    calc(var(--m) / 2)
+  );
+
+  &[data-local-type="margin"]:not(.simulated) {
+    max-width: min(var(--w), calc(100% - var(--m)));
+    margin: 0 auto;
+  }
+
+  &[data-local-type="padding"]:not(.simulated) {
+    &[data-local-padding*="right"] {
+      padding-right: var(--clamp-p);
+    }
+    &[data-local-padding*="left"] {
+      padding-left: var(--clamp-p);
+    }
+  }
+
+  .simulated {
+    // This allows a child to inherit the calculated variables from padding, but doesn't actually pass the styles.
+    // Is this a good way to do this? I don't know. Possibly something to revisit.
+  }
+}

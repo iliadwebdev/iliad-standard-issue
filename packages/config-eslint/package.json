@@ -17,7 +17,6 @@
     "typescript": "5.5.4"
   },
   "scripts": {
-    "postinstall": "node ../build-scripts/post-install.js",
     "build": "node ../build-scripts/simple-build.js"
   },
   "dependencies": {}

@@ -20,6 +20,7 @@
     "packages/*"
   ],
   "dependencies": {
-    "@changesets/cli": "^2.27.9"
+    "@changesets/cli": "^2.27.9",
+    "esbuild-sass-plugin": "^3.3.1"
   }
 }
