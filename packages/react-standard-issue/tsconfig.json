@@ -1,8 +1,7 @@
 {
-  "extends": "@iliad.dev/typescript-config/iliad-react-library.json",
+  // "extends": "@iliad.dev/typescript-config/iliad-react-library.json",
   "compilerOptions": {
     "outDir": "lib",
-    "allowArbitraryExtensions": true,
     "declaration": true,
     "declarationMap": true,
     "jsx": "react-jsx"
