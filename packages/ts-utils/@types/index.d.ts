@@ -1,2 +1,2 @@
 import "./iliad_global.d.ts";
-import "./keystores.js";
+import "./keystores.d.ts";
