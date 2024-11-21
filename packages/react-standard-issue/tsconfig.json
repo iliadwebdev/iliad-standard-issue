@@ -8,10 +8,6 @@
     // "moduleResolution": "bundler",
     // "module": "Preserve"
   },
-  "exclude": ["dist", "lib", "@types", "node_modules"],
-  "include": [
-    "src/**/*",
-    "src/@types/**/*",
-    "@iliad.dev/ts-utils/@types" // Adjust path if your types are under `dist`
-  ]
+  "exclude": ["node_modules", ".gitignore", "package.json", "README.md"],
+  "include": ["."]
 }

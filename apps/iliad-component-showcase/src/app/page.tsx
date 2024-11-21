@@ -5,6 +5,7 @@ import { Clamp } from "@iliad.dev/react-standard-issue";
 // import { Box as Clamp } from "@mantine/core";
 
 import { Hermes } from "@iliad.dev/hermes";
+
 const hermes = new Hermes("test", {});
 hermes.addBaseQuery("https://lego.com/");
 console.log(hermes.fetch(""));

@@ -14,7 +14,7 @@
   },
   "scripts": {
     "lint": "eslint *.ts*",
-    "build": "rollup --config",
+    "disabled-build": "rollup --config",
     "dev": "pnpm build --watch"
   },
   "devDependencies": {
