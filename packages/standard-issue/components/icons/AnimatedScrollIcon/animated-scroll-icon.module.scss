@@ -1,0 +1,16 @@
+.animated {
+  position: relative;
+  .circle {
+    animation: circle 2s infinite cubic-bezier(0.075, 0.82, 0.165, 1) alternate
+      forwards;
+  }
+}
+
+@keyframes circle {
+  0% {
+    transform: translateY(calc(var(--si-size) * 2));
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

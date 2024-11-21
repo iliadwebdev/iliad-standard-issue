@@ -1,8 +1,7 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 
-import { Clamp } from "@iliad.dev/react-standard-issue";
-// import { Box as Clamp } from "@mantine/core";
+import { Clamp } from "@iliad.dev/standard-issue";
 
 import { Hermes } from "@iliad.dev/hermes";
 
@@ -13,7 +12,7 @@ console.log(hermes.fetch(""));
 export default function Home() {
   return (
     <div className={styles.page}>
-      <Clamp>
+      <Clamp w={400}>
         <main className={styles.main}>
           <Image
             className={styles.logo}

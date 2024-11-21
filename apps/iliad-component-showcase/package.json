@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@iliad.dev/next-standard-issue": "*",
+    "@iliad.dev/standard-issue": "*",
     "@iliad.dev/react-standard-issue": "*",
     "@mantine/carousel": "^7.14.1",
     "@mantine/charts": "^7.14.1",

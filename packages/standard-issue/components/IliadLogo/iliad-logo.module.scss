@@ -1,0 +1,109 @@
+.mainContainer {
+  position: relative;
+  height: var(--h);
+  --w: calc(var(--h) * 1.2);
+  --hh: calc(var(--w) * 0.45);
+  --rhh: calc(var(--w) * 0.45 - 4px);
+  --lhh: calc(var(--w) * 0.45 - 2px);
+  aspect-ratio: 16/5;
+  // border: 1px solid green;
+  --atf: cubic-bezier(0.645, 0.045, 0.355, 1);
+  * {
+    transition: all 280ms var(--atf);
+  }
+  &:hover {
+    .rightMask {
+      left: 100%;
+
+      img {
+        right: calc(100%);
+      }
+    }
+    .leftMask {
+      left: 0%;
+
+      img {
+        left: var(--lhh);
+        // left: calc(100% - var(--hh));
+        // left: calc(-100%);
+        // transform: translate(0, 0);
+      }
+    }
+    .logoContainer {
+      left: calc(100% - var(--rhh) + 4px);
+    }
+  }
+
+  // border-radius: var(--hh);
+}
+
+.rightMask {
+  left: calc(0% + var(--rhh));
+  // background-color: red;
+  position: absolute;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  top: 0;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding-right: var(--rhh);
+
+  img {
+    object-fit: contain;
+    position: absolute;
+    right: var(--rhh);
+    height: 50%;
+  }
+}
+
+.leftMask {
+  left: calc(-100% + var(--lhh));
+  // background-color: blue;
+  position: absolute;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  top: 0;
+
+  img {
+    object-fit: contain;
+    position: absolute;
+    // left: calc(100% - var(--hh));
+    left: 100%;
+    height: 60%;
+    bottom: 0;
+  }
+}
+
+.logoContainer {
+  // aspect-ratio: 1.2/1;
+
+  height: 100%;
+  width: var(--w);
+  left: 0%;
+  // background-color: yellow;
+  position: absolute;
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+
+  img {
+    width: 100%;
+    // height: 100%;
+    object-fit: contain;
+  }
+}
+
+.overflow {
+  position: absolute;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+}

@@ -1,2 +1,2 @@
 import "./iliad_global.d.ts";
-import "./keystores.d.ts";
+export type * from "./keystores.d.ts";
