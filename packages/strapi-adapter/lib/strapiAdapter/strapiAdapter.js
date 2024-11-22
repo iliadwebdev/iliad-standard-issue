@@ -1,18 +1,22 @@
-"use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _chunkPKBMQBKPjs = require('../chunk-PKBMQBKP.js');
-var _tsutils = require('@iliad.dev/ts-utils');
-var _contentTypeSyncjs = require('./contentTypeSync.js');
-require('@iliad.dev/ts-utils/@types');
-var _hermes2 = require('@iliad.dev/hermes');
-var _utilsjs = require('../utils/utils.js'); var _utilsjs2 = _interopRequireDefault(_utilsjs);
+import {
+  __publicField
+} from "../chunk-PKBMQBKP.js";
+import {
+  downloadContentTypes,
+  requestNewContentTypes,
+  downloadContentTypesSync,
+  normalizeContentTypesOptions,
+  doContentTypesExist
+} from "./contentTypeSync";
+import { Hermes } from "@iliad.dev/hermes";
+import StrapiUtils from "../utils/utils.js";
 class StrapiContext {
-  constructor(contextLabel, strapiApiLocation, strapiBearerToken, client, options) {
-    _chunkPKBMQBKPjs.__publicField.call(void 0, this, "hermes");
-    _chunkPKBMQBKPjs.__publicField.call(void 0, this, "client", "axios");
-    this.hermes = new (0, _hermes2.Hermes)(
-      contextLabel,
-      _utilsjs2.default.mergeDefaultHermesOptions(options)
+  constructor(strapiApiLocation, strapiBearerToken, client, options) {
+    __publicField(this, "contentTypesSyncOptions", null);
+    __publicField(this, "client", "axios");
+    __publicField(this, "hermes");
+    this.hermes = new Hermes(
+      StrapiUtils.mergeDefaultHermesOptions(options)
     ).addBaseUrl(strapiApiLocation);
     if (strapiBearerToken) {
       this.hermes.addBaseHeaders({
@@ -24,11 +28,11 @@ class StrapiContext {
     }
   }
   // CONTEXT UTILITIES
-  static createStrapiContext(contextLabel, strapiApiLocation, strapiBearerToken, options) {
+  static createStrapiContext(strapiApiLocation, strapiBearerToken, options) {
     return new StrapiContext(
-      contextLabel,
       strapiApiLocation,
       strapiBearerToken,
+      void 0,
       options
     );
   }
@@ -45,7 +49,7 @@ class StrapiContext {
   }
   // GET FUNCTIONS
   async getFullCollection(collection, query = "", _hermes = this.hermes) {
-    query = _utilsjs2.default.sanitizeQuery(query);
+    query = StrapiUtils.sanitizeQuery(query);
     let data = [];
     let meta;
     _firstPage: {
@@ -71,7 +75,7 @@ class StrapiContext {
       meta = firstPage.meta;
       data = firstPage.data;
     }
-    let indexArray = _utilsjs2.default.indexArrayFromMeta(meta);
+    let indexArray = StrapiUtils.indexArrayFromMeta(meta);
     let promises = indexArray.map(async (i) => {
       let { data: page, error } = await this.getCollection(
         collection,
@@ -100,7 +104,7 @@ class StrapiContext {
         data = data.concat(page);
       }
     });
-    return await _utilsjs2.default.coerceData(
+    return await StrapiUtils.coerceData(
       {
         meta,
         data
@@ -109,7 +113,7 @@ class StrapiContext {
     );
   }
   async getEntryBySlug(collection, slug, query = "", _hermes = this.hermes) {
-    let _q = _utilsjs2.default.sanitizeQuery(query, false);
+    let _q = StrapiUtils.sanitizeQuery(query, false);
     let __q = `&filters[slug][$eq]=${slug}`;
     if (_q) {
       __q += `&${_q}`;
@@ -123,10 +127,10 @@ class StrapiContext {
       );
       return { data: void 0, error };
     }
-    return await _utilsjs2.default.coerceData(data, collection, slug, true);
+    return await StrapiUtils.coerceData(data, collection, slug, true);
   }
   async getCollection(collection, page = 1, pageSize = 25, query = "", _hermes = this.hermes) {
-    let _q = _utilsjs2.default.sanitizeQuery(query, false);
+    let _q = StrapiUtils.sanitizeQuery(query, false);
     let __q = `?pagination[pageSize]=${pageSize}&pagination[page]=${page}`;
     if (_q) {
       __q += `&${_q}`;
@@ -140,10 +144,10 @@ class StrapiContext {
       });
       return { data: void 0, error };
     }
-    return await _utilsjs2.default.coerceData(data, collection);
+    return await StrapiUtils.coerceData(data, collection);
   }
   async getEntry(collection, id, query = "", _hermes = this.hermes) {
-    query = _utilsjs2.default.sanitizeQuery(query);
+    query = StrapiUtils.sanitizeQuery(query);
     let { data, error } = await this.getWithClient(
       `${collection}/${id}${query}`,
       {
@@ -154,10 +158,10 @@ class StrapiContext {
       console.error(`Error fetching entry ${collection}:`, error, { query });
       return { data: void 0, error };
     }
-    return await _utilsjs2.default.coerceData(data, collection, id);
+    return await StrapiUtils.coerceData(data, collection, id);
   }
   async getSingle(collection, query = "", _hermes = this.hermes) {
-    query = _utilsjs2.default.sanitizeQuery(query);
+    query = StrapiUtils.sanitizeQuery(query);
     let { data, error } = await this.getWithClient(`${collection}${query}`, {
       next: { tags: [collection, "atlas::full-revalidation"] }
     });
@@ -165,29 +169,68 @@ class StrapiContext {
       console.error(`Error fetching entry ${collection}:`, error, { query });
       return { data: void 0, error };
     }
-    return await _utilsjs2.default.coerceData(data, collection);
+    return await StrapiUtils.coerceData(data, collection);
+  }
+  async requestNewContentTypes() {
+    return requestNewContentTypes(this.hermes);
+  }
+  async syncContentTypes() {
+    if (!this.contentTypesSyncOptions) {
+      console.error("No content types sync options set.");
+      return {
+        data: void 0,
+        error: { message: "No content types sync options set.", code: 500 }
+      };
+    }
+    if (this.contentTypesSyncOptions.requestOnSync === true) {
+      await this.requestNewContentTypes();
+    }
+    return downloadContentTypes(this.hermes, this.contentTypesSyncOptions).then((response) => {
+      return {
+        data: null,
+        error: void 0
+      };
+    }).catch((error) => {
+      console.error("Error syncing content types:", error);
+      return {
+        data: void 0,
+        error
+      };
+    });
   }
   get Hermes() {
     return this.hermes;
   }
-  withContentTypes(options) {
-    const { data: contentTypes, error } = _tsutils.runAsyncSynchronously.call(void 0, 
-      _contentTypeSyncjs.downloadContentTypes,
-      this.hermes,
-      options
-    );
-    return this;
+  get contentTypesExist() {
+    if (!this.contentTypesSyncOptions) {
+      return false;
+    }
+    return doContentTypesExist(this.contentTypesSyncOptions);
   }
   // STATIC FUNCTIONS
   static extractStrapiData(input) {
-    return _utilsjs2.default.extractStrapiData(input);
+    return StrapiUtils.extractStrapiData(input);
   }
   extractStrapiData(input) {
-    return _utilsjs2.default.extractStrapiData(input);
+    return StrapiUtils.extractStrapiData(input);
   }
-  // extractStrapiData = StrapiUtils.extractStrapiData;
+  // FACTORY FUNCTIONS
+  withContentTypes(options) {
+    const strictOptions = this.setContentTypesSyncOptions(options);
+    downloadContentTypesSync(this.hermes, strictOptions);
+    return this;
+  }
+  label(label) {
+    this.hermes.setLabel(label);
+    return this;
+  }
+  // Setters
+  setContentTypesSyncOptions(options) {
+    this.contentTypesSyncOptions = normalizeContentTypesOptions(options);
+    return this.contentTypesSyncOptions;
+  }
 }
 var strapiAdapter_default = StrapiContext;
-
-
-exports.default = strapiAdapter_default;
+export {
+  strapiAdapter_default as default
+};

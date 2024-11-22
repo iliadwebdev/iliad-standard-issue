@@ -4,7 +4,8 @@ import type {
   APIResponseData,
   StrapiResponse,
   APIResponse,
-} from './strapi.d.ts';
+  Common,
+} from "./strapi.d.ts";
 
 type ErrorMessage = {
   message: string;
@@ -52,16 +53,19 @@ type StrapiMetaData = {
 
 type EnvVariable = string | undefined;
 
-type StrapiResponseType = 'entry' | 'collection';
+type StrapiResponseType = "entry" | "collection";
 
 type StandardResponse<T> = SuccessResponse<T> | ErrorResponse;
 
-export type ContextClient = 'axios' | 'fetch';
+export type ContextClient = "axios" | "fetch";
 
 // export type StrapiData = StrapiResponse | StrapiEntry | StrapiEntry[];
-export type StrapiData = APIResponseCollection | APIResponse | APIResponseData;
-export type StrapiDataObject = {
-  [key: string]: StrapiData;
+export type StrapiData<T extends Common.UID.ContentType> =
+  | APIResponseCollection<T>
+  | APIResponse<T>
+  | APIResponseData<T>;
+export type StrapiDataObject<T extends Common.UID.ContentType> = {
+  [key: string]: StrapiData<T>;
 };
 
 export {
@@ -71,7 +75,6 @@ export {
   SuccessResponse,
   StrapiResponse,
   StrapiMetaData,
-  HermesOptions,
   ErrorResponse,
   ErrorMessage,
   EnvVariable,

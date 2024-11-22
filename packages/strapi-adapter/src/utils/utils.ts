@@ -14,6 +14,7 @@ import type {
   StrapiResponseType,
   TransformedStrapiEntry,
 } from "../@types/adapter";
+
 import type {
   Common,
   APIResponse,
@@ -115,7 +116,7 @@ namespace StrapiUtils {
   }
   export async function extractStrapiData<
     TContentTypeUID extends Common.UID.ContentType,
-  >(input: StrapiData | StrapiDataObject) {
+  >(input: StrapiData<TContentTypeUID> | StrapiDataObject<TContentTypeUID>) {
     function isObject(obj: any) {
       return obj !== null && typeof obj === "object";
     }

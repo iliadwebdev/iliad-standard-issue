@@ -5,15 +5,22 @@
     /* Modules */
     "module": "ESNext" /* Specify what module code is generated. */,
     "moduleResolution": "Node" /* Determine how modules get resolved. */,
-    "noEmit": true /* Disable emitting files from a compilation. */,
+    "declaration": true,
+    "declarationDir": "./dist/types",
+    "emitDeclarationOnly": true /* Emit only declaration files. */,
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
     /* Type Checking */
     "strict": true /* Enable all strict type-checking options. */,
     "noUncheckedIndexedAccess": true /* Add 'undefined' to a type when accessed using an index. */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
-    "allowJs": true
+    "allowJs": true,
+    "allowImportingTsExtensions": true
   },
-  "include": ["src", "node_modules/@iliad.dev/ts-utils/@types/**/*.d.ts"],
-  "exclude": ["node_modules", "dist", "rollup.config.js"]
+  "exclude": ["rollup.config.js", "node_modules/*", "dist"],
+  "include": [
+    "src",
+    "src/@types/**/*",
+    "node_modules/@iliad.dev/ts-utils/@globals"
+  ]
 }

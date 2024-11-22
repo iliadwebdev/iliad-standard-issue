@@ -15,7 +15,7 @@ declare class Hermes {
     originLocation: string;
     hermesOptions: HermesOptions;
     axiosInstance: AxiosInstance;
-    constructor(originLocation: string, options?: HermesOptions);
+    constructor(options?: HermesOptions);
     private mergeHermesOptions;
     private normalizeResponse;
     private transformVerboseLog;
@@ -37,6 +37,7 @@ declare class Hermes {
     addBaseUrl(url: string): Hermes;
     addBaseQuery(query: string): Hermes;
     addBaseHeaders(headers: object): Hermes;
+    setLabel(label: string): Hermes;
 }
 
 export { Hermes as default };

@@ -33,12 +33,13 @@
   "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "nodemon": "^3.1.7",
-    "ts-node": "^10.9.2",
-    "tslib": "~2.7",
+    "@iliad.dev/hermes": "*",
     "@iliad.dev/strapi-adapter": "*",
     "@iliad.dev/typescript-config": "*",
-    "@iliad.dev/hermes": "*"
+    "dotenv": "^16.4.5",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
+    "tslib": "~2.7"
   },
   "volta": {
     "node": "20.17.0"

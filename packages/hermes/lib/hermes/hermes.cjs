@@ -12,7 +12,7 @@ const defaultHermesOptions = {
   extractData: true
 };
 class Hermes {
-  constructor(originLocation, options = defaultHermesOptions) {
+  constructor(options = defaultHermesOptions) {
     _chunkETV4XYOVcjs.__publicField.call(void 0, this, "baseUrl");
     _chunkETV4XYOVcjs.__publicField.call(void 0, this, "baseQuery");
     _chunkETV4XYOVcjs.__publicField.call(void 0, this, "baseHeaders");
@@ -20,8 +20,8 @@ class Hermes {
     _chunkETV4XYOVcjs.__publicField.call(void 0, this, "originLocation", "Anonymous");
     _chunkETV4XYOVcjs.__publicField.call(void 0, this, "hermesOptions");
     _chunkETV4XYOVcjs.__publicField.call(void 0, this, "axiosInstance", _axios2.default.create());
-    this.originLocation = originLocation;
     this.hermesOptions = this.mergeHermesOptions(options);
+    this.originLocation = _nullishCoalesce(this.hermesOptions.originLocation, () => ( "Anonymous"));
   }
   mergeHermesOptions(options) {
     return _deepmerge2.default.call(void 0, defaultHermesOptions, options);
@@ -205,6 +205,10 @@ class Hermes {
   }
   addBaseHeaders(headers) {
     this.baseHeaders = headers;
+    return this;
+  }
+  setLabel(label) {
+    this.originLocation = label;
     return this;
   }
 }

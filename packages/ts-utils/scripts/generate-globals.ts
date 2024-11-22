@@ -20,6 +20,7 @@ function processFiles(files) {
   let importsContent = "";
 
   const collectedImports = new Map(); // To avoid duplicate imports
+  const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
 
   files.forEach((filePath) => {
     const absolutePath = path.resolve(__dirname, filePath);
@@ -48,9 +49,6 @@ function processFiles(files) {
         ts.isEnumDeclaration(node) ||
         ts.isClassDeclaration(node)
       ) {
-        // Collect the full text of the type declaration
-        let typeText = node.getFullText(sourceFile).trim();
-
         // Check if the type was exported in the original file
         const isExported =
           node.modifiers &&
@@ -59,15 +57,34 @@ function processFiles(files) {
           );
 
         // Adjust the 'export' keyword based on whether it was exported
+        let modifiers = node.modifiers ? [...node.modifiers] : [];
+
         if (isExported) {
-          // Ensure it starts with 'export'
-          if (!typeText.startsWith("export")) {
-            typeText = "export " + typeText;
+          // Ensure 'export' modifier is present
+          if (
+            !modifiers.some((mod) => mod.kind === ts.SyntaxKind.ExportKeyword)
+          ) {
+            modifiers = [
+              ts.factory.createModifier(ts.SyntaxKind.ExportKeyword),
+              ...modifiers,
+            ];
           }
         } else {
-          // Remove 'export' if present
-          typeText = typeText.replace(/^export\s+/, "");
+          // Remove 'export' modifier if present
+          modifiers = modifiers.filter(
+            (mod) => mod.kind !== ts.SyntaxKind.ExportKeyword
+          );
         }
+
+        // Create a new node with the updated modifiers
+        const updatedNode = updateNodeWithModifiers(node, modifiers);
+
+        // Print the updated node
+        const typeText = printer.printNode(
+          ts.EmitHint.Unspecified,
+          updatedNode,
+          sourceFile
+        );
 
         typeDeclarations.push(typeText);
       }
@@ -101,6 +118,46 @@ function indent(text, spaces) {
     .split("\n")
     .map((line) => (line.trim() ? indentation + line : line))
     .join("\n");
+}
+
+// Helper function to update node modifiers
+function updateNodeWithModifiers(node, modifiers) {
+  if (ts.isTypeAliasDeclaration(node)) {
+    return ts.factory.updateTypeAliasDeclaration(
+      node,
+      modifiers,
+      node.name,
+      node.typeParameters,
+      node.type
+    );
+  } else if (ts.isInterfaceDeclaration(node)) {
+    return ts.factory.updateInterfaceDeclaration(
+      node,
+      modifiers,
+      node.name,
+      node.typeParameters,
+      node.heritageClauses,
+      node.members
+    );
+  } else if (ts.isEnumDeclaration(node)) {
+    return ts.factory.updateEnumDeclaration(
+      node,
+      modifiers,
+      node.name,
+      node.members
+    );
+  } else if (ts.isClassDeclaration(node)) {
+    return ts.factory.updateClassDeclaration(
+      node,
+      modifiers,
+      node.name,
+      node.typeParameters,
+      node.heritageClauses,
+      node.members
+    );
+  }
+  // Return the node unmodified if it's none of the above
+  return node;
 }
 
 // Run the script

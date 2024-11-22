@@ -41,8 +41,8 @@ type RelationValue<TAttribute extends Attribute.Attribute> =
             >,
             TRelationKind extends `${string}ToMany`
               ? Omit<APIResponseCollection<TTarget>, "meta">
-              : APIResponse<TTarget> | null,
-          ],
+              : APIResponse<TTarget> | null
+          ]
         ],
         `TODO: handle other relation kind (${TRelationKind})`
       >
@@ -87,26 +87,26 @@ export type GetValue<TAttribute extends Attribute.Attribute> =
         // Relation
         [
           Utils.Expression.Extends<TAttribute, Attribute.OfType<"relation">>,
-          RelationValue<TAttribute>,
+          RelationValue<TAttribute>
         ],
         // DynamicZone
         [
           Utils.Expression.Extends<TAttribute, Attribute.OfType<"dynamiczone">>,
-          DynamicZoneValue<TAttribute>,
+          DynamicZoneValue<TAttribute>
         ],
         // Component
         [
           Utils.Expression.Extends<TAttribute, Attribute.OfType<"component">>,
-          ComponentValue<TAttribute>,
+          ComponentValue<TAttribute>
         ],
         // Media
         [
           Utils.Expression.Extends<TAttribute, Attribute.OfType<"media">>,
-          MediaValue<TAttribute>,
+          MediaValue<TAttribute>
         ],
         // Fallback
         // If none of the above attribute type, fallback to the original Attribute.GetValue (while making sure it's an attribute)
-        [Utils.Expression.True, Attribute.GetValue<TAttribute, unknown>],
+        [Utils.Expression.True, Attribute.GetValue<TAttribute, unknown>]
       ],
       unknown
     >,
@@ -132,7 +132,7 @@ export interface APIResponse<TContentTypeUID extends Common.UID.ContentType> {
 }
 
 export interface APIResponseCollection<
-  TContentTypeUID extends Common.UID.ContentType,
+  TContentTypeUID extends Common.UID.ContentType
 > {
   data: APIResponseData<TContentTypeUID>[];
   meta: APIResponseCollectionMetadata;
@@ -141,4 +141,5 @@ export interface APIResponseCollection<
 export type StrapiResponse<T extends Common.UID.ContentType> =
   | APIResponseCollection<T>
   | APIResponse<T>;
+
 export type { Common, Attribute, Utils };

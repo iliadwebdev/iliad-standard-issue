@@ -41,12 +41,9 @@ class Hermes {
   hermesOptions: HermesOptions;
   axiosInstance: AxiosInstance = axios.create();
 
-  constructor(
-    originLocation: string,
-    options: HermesOptions = defaultHermesOptions
-  ) {
-    this.originLocation = originLocation;
+  constructor(options: HermesOptions = defaultHermesOptions) {
     this.hermesOptions = this.mergeHermesOptions(options);
+    this.originLocation = this.hermesOptions.originLocation ?? "Anonymous";
   }
 
   private mergeHermesOptions(options: HermesOptions): HermesOptions {
@@ -308,6 +305,12 @@ class Hermes {
 
   addBaseHeaders(headers: object): Hermes {
     this.baseHeaders = headers;
+
+    return this;
+  }
+
+  setLabel(label: string): Hermes {
+    this.originLocation = label;
 
     return this;
   }

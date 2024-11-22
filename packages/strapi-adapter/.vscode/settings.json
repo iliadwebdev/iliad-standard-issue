@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["Strapi"]
+  "cSpell.words": ["Strapi"],
+  "C_Cpp.default.compilerPath": "/usr/bin/gcc"
 }

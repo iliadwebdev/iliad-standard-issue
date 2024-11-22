@@ -9,6 +9,12 @@ const globalsPath = path.resolve(__dirname, "./src/@types/globals.d.ts");
 const globalsContent = fs.readFileSync(globalsPath, "utf-8");
 
 indexPaths.forEach((indexPath) => {
+  if (!fs.existsSync(indexPath)) {
+    console.error(`File not found: ${indexPath}`);
+    return;
+  }
   const indexContent = fs.readFileSync(indexPath, "utf-8");
   fs.writeFileSync(indexPath, `${globalsContent}\n${indexContent}`);
 });
+
+console.log("Merged globals into index.d.ts files");

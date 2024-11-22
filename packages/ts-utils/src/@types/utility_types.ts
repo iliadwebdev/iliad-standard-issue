@@ -18,18 +18,22 @@ export type XOR<T, U> = T | U extends object
 
 export type OR<T, U> = T | U;
 
-export type NetworkResponse<T> =
-  | {
-      data: T;
-      error: undefined;
-    }
-  | {
-      data: undefined;
-      error: {
-        message: string;
-        code: number;
-      };
-    };
+export type NetworkResponse<
+  T,
+  E = {
+    message: string;
+    code: number;
+  }
+> = XOR<
+  {
+    data: T;
+    error?: undefined;
+  },
+  {
+    data?: undefined;
+    error: E;
+  }
+>;
 
 export type StandardResponse<T> = NetworkResponse<T>;
 
@@ -63,7 +67,31 @@ type PrependBit<T extends string> = T extends string
   ? `0${T}` | `1${T}`
   : never;
 
+// @ts-ignore
 export type BinaryPermutations<N extends number> = N extends 0
   ? ""
   : // @ts-ignore
     PrependBit<BinaryPermutations<Decrement<N>>>;
+
+export type Recursive_Required<T> = {
+  [K in keyof T]-?: NonNullable<T[K]> extends object
+    ? Recursive_Required<NonNullable<T[K]>>
+    : NonNullable<T[K]>;
+};
+
+// Utility type to get optional keys of T
+type OptionalKeys<T> = {
+  [K in keyof T]-?: T extends Record<K, T[K]> ? never : K;
+}[keyof T];
+
+// OptionalFieldsOf<T> picks all optional fields of T and makes them required
+export type OptionalFieldsOf<T> = {
+  [K in OptionalKeys<T>]-?: T[K];
+};
+
+// Recursive_OptionalFieldsOf<T> recursively picks optional fields and makes them required
+export type Recursive_OptionalFieldsOf<T> = T extends object
+  ? {
+      [K in OptionalKeys<T>]-?: Recursive_OptionalFieldsOf<T[K]>;
+    }
+  : T;

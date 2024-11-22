@@ -1,4 +1,4 @@
-import { AxiosInstance, AxiosRequestConfig } from "axios";
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 
 // Types
 type ErrorMessage = {
@@ -19,6 +19,7 @@ type ErrorResponse = {
 // Interfaces
 interface HermesOptions {
   verboseLogging?: boolean;
+  originLocation?: string;
   bustDevCache?: boolean;
   extractData?: boolean;
 }
@@ -28,15 +29,16 @@ interface HermesMethod {
   FETCH: "fetch";
 }
 
+type HermesAxiosResponse<T> = Promise<StandardResponse<AxiosResponse<T>>>;
 type StandardResponse<T> = SuccessResponse<T> | ErrorResponse;
 
 interface HermesAxiosInstance
   extends Omit<AxiosInstance, "get" | "post" | "put" | "delete"> {
   // Custom Axios instance methods
-  get<T>(url: string, data: any, options?: any): Promise<StandardResponse<T>>;
-  post<T>(url: string, options?: any): Promise<StandardResponse<T>>;
-  put<T>(url: string, data: any, options?: any): Promise<StandardResponse<T>>;
-  delete<T>(url: string, options?: any): Promise<StandardResponse<T>>;
+  put<T>(url: string, data: any, options?: any): HermesAxiosResponse<T>;
+  delete<T>(url: string, options?: any): HermesAxiosResponse<T>;
+  post<T>(url: string, options?: any): HermesAxiosResponse<T>;
+  get<T>(url: string, options?: any): HermesAxiosResponse<T>;
 }
 
 type Options = RequestInit | AxiosRequestConfig;

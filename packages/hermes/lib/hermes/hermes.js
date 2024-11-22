@@ -12,7 +12,7 @@ const defaultHermesOptions = {
   extractData: true
 };
 class Hermes {
-  constructor(originLocation, options = defaultHermesOptions) {
+  constructor(options = defaultHermesOptions) {
     __publicField(this, "baseUrl");
     __publicField(this, "baseQuery");
     __publicField(this, "baseHeaders");
@@ -20,8 +20,8 @@ class Hermes {
     __publicField(this, "originLocation", "Anonymous");
     __publicField(this, "hermesOptions");
     __publicField(this, "axiosInstance", axios.create());
-    this.originLocation = originLocation;
     this.hermesOptions = this.mergeHermesOptions(options);
+    this.originLocation = this.hermesOptions.originLocation ?? "Anonymous";
   }
   mergeHermesOptions(options) {
     return merge(defaultHermesOptions, options);
@@ -205,6 +205,10 @@ class Hermes {
   }
   addBaseHeaders(headers) {
     this.baseHeaders = headers;
+    return this;
+  }
+  setLabel(label) {
+    this.originLocation = label;
     return this;
   }
 }

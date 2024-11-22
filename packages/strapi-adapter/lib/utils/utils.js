@@ -1,10 +1,10 @@
-"use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; } function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }require('../chunk-PKBMQBKP.js');
-var _qs = require('qs'); var _qs2 = _interopRequireDefault(_qs);
+import "../chunk-PKBMQBKP.js";
+import qs from "qs";
 var StrapiUtils;
 ((StrapiUtils2) => {
   function sanitizeQuery(query = "", addQueryPrefix = true) {
     if (typeof query === "object") {
-      query = _qs2.default.stringify(query);
+      query = qs.stringify(query);
     }
     query = query.startsWith("&") ? query.slice(1) : query;
     let qp = addQueryPrefix ? "?" : "";
@@ -22,7 +22,7 @@ var StrapiUtils;
     try {
       if (!data) throw new Error("No data returned from Strapi");
       apiResponse = data;
-      type = "attributes" in _optionalChain([apiResponse, 'optionalAccess', _2 => _2.data]) ? "entry" : "collection";
+      type = "attributes" in apiResponse?.data ? "entry" : "collection";
     } catch (error) {
       console.error(
         `Error parsing entry ${collection}/${id}: ${error.message}`
@@ -114,7 +114,7 @@ var StrapiUtils;
       }
     }
     let initialInput;
-    if (_optionalChain([input, 'optionalAccess', _3 => _3.data])) {
+    if (input?.data) {
       initialInput = input.data;
     } else {
       initialInput = input;
@@ -124,6 +124,6 @@ var StrapiUtils;
   StrapiUtils2.extractStrapiData = extractStrapiData;
 })(StrapiUtils || (StrapiUtils = {}));
 var utils_default = StrapiUtils;
-
-
-exports.default = utils_default;
+export {
+  utils_default as default
+};

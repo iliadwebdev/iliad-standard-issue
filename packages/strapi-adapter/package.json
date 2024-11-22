@@ -1,6 +1,6 @@
 {
   "name": "@iliad.dev/strapi-adapter",
-  "version": "0.0.40",
+  "version": "0.0.42",
   "description": "Utility functions to simplify interactions with Strapi backend.",
   "repository": {
     "type": "git",
@@ -8,26 +8,33 @@
   },
   "license": "ISC",
   "author": "Smoke3785",
-  "files": [
-    "lib",
-    "dist",
-    "@types"
-  ],
-  "main": "lib/index.cjs",
-  "module": "lib/index.js",
+  "type": "module",
+  "main": "lib/index.js",
+  "module": "lib/index.cjs",
   "types": "lib/index.d.ts",
+  "files": [
+    "dist",
+    "lib"
+  ],
   "scripts": {
-    "ts-types": "tsc",
-    "build:dev": "rimraf lib && tsup --watch",
-    "build": "rimraf dist && env NODE_ENV=production tsup"
+    "build": "env NODE_ENV=production tsup &&tsup",
+    "build:dev": "tsup --watch",
+    "dev": "tsx watch src/index.ts",
+    "lint": "tsc",
+    "test": "rollup -c && node test/index.ts",
+    "test-": "node test/index.ts"
   },
   "dependencies": {
+    "@iliad.dev/hermes": "*",
+    "@iliad.dev/ts-utils": "*",
     "@strapi/strapi": "^4.24.2",
+    "deepmerge": "^4.3.1",
+    "pretty-bytes": "^6.1.1",
     "qs": "^6.12.1",
-    "typescript": "^5.2.2",
-    "@iliad.dev/hermes": "*"
+    "typescript": "^5.2.2"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/qs": "^6.9.15",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
