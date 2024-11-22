@@ -1,9 +1,22 @@
 {
   "compilerOptions": {
     "jsx": "react-jsx",
-    "moduleResolution": "nodenext",
-    "module": "NodeNext"
+    "moduleResolution": "node10",
+
+    "esModuleInterop": true,
+    "module": "ESNext"
   },
-  "exclude": ["node_modules", "dist", "lib"],
-  "include": ["node_modules/@iliad.dev/ts-utils/@types", "@types/**/*.d.ts"]
+  // "exclude": ["node_modules", "dist", "lib"],
+  "include": [
+    "node_modules/@iliad.dev/ts-utils/@types",
+    "@types/**/*.d.ts",
+
+    "@types",
+    "components",
+    "hooks",
+    "styles",
+    "utils",
+    "index.ts",
+    "meta.ts"
+  ]
 }

@@ -16,6 +16,6 @@
     "rootDir": "src",
     "declaration": true
   },
-  "include": ["src", "src/@types/**/*"],
+  "include": ["src", "src/@types/**/*", "../globals.d.ts"],
   "exclude": ["node_modules", "dist", "lib", "@types"]
 }

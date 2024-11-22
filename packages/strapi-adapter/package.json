@@ -8,19 +8,18 @@
   },
   "license": "ISC",
   "author": "Smoke3785",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/strapi.d.ts",
   "files": [
-    "dist"
+    "lib",
+    "dist",
+    "@types"
   ],
+  "main": "lib/index.cjs",
+  "module": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
-    "_publish": "rollup -c && npm publish",
-    "build": "rollup -c",
-    "dev": "tsx watch ./src/index.ts",
-    "lint": "tsc",
-    "test": "rollup -c && node test/index.ts",
-    "test-": "node test/index.ts"
+    "ts-types": "tsc",
+    "build:dev": "rimraf lib && tsup --watch",
+    "build": "rimraf dist && env NODE_ENV=production tsup"
   },
   "dependencies": {
     "@strapi/strapi": "^4.24.2",

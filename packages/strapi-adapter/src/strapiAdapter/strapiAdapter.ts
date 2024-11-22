@@ -1,3 +1,7 @@
+import { runAsyncSynchronously } from "@iliad.dev/ts-utils";
+import { downloadContentTypes } from "./contentTypeSync.js";
+import "@iliad.dev/ts-utils/@types";
+
 import { Hermes } from "@iliad.dev/hermes";
 
 // TYPES
@@ -31,6 +35,10 @@ import type { Common } from "@strapi/strapi";
 type TypedResponse<T extends Common.UID.ContentType> = Promise<
   StandardResponse<APIResponseCollection<T>>
 >;
+
+export type ContentTypesSyncOptions = {
+  outDir: string;
+};
 
 // UTILITY FUNCTIONS
 import StrapiUtils from "../utils/utils.js";
@@ -77,10 +85,10 @@ class StrapiContext {
     );
   }
 
-  private async getWithClient(
+  private async getWithClient<T extends Common.UID.ContentType>(
     url: string | URL,
     options?: any
-  ): Promise<StandardResponse<StrapiResponse>> {
+  ): Promise<StandardResponse<StrapiResponse<T>>> {
     url = url as string;
     let response;
 
@@ -91,7 +99,7 @@ class StrapiContext {
       response = await this.hermes.fetch(url, options);
     }
 
-    return response as StandardResponse<StrapiResponse>;
+    return response as StandardResponse<StrapiResponse<T>>;
   }
 
   // GET FUNCTIONS
@@ -172,7 +180,7 @@ class StrapiContext {
       {
         meta,
         data,
-      } as StrapiResponse,
+      } as StrapiResponse<TContentTypeUID>,
       collection
     );
   }
@@ -276,6 +284,15 @@ class StrapiContext {
 
   get Hermes(): Hermes {
     return this.hermes;
+  }
+
+  withContentTypes(options: ContentTypesSyncOptions): StrapiContext {
+    const { data: contentTypes, error } = runAsyncSynchronously(
+      downloadContentTypes,
+      this.hermes,
+      options
+    );
+    return this;
   }
 
   // STATIC FUNCTIONS

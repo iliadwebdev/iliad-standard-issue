@@ -1,3 +1,3 @@
-declare function tsUtilsTest(): string;
+declare function runAsyncSynchronously<T, Args extends any[]>(asyncFunction: (...args: Args) => Promise<T>, ...args: Args): T;
 
-export { tsUtilsTest };
+export { runAsyncSynchronously };

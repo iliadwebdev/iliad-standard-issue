@@ -11,8 +11,8 @@ declare module "*.module.css" {
 }
 
 declare module "*.module.scss" {
-  const classes: CSSModuleClasses;
-  export default classes;
+  const content: CSSModuleClasses;
+  export default content;
 }
 
 declare module "*.scss" {

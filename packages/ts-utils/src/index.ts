@@ -1,3 +1,5 @@
-export * from "./utils";
+/// <reference path="./@types/globals.d.ts" />
 
-type A = XOR<1, 2>;
+import "./@types";
+
+export * from "./utils";

@@ -2,6 +2,7 @@
 
 // Styles
 import styles from "./power-button.module.scss";
+
 import clsx from "clsx";
 
 // Mantine
@@ -30,7 +31,7 @@ import {
 } from "./utils";
 
 // @ts-ignore
-import useRipple from "../../utils/hooks/useRipple";
+import useRipple from "../../hooks/useRipple";
 
 // Types
 import type { PowerButtonProps, StrapiButtonComponentProps } from "./types";

@@ -1,1 +1,1 @@
-export { tsUtilsTest } from './utils/index.cjs';
+export { runAsyncSynchronously } from './utils/index.cjs';

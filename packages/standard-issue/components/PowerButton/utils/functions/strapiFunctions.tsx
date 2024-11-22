@@ -1,8 +1,8 @@
 import {
-  DynamicReactIcon,
-  type PowerButtonProps,
   type StrapiButtonComponentProps,
-} from "@iliad/components";
+  type PowerButtonProps,
+  DynamicReactIcon,
+} from "../../../";
 
 import { getVariantFromProps } from "./helperFunctions";
 

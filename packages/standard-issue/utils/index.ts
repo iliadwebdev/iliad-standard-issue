@@ -1,3 +1,1 @@
-export function utils() {
-  return true;
-}
+export * from "./loadModule";

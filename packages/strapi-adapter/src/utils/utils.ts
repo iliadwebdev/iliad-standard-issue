@@ -57,20 +57,20 @@ namespace StrapiUtils {
     return query.replaceAll("&?", "&"); // Monkey patch, this sanitization function needs to be revisited.
   }
   export function mergeQueries(...queries: any[]) {}
-  export async function coerceData(
+  export async function coerceData<T extends Common.UID.ContentType>(
     data: any = null,
     collection: string,
     id?: number | string,
     extractSingleCollectionResponse: boolean = false,
     client?: ContextClient
   ): Promise<SuccessResponse<any> | ErrorResponse> {
-    let result: StrapiEntry | Array<StrapiEntry> | StrapiResponse;
-    let apiResponse: StrapiResponse;
+    let result: StrapiEntry | Array<StrapiEntry> | StrapiResponse<T>;
+    let apiResponse: StrapiResponse<T>;
     let type: StrapiResponseType;
 
     try {
       if (!data) throw new Error("No data returned from Strapi");
-      apiResponse = data as StrapiResponse;
+      apiResponse = data as StrapiResponse<T>;
 
       type = "attributes" in apiResponse?.data ? "entry" : "collection";
     } catch (error: any) {

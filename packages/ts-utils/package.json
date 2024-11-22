@@ -1,25 +1,25 @@
 {
   "name": "@iliad.dev/ts-utils",
-  "version": "0.0.12",
+  "version": "0.0.18",
   "description": "A collection of TypeScript utilities.",
   "repository": {
     "type": "git",
     "url": "https://github.com/iliadwebdev/iliad-standard-issue"
   },
-  "main": "lib/index.cjs",
-  "module": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "./lib/index.cjs",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "type": "module",
   "exports": {
     ".": {
+      "types": "./lib/index.d.ts",
       "import": "./lib/index.js",
-      "require": "./lib/index.cjs",
-      "types": "./lib/index.d.ts"
+      "require": "./lib/index.cjs"
     },
     "./@types": {
-      "import": "./@types/index.d.ts",
-      "require": "./@types/index.d.ts",
-      "types": "./@types/index.d.ts"
+      "types": "./@types/index.d.ts",
+      "import": "./@types/index.js",
+      "require": "./@types/index.cjs"
     }
   },
   "files": [
@@ -31,8 +31,9 @@
   "author": "Smoke3785",
   "scripts": {
     "ts-types": "tsc",
-    "build:dev": "rimraf lib && tsup --watch",
-    "build": "rimraf dist && env NODE_ENV=production tsup",
+    "build:dev": "tsx scripts/generate-globals.ts && rimraf lib && tsup --watch && tsx scripts/merge-globals.ts",
+    "build": "tsx scripts/generate-globals.ts && rimraf dist && env NODE_ENV=production tsup && tsx scripts/merge-globals.ts",
+    "merge-globals": "tsx scripts/merge-globals.ts",
     "build:watch": "tsup --watch"
   },
   "dependencies": {

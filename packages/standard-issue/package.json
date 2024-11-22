@@ -1,6 +1,6 @@
 {
   "name": "@iliad.dev/standard-issue",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "scripts": {
     "build": "echo no build"
   },
@@ -19,8 +19,8 @@
   "description": "",
   "dependencies": {
     "@iliad.dev/primitive-extensions": "*",
-    "@iliad.dev/typescript-config": "*",
     "@iliad.dev/ts-utils": "*",
+    "@iliad.dev/typescript-config": "*",
     "clsx": "^2.1.0",
     "deepmerge": "^4.3.1",
     "react-fast-compare": "^3.2.2",

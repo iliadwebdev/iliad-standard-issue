@@ -1,14 +1,13 @@
 "use server";
+import "@iliad.dev/ts-utils/@types";
 
 // Components
 import { StrapiImage } from "../IliadImage";
 
-// Server
-import strapi from "@strapi/server";
-
 // Types
-import type { APIResponse, APIResponseData } from "iliad-strapi-adapter";
+import type { APIResponseData } from "@iliad.dev/strapi-adapter";
 import type { StrapiImageProps } from "../IliadImage";
+import { loadModule } from "../../utils";
 
 type FromStrapiServerProps = Partial<StrapiImageProps> & {
   assetId: string | number;
@@ -30,6 +29,9 @@ const Remote_StrapiImage = async ({
   assetId,
   ...props
 }: FromStrapiServerProps) => {
+  const strapi = await loadModule("@strapi/server");
+
+  // Server
   const {
     data: asset,
     error,
@@ -50,7 +52,7 @@ const Remote_StrapiImage = async ({
   }
 
   // Dunno what's going on here tbh
-  const mediaAsset = asset as BaseStrapiMediaAsset;
+  const mediaAsset = asset;
 
   // @ts-ignore
   return <StrapiImage mediaAsset={mediaAsset} {...props} />;
