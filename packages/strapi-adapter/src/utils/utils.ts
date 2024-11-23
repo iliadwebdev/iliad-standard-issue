@@ -12,7 +12,6 @@ import type {
   SuccessResponse,
   StrapiDataObject,
   StrapiResponseType,
-  TransformedStrapiEntry,
 } from "../@types/adapter";
 
 import type {

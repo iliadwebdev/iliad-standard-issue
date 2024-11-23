@@ -1,46 +1,41 @@
-type Enumerate<N extends number, Acc extends number[] = []> = Acc["length"] extends N ? Acc[number] : Enumerate<N, [...Acc, Acc["length"]]>;
-type IntRange<F extends number, T extends number> = Exclude<Enumerate<T>, Enumerate<F>>;
+import { IUtils } from './internalUtils.js';
+
 type Without<T, U> = {
     [P in Exclude<keyof T, keyof U>]?: never;
 };
 type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
 type OR<T, U> = T | U;
-type NetworkResponse<T, E = {
+type NetworkError = {
     message: string;
     code: number;
-}> = XOR<{
-    data: T;
-    error?: undefined;
-}, {
+};
+type ErrorResponse<E = {
+    message: string;
+    code: number;
+}> = {
     data?: undefined;
     error: E;
-}>;
-type StandardResponse<T> = NetworkResponse<T>;
-type Falsy = false | 0 | "" | null | undefined;
-type FalsyPart<T> = Extract<T, Falsy>;
-type NotFalsy<T> = Exclude<T, Falsy>;
+};
+type StandardResponse<T, E = NetworkError> = XOR<{
+    data: T;
+    error?: undefined;
+}, ErrorResponse<E>>;
+type FalsyPart<T> = Extract<T, IUtils.Falsy>;
+type NotFalsy<T> = Exclude<T, IUtils.Falsy>;
 type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 type Nullable<T> = T | null;
-type NumericalRange<F extends number, T extends number> = IntRange<F, T>;
-type BuildArray<Length extends number, Accumulator extends unknown[] = []> = Accumulator["length"] extends Length ? Accumulator : BuildArray<Length, [...Accumulator, unknown]>;
-type Decrement<N extends number> = BuildArray<N> extends [
-    infer _,
-    ...infer Rest
-] ? Rest["length"] : never;
-type PrependBit<T extends string> = T extends string ? `0${T}` | `1${T}` : never;
-type BinaryPermutations<N extends number> = N extends 0 ? "" : PrependBit<BinaryPermutations<Decrement<N>>>;
 type Recursive_Required<T> = {
     [K in keyof T]-?: NonNullable<T[K]> extends object ? Recursive_Required<NonNullable<T[K]>> : NonNullable<T[K]>;
 };
-type OptionalKeys<T> = {
-    [K in keyof T]-?: T extends Record<K, T[K]> ? never : K;
-}[keyof T];
+type DefaultParams<T> = Recursive_OptionalFieldsOf<T>;
 type OptionalFieldsOf<T> = {
-    [K in OptionalKeys<T>]-?: T[K];
+    [K in IUtils.OptionalKeys<T>]-?: T[K];
 };
 type Recursive_OptionalFieldsOf<T> = T extends object ? {
-    [K in OptionalKeys<T>]-?: Recursive_OptionalFieldsOf<T[K]>;
+    [K in IUtils.OptionalKeys<T>]-?: Recursive_OptionalFieldsOf<T[K]>;
 } : T;
-type DefaultParams<T> = Recursive_OptionalFieldsOf<T>;
+type BinaryPermutations<N extends number> = N extends 0 ? "" : PrependBit<BinaryPermutations<Decrement<N>>>;
+type NumericalRange<F extends number, T extends number> = IntRange<F, T>;
+type IntRange<F extends number, T extends number> = Exclude<IUtils.Enumerate<T>, IUtils.Enumerate<F>>;
 
-export type { BinaryPermutations, DefaultParams, Falsy, FalsyPart, IntRange, NetworkResponse, NotFalsy, Nullable, NumericalRange, OR, Optional, OptionalFieldsOf, Recursive_OptionalFieldsOf, Recursive_Required, StandardResponse, Without, XOR };
+export type { BinaryPermutations, DefaultParams, ErrorResponse, FalsyPart, IntRange, NotFalsy, Nullable, NumericalRange, OR, Optional, OptionalFieldsOf, Recursive_OptionalFieldsOf, Recursive_Required, StandardResponse, Without, XOR };

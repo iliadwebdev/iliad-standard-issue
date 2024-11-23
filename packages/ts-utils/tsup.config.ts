@@ -1,5 +1,6 @@
 import type { Options } from "tsup";
 import cpx from "cpx";
+import { $ } from "zx";
 
 const env = process.env.NODE_ENV;
 
@@ -18,6 +19,12 @@ export const tsup: Options = {
   outDir: env === "production" ? "dist" : "lib",
   entry: ["src/**/*.ts"],
   onSuccess: async () => {
+    // await $`tsx scripts/generate-globals.ts`;
+    // console.log(`Generated globals.d.ts`);
+
+    // await $`tsx scripts/merge-globals.ts`;
+    // console.log(`Merged globals.d.ts`);
+
     console.log(`Copying @types directory to root`);
     try {
       cpx.copy("./src/@types/**/*", "./@types");

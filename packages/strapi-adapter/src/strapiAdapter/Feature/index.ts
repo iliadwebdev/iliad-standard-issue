@@ -1,7 +1,8 @@
-import { FeatureParams } from "./types";
 import { Hermes } from "@iliad.dev/hermes";
-import { ContextClient } from "../../@types";
-import { StrictContentTypesSyncOptions } from "../ContentTypeSync/types";
+
+import { StrictContentTypesSyncOptions } from "@features";
+import { FeatureParams } from "./types";
+import { ContextClient } from "@types";
 
 // This is the base Feature class that holds information common to all features.
 class Feature {
@@ -18,5 +19,6 @@ class Feature {
   protected withContentTypes(options: any): void {}
 }
 
+export * from "./types";
 export default Feature;
 export { Feature };

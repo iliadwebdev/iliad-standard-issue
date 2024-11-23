@@ -5,7 +5,7 @@ import type {
   StrapiResponse,
   APIResponse,
   Common,
-} from "./strapi.d.ts";
+} from "./strapi";
 
 type ErrorMessage = {
   message: string;
@@ -20,10 +20,6 @@ type SuccessResponse<T> = {
 type ErrorResponse = {
   data: undefined;
   error: ErrorMessage;
-};
-
-type NotFoundResponse = ErrorResponse & {
-  error: ErrorMessage & { code: 404 };
 };
 
 type StrapiEntry = {
@@ -46,26 +42,19 @@ type StrapiMetaData = {
   [key: string]: any;
 };
 
-// type StrapiResponse = {
-//   meta: StrapiMetaData;
-//   data: StrapiEntry | Array<StrapiEntry>;
-// };
-
+export type StringLike = string | EnvVariable | URL;
 type EnvVariable = string | undefined;
 
-export type StringLike = string | EnvVariable | URL;
-
-type StrapiResponseType = "entry" | "collection";
-
 type StandardResponse<T> = SuccessResponse<T> | ErrorResponse;
+type StrapiResponseType = "entry" | "collection";
 
 export type ContextClient = "axios" | "fetch";
 
-// export type StrapiData = StrapiResponse | StrapiEntry | StrapiEntry[];
 export type StrapiData<T extends Common.UID.ContentType> =
   | APIResponseCollection<T>
   | APIResponse<T>
   | APIResponseData<T>;
+
 export type StrapiDataObject<T extends Common.UID.ContentType> = {
   [key: string]: StrapiData<T>;
 };

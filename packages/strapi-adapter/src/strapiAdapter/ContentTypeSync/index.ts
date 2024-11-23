@@ -66,3 +66,4 @@ class ContentTypeSync extends Feature {
 
 export default ContentTypeSync;
 export { ContentTypeSync };
+export * from "./types";

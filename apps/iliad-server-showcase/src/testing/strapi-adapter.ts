@@ -32,13 +32,18 @@ export const mainStrapiAdapterTest = async () => {
     1,
     99,
     {
-      populate: '*',
       sort: 'earliestVenueStart:asc',
       filters: {
         earliestVenueStart: { $gte: new Date().toISOString() },
       },
+      populate: 'venues',
     },
   );
+
+  await strapi.getCollection<'api::event.event'>('events', 1, 99, {
+    populate: ['venues', 'venues.buttons'],
+    sort: 'earliestVenueStart:asc',
+  });
 
   console.log({ data, error });
 };

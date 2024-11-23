@@ -10,18 +10,23 @@ import type { StrapiInstanceParams } from "./types";
 
 // CLASSES
 import ContentTypeSync from "../ContentTypeSync";
+import Authentication from "../Authentication";
 import StrapiAdapter from "../StrapiAdapter";
 
+// https://strapi-sdk-js.netlify.app/api/
 export interface StrapiInstance extends StrapiAdapter, ContentTypeSync {} // Tricking intellisense
-export class StrapiInstance extends classes(StrapiAdapter, ContentTypeSync) {
+export class StrapiInstance extends classes(
+  ContentTypeSync,
+  Authentication,
+  StrapiAdapter
+) {
   constructor(params: StrapiInstanceParams) {
     // Parse and validate the Strapi instance parameters, applying defaults where necessary.
     const { strapiApiLocation, strapiBearerToken, hermesOptions, client } =
       parseStrapiInstanceParams(params);
 
-    // Tell our Strapi Adapter what networking library to use.
     super({
-      client,
+      client, // Tell our Strapi Adapter what networking library to use.
       hermes: createHermesInstance(
         hermesOptions,
         strapiApiLocation,

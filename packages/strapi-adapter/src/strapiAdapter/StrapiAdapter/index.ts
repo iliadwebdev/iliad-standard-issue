@@ -1,20 +1,18 @@
 import {
   APIResponseCollection,
-  StrapiDataObject,
   APIResponseData,
   StrapiResponse,
-  StrapiData,
   // INTERNAL TYPINGS
-  ErrorResponse,
-  ContextClient,
   StandardResponse,
-} from "../../@types";
+  ContextClient,
+  ErrorResponse,
+} from "@types";
 import { Hermes } from "@iliad.dev/hermes";
 import { Common } from "@strapi/strapi";
 
-import StrapiUtils from "../../utils/utils";
-import { FeatureParams } from "../Feature/types";
-import Feature from "../Feature";
+import { QueryStringCollection, QueryStringEntry } from "./types";
+import { Feature, FeatureParams } from "../Feature";
+import { StrapiUtils } from "@utils";
 
 class StrapiAdapter extends Feature {
   client: ContextClient = "axios"; // I should probably change this to fetch, given that most of the time this is being use in Next.js.
@@ -48,7 +46,7 @@ class StrapiAdapter extends Feature {
   // GET FUNCTIONS
   async getFullCollection<TContentTypeUID extends Common.UID.ContentType>(
     collection: string,
-    query: string | object = "",
+    query: QueryStringCollection<TContentTypeUID> = "",
     _hermes: Hermes = this.hermes
   ): Promise<StandardResponse<APIResponseCollection<TContentTypeUID>>> {
     query = StrapiUtils.sanitizeQuery(query);
@@ -131,7 +129,7 @@ class StrapiAdapter extends Feature {
   async getEntryBySlug<TContentTypeUID extends Common.UID.ContentType>(
     collection: string,
     slug: string,
-    query: string | object = "",
+    query: QueryStringEntry<TContentTypeUID> = "",
     _hermes: Hermes = this.hermes
   ): Promise<StandardResponse<APIResponseData<TContentTypeUID>>> {
     let _q = StrapiUtils.sanitizeQuery(query, false);
@@ -159,7 +157,7 @@ class StrapiAdapter extends Feature {
     collection: string,
     page: number = 1,
     pageSize: number = 25,
-    query: string | object = "",
+    query: QueryStringCollection<TContentTypeUID> = "",
     _hermes: Hermes = this.hermes
   ): Promise<StandardResponse<APIResponseCollection<TContentTypeUID>>> {
     let _q = StrapiUtils.sanitizeQuery(query, false);
@@ -186,7 +184,7 @@ class StrapiAdapter extends Feature {
   async getEntry<TContentTypeUID extends Common.UID.ContentType>(
     collection: string,
     id: number,
-    query: string | object = "",
+    query: QueryStringCollection<TContentTypeUID> = "",
     _hermes: Hermes = this.hermes
   ): Promise<StandardResponse<APIResponseData<TContentTypeUID>>> {
     query = StrapiUtils.sanitizeQuery(query);
@@ -208,7 +206,7 @@ class StrapiAdapter extends Feature {
 
   async getSingle<TContentTypeUID extends Common.UID.ContentType>(
     collection: string,
-    query: string | object = "",
+    query: QueryStringCollection<TContentTypeUID> = "",
     _hermes: Hermes = this.hermes
   ): Promise<StandardResponse<APIResponseData<TContentTypeUID>>> {
     query = StrapiUtils.sanitizeQuery(query);
@@ -230,3 +228,4 @@ class StrapiAdapter extends Feature {
 
 export default StrapiAdapter;
 export { StrapiAdapter };
+export * from "./types";
