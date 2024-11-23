@@ -1,90 +1,31 @@
-// import "@iliad.dev/ts-utils/@types";
-import { runAsyncSynchronously } from "@iliad.dev/ts-utils";
 import {
-  downloadContentTypes,
-  requestNewContentTypes,
-  downloadContentTypesSync,
-  normalizeContentTypesOptions,
-  doContentTypesExist,
-} from "./contentTypeSync";
-import type {
-  ContentTypesSyncOptions,
-  StrictContentTypesSyncOptions,
-} from "./contentTypeSync";
-
-import { Hermes, HermesOptions } from "@iliad.dev/hermes";
-
-// TYPES
-import type {
-  APIResponseCollectionMetadata,
   APIResponseCollection,
+  StrapiDataObject,
   APIResponseData,
   StrapiResponse,
-  APIResponse,
-  // StrapiEntry,
-  // StrapiMetaData,
-  // StrapiResponseType,
-  // TransformedStrapiEntry,
   StrapiData,
-  StrapiDataObject,
-  // StrapiResponse,
   // INTERNAL TYPINGS
-  EnvVariable,
   ErrorResponse,
   ContextClient,
-  SuccessResponse,
   StandardResponse,
-} from "../@types";
+} from "../../@types";
+import { Hermes } from "@iliad.dev/hermes";
+import { Common } from "@strapi/strapi";
 
-import type { Common } from "@strapi/strapi";
+import StrapiUtils from "../../utils/utils";
+import { FeatureParams } from "../Feature/types";
+import Feature from "../Feature";
 
-type TypedResponse<T extends Common.UID.ContentType> = Promise<
-  StandardResponse<APIResponseCollection<T>>
->;
-
-// UTILITY FUNCTIONS
-import StrapiUtils from "../utils/utils.js";
-
-// I should move this entire implementation to a StrapiContext class that extends Hermes, and then export a default instance of that class.
-class StrapiContext {
-  private contentTypesSyncOptions: Nullable<StrictContentTypesSyncOptions> =
-    null;
-
-  client: ContextClient = "axios";
+class StrapiAdapter extends Feature {
+  client: ContextClient = "axios"; // I should probably change this to fetch, given that most of the time this is being use in Next.js.
   hermes: Hermes;
-  constructor(
-    strapiApiLocation: EnvVariable | URL | string,
-    strapiBearerToken?: EnvVariable,
-    client?: ContextClient,
-    options?: HermesOptions
-  ) {
-    this.hermes = new Hermes(
-      StrapiUtils.mergeDefaultHermesOptions(options)
-    ).addBaseUrl(strapiApiLocation as string);
 
-    if (strapiBearerToken) {
-      this.hermes.addBaseHeaders({
-        Authorization: `Bearer ${strapiBearerToken}`,
-      });
-    }
+  constructor(props: FeatureParams) {
+    super(props);
 
-    if (client) {
-      this.client = (client as ContextClient) || this.client;
-    }
-  }
-
-  // CONTEXT UTILITIES
-  static createStrapiContext(
-    strapiApiLocation: EnvVariable & URL,
-    strapiBearerToken?: EnvVariable,
-    options?: HermesOptions
-  ): StrapiContext {
-    return new StrapiContext(
-      strapiApiLocation,
-      strapiBearerToken,
-      undefined,
-      options
-    );
+    let { client, hermes } = props;
+    this.hermes = hermes;
+    this.client = client;
   }
 
   private async getWithClient<T extends Common.UID.ContentType>(
@@ -284,83 +225,8 @@ class StrapiContext {
     return await StrapiUtils.coerceData(data, collection);
   }
 
-  async requestNewContentTypes(): Promise<StandardResponse<null>> {
-    return requestNewContentTypes(this.hermes);
-  }
-
-  async syncContentTypes(): Promise<StandardResponse<null>> {
-    if (!this.contentTypesSyncOptions) {
-      console.error("No content types sync options set.");
-      return {
-        data: undefined,
-        error: { message: "No content types sync options set.", code: 500 },
-      };
-    }
-
-    if (this.contentTypesSyncOptions.requestOnSync === true) {
-      await this.requestNewContentTypes();
-    }
-
-    return downloadContentTypes(this.hermes, this.contentTypesSyncOptions)
-      .then((response) => {
-        return {
-          data: null,
-          error: undefined,
-        };
-      })
-      .catch((error) => {
-        console.error("Error syncing content types:", error);
-        return {
-          data: undefined,
-          error,
-        };
-      });
-  }
-
-  get Hermes(): Hermes {
-    return this.hermes;
-  }
-
-  get contentTypesExist(): boolean {
-    if (!this.contentTypesSyncOptions) {
-      return false;
-    }
-    return doContentTypesExist(this.contentTypesSyncOptions);
-  }
-
-  // STATIC FUNCTIONS
-  public static extractStrapiData<T extends Common.UID.ContentType>(
-    input: StrapiData<T> | StrapiDataObject<T>
-  ) {
-    return StrapiUtils.extractStrapiData(input);
-  }
-
-  public extractStrapiData<T extends Common.UID.ContentType>(
-    input: StrapiData<T> | StrapiDataObject<T>
-  ) {
-    return StrapiUtils.extractStrapiData(input);
-  }
-
-  // FACTORY FUNCTIONS
-  public withContentTypes(options: ContentTypesSyncOptions): StrapiContext {
-    const strictOptions = this.setContentTypesSyncOptions(options);
-    downloadContentTypesSync(this.hermes, strictOptions);
-
-    return this;
-  }
-
-  public label(label: string): StrapiContext {
-    this.hermes.setLabel(label);
-    return this;
-  }
-
-  // Setters
-  private setContentTypesSyncOptions(
-    options: ContentTypesSyncOptions
-  ): StrictContentTypesSyncOptions {
-    this.contentTypesSyncOptions = normalizeContentTypesOptions(options);
-    return this.contentTypesSyncOptions;
-  }
+  protected withContentTypes(options: any): void {}
 }
 
-export default StrapiContext;
+export default StrapiAdapter;
+export { StrapiAdapter };

@@ -1,6 +1,6 @@
+import { HermesMethod, HermesOptions, StandardResponse, HermesAxiosInstance } from '../@types/hermes.js';
 import { AxiosInstance } from 'axios';
 import { parse, stringify } from 'qs';
-import { HermesMethod, HermesOptions, StandardResponse, HermesAxiosInstance } from '../@types/hermes.js';
 
 declare const qs: {
     parse: typeof parse;

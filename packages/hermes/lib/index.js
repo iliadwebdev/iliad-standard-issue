@@ -1,6 +1,6 @@
 import "./chunk-PKBMQBKP.js";
-import Hermes from "./hermes/hermes";
 import { HermesOptions } from "./@types/hermes";
+import Hermes from "./hermes/hermes";
 export {
   Hermes,
   HermesOptions

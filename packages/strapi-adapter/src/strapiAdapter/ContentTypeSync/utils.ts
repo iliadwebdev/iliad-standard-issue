@@ -1,32 +1,19 @@
+// Data
+import { defaultContentTypesSyncOptions } from "./data";
+
+// Utils
+import { sync } from "@iliad.dev/ts-utils";
+import { Hermes } from "@iliad.dev/hermes";
 import prettyBytes from "pretty-bytes";
 import deepmerge from "deepmerge";
+import fs from "fs";
 
-import { Hermes } from "@iliad.dev/hermes";
-import fs, { write } from "fs";
-type ContentTypesResponse = [string, string];
-
-const defaultContentTypesSyncOptions: Recursive_OptionalFieldsOf<ContentTypesSyncOptions> =
-  {
-    blockOnFirstDownload: true,
-    requestOnSync: false,
-    names: {
-      contentTypes: "contentTypes.d.ts",
-      components: "components.d.ts",
-    },
-  };
-
-export type ContentTypesSyncOptions = {
-  blockOnFirstDownload?: boolean;
-  requestOnSync?: boolean;
-  outDir: string;
-  names?: {
-    contentTypes?: string;
-    components?: string;
-  };
-};
-
-export type StrictContentTypesSyncOptions =
-  Recursive_Required<ContentTypesSyncOptions>;
+// Types
+import {
+  StrictContentTypesSyncOptions,
+  ContentTypesSyncOptions,
+  ContentTypesResponse,
+} from "./types";
 
 function writeContentTypes(
   options: StrictContentTypesSyncOptions,
@@ -35,6 +22,7 @@ function writeContentTypes(
   const { outDir, names } = options;
   const [contentTypes, components] = data;
 
+  console.log("writing content types");
   try {
     fs.writeFileSync(`${outDir}/${names.contentTypes}`, contentTypes, {
       encoding: "utf8",
@@ -45,7 +33,6 @@ function writeContentTypes(
   } catch (error) {
     console.error("Error writing content types", error);
     return {
-      data: undefined,
       error: {
         message: "Error writing content types",
         code: 500,
@@ -57,7 +44,7 @@ function writeContentTypes(
   const componentsSize = Buffer.byteLength(components, "utf8");
 
   const diskSize = prettyBytes(contentTypesSize + componentsSize);
-  return { data: diskSize, error: undefined };
+  return { data: diskSize };
 }
 
 export async function requestNewContentTypes(
@@ -78,14 +65,13 @@ export async function downloadContentTypes(
   options: StrictContentTypesSyncOptions,
   start: number = performance.now()
 ): Promise<StandardResponse<null>> {
+  console.log("Downloading content types");
   const { data: $1data, error: $1error } =
     await hermes.axios.get<ContentTypesResponse>("/content-types");
   if ($1error !== undefined) {
     console.error("Error downloading content types", $1error);
     return { error: $1error };
   }
-
-  console.log(Object.keys($1data));
 
   const { data: diskSize, error: $2error } = writeContentTypes(
     options,
@@ -104,21 +90,57 @@ export async function downloadContentTypes(
   return { data: null };
 }
 
-export function downloadContentTypesSync(
+export const downloadContentTypesSync = sync(downloadContentTypes, {
+  timeout: 3000,
+});
+
+function shouldBlock(
+  options: StrictContentTypesSyncOptions,
+  log: boolean = false
+): boolean {
+  const ctExists = doContentTypesExist(options);
+  const _log = log || options.logBlockReasons;
+  const blockReasons: string[] = [];
+
+  // Push block reasons to the blockReasons array
+  if (options.alwaysBlock) blockReasons.push("alwaysBlock");
+  if (options.blockOnFirstDownload && !ctExists)
+    blockReasons.push("blockOnFirstDownload");
+
+  if (_log) {
+    console.log(
+      "Blocking execution until download completes for reasons:",
+      blockReasons.join(", ")
+    );
+  }
+
+  return blockReasons.length > 0;
+}
+
+export function downloadContentTypesDynamic(
   hermes: Hermes,
   options: StrictContentTypesSyncOptions
 ): StandardResponse<null> {
   const start = performance.now();
 
-  const ctExists = doContentTypesExist(options);
-  if (!ctExists && options.blockOnFirstDownload) {
-    console.log("Content types already exist. Downloading asyncronously.");
-    downloadContentTypes(hermes, options, start);
-  } else {
-    console.log(
-      "Content types not found. Blocking until initial download is complete. To disable this behavior, set the `blockOnFirstDownload` option of `withContentTypes` to `false`."
-    );
+  if (false && shouldBlock(options, true)) {
+    const { error } = downloadContentTypesSync(hermes, options, start);
+    if (error !== undefined) {
+      console.error("Error downloading content types syncronously", error);
+      // @ts-ignore - Feature delayed.
+      return { error };
+    }
+    console.log("Content types downloaded syncronously");
   }
+  // Content types already exist, so we don't need to wait for the download
+  downloadContentTypes(hermes, options, start).then(({ data, error }) => {
+    if (error !== undefined) {
+      console.error("Error downloading content types", error);
+      return { error };
+    }
+
+    console.log("Content types downloaded asyncronously"); // This is handled by the downloadContentTypes function
+  });
 
   return { data: null };
 }
@@ -127,9 +149,14 @@ export function doContentTypesExist({
   outDir,
   names,
 }: StrictContentTypesSyncOptions): boolean {
+  console.log(1);
   if (!fs.existsSync(outDir)) return false;
 
   const files = fs.readdirSync(outDir);
+  console.log(
+    files.includes(names.contentTypes),
+    files.includes(names.components)
+  );
   return files.includes(names.contentTypes) && files.includes(names.components);
 }
 

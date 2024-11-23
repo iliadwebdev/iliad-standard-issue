@@ -6,17 +6,15 @@ import merge from "deepmerge";
 const qs = { parse, stringify };
 
 // Helper functions
-import { getFormattedName, getTimestamp, padPrefix } from "../utils/helpers";
+import { getFormattedName, getTimestamp } from "../utils/helpers";
 
 // Types
 import {
   HermesAxiosInstance,
-  SuccessResponse,
+  StandardResponse,
   HermesOptions,
-  ErrorResponse,
   ErrorMessage,
   HermesMethod,
-  StandardResponse,
 } from "../@types/hermes";
 
 const defaultHermesOptions: HermesOptions = {

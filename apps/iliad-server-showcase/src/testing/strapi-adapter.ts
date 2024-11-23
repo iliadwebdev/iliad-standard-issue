@@ -1,4 +1,4 @@
-import StrapiContext from '@iliad.dev/strapi-adapter';
+import { StrapiInstance } from '@iliad.dev/strapi-adapter';
 import { config } from 'dotenv';
 import path from 'path';
 config();
@@ -10,21 +10,35 @@ const typesDir = path.resolve(process.cwd(), './src/@types');
 // console.log('strapiApiLocation:', strapiApiLocation);
 // console.log('strapiBearerToken:', strapiBearerToken);
 
-const strapi = new StrapiContext(
-  `${strapiApiLocation}/api`,
-  strapiBearerToken,
-  'fetch',
-  {
+console.log('Beginning');
+const strapi = new StrapiInstance({
+  strapiApiLocation: `${strapiApiLocation}/api`,
+  strapiBearerToken: strapiBearerToken,
+  client: 'fetch',
+  hermesOptions: {
     verboseLogging: false,
   },
-)
+})
   .label('Server Test')
   .withContentTypes({
+    alwaysBlock: true,
     outDir: typesDir,
   });
 
-await strapi.syncContentTypes();
-
 export const mainStrapiAdapterTest = async () => {
-  console.log('running Strapi Adapter Test');
+  console.log('Strapi instantiated, running Strapi Adapter Test');
+  const { data, error } = await strapi.getCollection<'api::event.event'>(
+    'events',
+    1,
+    99,
+    {
+      populate: '*',
+      sort: 'earliestVenueStart:asc',
+      filters: {
+        earliestVenueStart: { $gte: new Date().toISOString() },
+      },
+    },
+  );
+
+  console.log({ data, error });
 };

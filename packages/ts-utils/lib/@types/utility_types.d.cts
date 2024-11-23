@@ -41,5 +41,6 @@ type OptionalFieldsOf<T> = {
 type Recursive_OptionalFieldsOf<T> = T extends object ? {
     [K in OptionalKeys<T>]-?: Recursive_OptionalFieldsOf<T[K]>;
 } : T;
+type DefaultParams<T> = Recursive_OptionalFieldsOf<T>;
 
-export type { BinaryPermutations, Falsy, FalsyPart, IntRange, NetworkResponse, NotFalsy, Nullable, NumericalRange, OR, Optional, OptionalFieldsOf, Recursive_OptionalFieldsOf, Recursive_Required, StandardResponse, Without, XOR };
+export type { BinaryPermutations, DefaultParams, Falsy, FalsyPart, IntRange, NetworkResponse, NotFalsy, Nullable, NumericalRange, OR, Optional, OptionalFieldsOf, Recursive_OptionalFieldsOf, Recursive_Required, StandardResponse, Without, XOR };

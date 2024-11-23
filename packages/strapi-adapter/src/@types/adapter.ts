@@ -53,6 +53,8 @@ type StrapiMetaData = {
 
 type EnvVariable = string | undefined;
 
+export type StringLike = string | EnvVariable | URL;
+
 type StrapiResponseType = "entry" | "collection";
 
 type StandardResponse<T> = SuccessResponse<T> | ErrorResponse;

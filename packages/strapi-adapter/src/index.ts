@@ -1,5 +1,5 @@
-import StrapiContext from "./strapiAdapter/strapiAdapter";
+import StrapiInstance from "./strapiAdapter/StrapiInstance";
 import StrapiUtils from "./utils/utils";
 
-export default StrapiContext;
-export { StrapiUtils };
+export { StrapiUtils, StrapiInstance };
+export default StrapiInstance;

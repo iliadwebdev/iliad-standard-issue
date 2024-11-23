@@ -86,6 +86,8 @@ declare global {
       [K in OptionalKeys<T>]-?: Recursive_OptionalFieldsOf<T[K]>;
   } : T;
 
+  export type DefaultParams<T> = Recursive_OptionalFieldsOf<T>;
+
 }
 
 export {};

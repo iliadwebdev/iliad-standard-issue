@@ -1,1 +1,1 @@
-export { runAsyncSynchronously } from './utils/index.cjs';
+export { mergeDefaults, sync } from './utils/index.cjs';
