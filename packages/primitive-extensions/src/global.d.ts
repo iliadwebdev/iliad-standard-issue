@@ -30,10 +30,10 @@ declare global {
 
   interface Array<T> {
     insertAtIndex(index: number, element: T): Array<T>;
-    getByWrappedIndex(index: number): T;
+    randomize(seed?: string | number): Array<T>;
     includesAll(arr: Array<T>): boolean;
     includesAny(arr: Array<T>): boolean;
-    randomize(seed?: string | number): Array<T>;
+    getByWrappedIndex(index: number): T;
     last(): T;
   }
 

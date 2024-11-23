@@ -1,6 +1,6 @@
 {
   "name": "@iliad.dev/primitive-extensions",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "description": "Extends primitive types with useful methods.",
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
 {
   "name": "@iliad.dev/ts-utils",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "A collection of TypeScript utilities.",
   "repository": {
     "type": "git",
