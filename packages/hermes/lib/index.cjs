@@ -4,4 +4,5 @@ var _hermes3 = require('./hermes/hermes'); var _hermes4 = _interopRequireDefault
 
 
 
-exports.Hermes = _hermes4.default; exports.HermesOptions = _hermes.HermesOptions;
+
+exports.Hermes = _hermes4.default; exports.HermesOptions = _hermes.HermesOptions; exports.HermesRequestInit = _hermes.HermesRequestInit;

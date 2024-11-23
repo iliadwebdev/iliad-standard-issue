@@ -1,4 +1,7 @@
-import { StrapiInstance } from '@iliad.dev/strapi-adapter';
+import {
+  StrapiInstance,
+  LegacyStrapiInstance,
+} from '@iliad.dev/strapi-adapter';
 import { config } from 'dotenv';
 import path from 'path';
 config();
@@ -7,11 +10,8 @@ const strapiApiLocation = process.env.STRAPI_API_URL || '';
 const strapiBearerToken = process.env.STRAPI_API_KEY || '';
 const typesDir = path.resolve(process.cwd(), './src/@types');
 
-// console.log('strapiApiLocation:', strapiApiLocation);
-// console.log('strapiBearerToken:', strapiBearerToken);
-
 console.log('Beginning');
-const strapi = new StrapiInstance({
+const legacyStrapi = new LegacyStrapiInstance({
   strapiApiLocation: `${strapiApiLocation}/api`,
   strapiBearerToken: strapiBearerToken,
   client: 'fetch',
@@ -19,20 +19,31 @@ const strapi = new StrapiInstance({
     verboseLogging: false,
   },
 })
-  .label('Server Test')
+  .label('Server Test (Legacy)')
   .withContentTypes({
     outDir: typesDir,
   });
 
-export const mainStrapiAdapterTest = async () =>
-  // await strapi.syncContentTypes();
-  // strapi.syncContentTypes({
-  //   outDir: typesDir,
-  // });
+const strapi = new StrapiInstance({
+  strapiApiLocation: `${strapiApiLocation}`,
+  strapiBearerToken: strapiBearerToken,
+  client: 'fetch',
+  hermesOptions: {
+    verboseLogging: false,
+  },
+})
+  .label('Server Test (Legacy)')
+  .withContentTypes({
+    outDir: typesDir,
+  });
 
+export const mainStrapiAdapterTest = async () => {
   console.log('Strapi instantiated, running Strapi Adapter Test');
+  const { data, error } = strapi.getCollection();
 
-const { data: data2, error: error2 } =
-  await strapi.getCollection<'api::article.article'>('articles', 1, 99, {});
-console.log(data2.data[0]);
-console.log({ data2, error2 });
+  console.log('Data:', data);
+};
+// await strapi.syncContentTypes();
+// strapi.syncContentTypes({
+//   outDir: typesDir,
+// });

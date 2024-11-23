@@ -7,4 +7,7 @@ export type StrapiInstanceParams = {
   strapiBearerToken?: StringLike;
   hermesOptions?: HermesOptions;
   client?: ContextClient;
+
+  // Warnings
+  suppressLegacyApiWarning?: boolean;
 };

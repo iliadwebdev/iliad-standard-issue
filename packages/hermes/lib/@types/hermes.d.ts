@@ -1,4 +1,4 @@
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { AxiosRequestConfig, AxiosInstance, AxiosResponse } from 'axios';
 
 type ErrorMessage = {
     message: string;
@@ -22,14 +22,15 @@ interface HermesMethod {
     AXIOS: "axios";
     FETCH: "fetch";
 }
+type HermesRequestInit<M = HermesMethod> = M extends HermesMethod["AXIOS"] ? AxiosRequestConfig : RequestInit;
 type HermesAxiosResponse<T> = Promise<StandardResponse<AxiosResponse<T>>>;
 type StandardResponse<T> = SuccessResponse<T> | ErrorResponse;
 interface HermesAxiosInstance extends Omit<AxiosInstance, "get" | "post" | "put" | "delete"> {
-    put<T>(url: string, data: any, options?: any): HermesAxiosResponse<T>;
-    delete<T>(url: string, options?: any): HermesAxiosResponse<T>;
-    post<T>(url: string, options?: any): HermesAxiosResponse<T>;
-    get<T>(url: string, options?: any): HermesAxiosResponse<T>;
+    post<T = any, R = HermesAxiosResponse<T>, D = any>(url: string, data: D, options?: AxiosRequestConfig<D>): R;
+    put<T = any, R = HermesAxiosResponse<T>, D = any>(url: string, data: D, options?: AxiosRequestConfig<D>): R;
+    delete<T = any, R = HermesAxiosResponse<T>>(url: string, options?: AxiosRequestConfig<T>): R;
+    get<T = any, R = HermesAxiosResponse<T>>(url: string, options?: AxiosRequestConfig<T>): R;
 }
 type Options = RequestInit | AxiosRequestConfig;
 
-export type { ErrorMessage, ErrorResponse, HermesAxiosInstance, HermesMethod, HermesOptions, Options, StandardResponse, SuccessResponse };
+export type { ErrorMessage, ErrorResponse, HermesAxiosInstance, HermesMethod, HermesOptions, HermesRequestInit, Options, StandardResponse, SuccessResponse };

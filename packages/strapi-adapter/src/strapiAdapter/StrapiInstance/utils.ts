@@ -40,6 +40,8 @@ export function parseStrapiInstanceParams(params: StrapiInstanceParams) {
   const { strapiApiLocation, strapiBearerToken, hermesOptions, client } =
     validateParams(params);
 
+  warnIfLegacyPattern(strapiApiLocation, params?.suppressLegacyApiWarning);
+
   return mergeDefaults<
     StrapiInstanceParams,
     Legacy_Recursive_Required<StrapiInstanceParams>
@@ -78,4 +80,13 @@ export function validateParams(
     ...params,
     strapiApiLocation: apiLocation,
   };
+}
+
+// Warns the user if the Strapi API location is using the legacy pattern.
+function warnIfLegacyPattern(apiLocation: string, suppress: boolean = false) {
+  if (!apiLocation.endsWith("api") || suppress) return;
+  console.warn(
+    `strapiApiLocation is using a legacy pattern. If you meant to include (/api) in your URL, set the suppressLegacyApiWarning option to true. Api Location: \n`,
+    apiLocation
+  );
 }

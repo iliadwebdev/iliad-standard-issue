@@ -23,12 +23,6 @@ export type ContentTypeUIDs = {
     : never;
 }[keyof Common.Schemas];
 
-// export type CollectionTypeNames = {
-//   [K in keyof Common.Schemas]: Common.Schemas[K] extends Schema.CollectionType
-//     ? Common.Schemas[K]["info"]["pluralName"]
-//     : never;
-// }[keyof Common.Schemas];
-
 export type CollectionTypeNames = keyof PluralNameToUID;
 
 export type SingleTypeNames = {
@@ -50,7 +44,7 @@ export type UIDFromPluralName<PN extends keyof PluralNameToUID> =
 
 export type GetContentTypeFromEntry<T extends CTUID> = "test" | "test2";
 
-type CTUID = Common.UID.ContentType; // Content Type UID
+export type CTUID = Common.UID.ContentType; // Content Type UID
 
 type QueryStringAll<TContentTypeUID extends CTUID> = Params.Pick<
   TContentTypeUID,
@@ -62,6 +56,15 @@ type QueryStringAll<TContentTypeUID extends CTUID> = Params.Pick<
   | "fields"
   | "sort"
   | "_q"
+>;
+
+export type CrudQueryFind<TContentTypeUID extends CTUID> = Params.Pick<
+  TContentTypeUID,
+  "publicationState" | "pagination" | "filters" | "plugin" | "sort"
+>;
+export type CrudQueryCreate<TContentTypeUID extends CTUID> = Params.Pick<
+  TContentTypeUID,
+  "populate" | "fields"
 >;
 
 export type QueryStringCollection<TContentTypeUID extends CTUID> =

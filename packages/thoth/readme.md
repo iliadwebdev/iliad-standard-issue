@@ -9,6 +9,8 @@ Logging library. Makes logs pretty, standard, project-agnostic. Provides utiliti
 - `hanging()` logs (api? `thoth.hanging(options).log()`?). Uses ORA to make spinner, can be resolved, timed out, failed, warned, etc.
 - Project-level prefix, (config.thoth.ts?), Iliad prefix **◭**, timestamp w. formats.
 - Thoth extends event emitter, allowing for side-effects (?)
+- Add ability to provide text snippets / internationalisation. Autocomplete possible.
+- Possible add ability to provide markup/down tags? <code> <strong> <italic> etc could be useful.
 
 ## API
 

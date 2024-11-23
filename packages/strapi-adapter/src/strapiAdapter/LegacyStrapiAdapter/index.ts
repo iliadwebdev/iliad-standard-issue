@@ -7,26 +7,24 @@ import {
   ContextClient,
   ErrorResponse,
 } from "@types";
-import { Hermes, HermesRequestInit } from "@iliad.dev/hermes";
-import { normalizeUrl, normalizeParams } from "./utils";
+import { Hermes } from "@iliad.dev/hermes";
 import { Common } from "@strapi/strapi";
 
 import {
-  GetContentTypeFromEntry,
   QueryStringCollection,
-  CollectionTypeNames,
-  UIDFromPluralName,
   QueryStringEntry,
-  SingleTypeNames,
-  CrudQueryCreate,
-  CrudQueryFind,
-  CTUID,
-} from "./types";
+} from "../StrapiAdapter/types";
 import { Feature, FeatureParams } from "../Feature";
 import { StrapiUtils } from "@utils";
 
-class StrapiAdapter extends Feature {
-  client: ContextClient = "fetch"; // I should probably change this to fetch, given that most of the time this is being use in Next.js.
+/**
+ * LegacyStrapiAdapter
+ *
+ * @deprecated All public methods in this class are deprecated. Access them through the `LegacyStrapiInstance` class.
+ * Incremental adoption of the `StrapiInstance` class is recommended for new functionality.
+ */
+class LegacyStrapiAdapter extends Feature {
+  client: ContextClient = "axios"; // I should probably change this to fetch, given that most of the time this is being use in Next.js.
   hermes: Hermes;
 
   constructor(props: FeatureParams) {
@@ -34,68 +32,8 @@ class StrapiAdapter extends Feature {
 
     let { client, hermes } = props;
     this.hermes = hermes;
-    if (client !== "fetch") {
-      console.warn(
-        "Axios is currently not supported. Defaulting to fetch instead."
-      );
-    }
-    // this.client = client;
+    this.client = client;
   }
-
-  private normalizedFetch<T>(
-    method: RequestInit["method"],
-    url: string | URL,
-    options: RequestInit = {}
-  ): Promise<StandardResponse<T>> {
-    return this.hermes.fetch<T>(normalizeUrl(url), {
-      ...options,
-      method,
-    });
-  }
-
-  // REST OPERATIONS
-  public async get<R>(
-    url: string | URL,
-    options?: any
-  ): Promise<StandardResponse<R>> {
-    return this.normalizedFetch<R>("GET", url, options);
-  }
-
-  public async post<R>(
-    url: string | URL,
-    options?: any
-  ): Promise<StandardResponse<R>> {
-    return this.normalizedFetch<R>("POST", url, options);
-  }
-
-  public async put<R>(
-    url: string | URL,
-    options?: any
-  ): Promise<StandardResponse<R>> {
-    return this.normalizedFetch<R>("PUT", url, options);
-  }
-
-  public async delete<R>(
-    url: string | URL,
-    options?: any
-  ): Promise<StandardResponse<R>> {
-    return this.normalizedFetch<R>("DELETE", url, options);
-  }
-
-  // CRUD OPERATIONS
-  public async find<E extends CollectionTypeNames, UID extends CTUID>(
-    collection: E,
-    params: CrudQueryFind<UID>
-  ): Promise<StandardResponse<APIResponseCollection<UID>>> {
-    return this.get<APIResponseCollection<UID>>(
-      collection,
-      normalizeParams(params)
-    );
-  }
-
-  // Continue this pattern
-
-  // SEMANTIC OPERATIONS
 
   private async getWithClient<T extends Common.UID.ContentType>(
     url: string | URL,
@@ -114,7 +52,10 @@ class StrapiAdapter extends Feature {
     return response as StandardResponse<StrapiResponse<T>>;
   }
 
-  // GET FUNCTIONS
+  /**
+   * Fetches the entire collection of data.
+   * @deprecated This method is exposed through `LegacyStrapiInstance`. Incrementally adopt `StrapiInstance` for new functionality.
+   */
   async getFullCollection<TContentTypeUID extends Common.UID.ContentType>(
     collection: string,
     query: QueryStringCollection<TContentTypeUID> = "",
@@ -197,6 +138,10 @@ class StrapiAdapter extends Feature {
     );
   }
 
+  /**
+   * Fetches an entry by its slug.
+   * @deprecated This method is exposed through `LegacyStrapiInstance`. Incrementally adopt `StrapiInstance` for new functionality.
+   */
   async getEntryBySlug<TContentTypeUID extends Common.UID.ContentType>(
     collection: string,
     slug: string,
@@ -224,13 +169,16 @@ class StrapiAdapter extends Feature {
     return await StrapiUtils.coerceData(data, collection, slug, true);
   }
 
+  /**
+   * Fetches a paginated collection.
+   * @deprecated This method is exposed through `LegacyStrapiInstance`. Incrementally adopt `StrapiInstance` for new functionality.
+   */
   async getCollection<TContentTypeUID extends Common.UID.CollectionType>(
     collection: string,
     page: number = 1,
     pageSize: number = 25,
     query: QueryStringCollection<TContentTypeUID> = "",
     _hermes: Hermes = this.hermes
-    // test?: GetContentTypeFromEntry<typeof collection>
   ): Promise<StandardResponse<APIResponseCollection<TContentTypeUID>>> {
     let _q = StrapiUtils.sanitizeQuery(query, false);
     let __q = `?pagination[pageSize]=${pageSize}&pagination[page]=${page}`;
@@ -253,38 +201,10 @@ class StrapiAdapter extends Feature {
     return await StrapiUtils.coerceData(data, collection as string);
   }
 
-  // 5. Corrected getCollectionTest Function
-  async getCollectionTest<
-    PN extends CollectionTypeNames,
-    TContentTypeUID extends Common.UID.CollectionType = UIDFromPluralName<PN>,
-  >(
-    collection: PN,
-    page: number = 1,
-    pageSize: number = 25,
-    query: QueryStringCollection<TContentTypeUID> = "",
-    _hermes: Hermes = this.hermes
-  ): Promise<StandardResponse<APIResponseCollection<TContentTypeUID>>> {
-    let _q = StrapiUtils.sanitizeQuery(query, false);
-    let __q = `?pagination[pageSize]=${pageSize}&pagination[page]=${page}`;
-
-    if (_q) {
-      __q += `&${_q}`;
-    }
-
-    let { data, error } = await this.getWithClient(`${collection}${__q}`, {
-      next: { tags: [collection, "atlas::full-revalidation"] },
-    });
-
-    if (error) {
-      console.error(`Error fetching collection ${collection}:`, error, {
-        query: __q,
-      });
-      return { data: undefined, error } as ErrorResponse;
-    }
-
-    return await StrapiUtils.coerceData<TContentTypeUID>(data, collection);
-  }
-
+  /**
+   * Fetches a single entry by its ID.
+   * @deprecated This method is exposed through `LegacyStrapiInstance`. Incrementally adopt `StrapiInstance` for new functionality.
+   */
   async getEntry<TContentTypeUID extends Common.UID.ContentType>(
     collection: string,
     id: number,
@@ -308,6 +228,10 @@ class StrapiAdapter extends Feature {
     return await StrapiUtils.coerceData(data, collection, id);
   }
 
+  /**
+   * Fetches a single entry of a content type.
+   * @deprecated This method is exposed through `LegacyStrapiInstance`. Incrementally adopt `StrapiInstance` for new functionality.
+   */
   async getSingle<TContentTypeUID extends Common.UID.ContentType>(
     collection: string,
     query: QueryStringCollection<TContentTypeUID> = "",
@@ -330,6 +254,5 @@ class StrapiAdapter extends Feature {
   protected withContentTypes(options: any): void {}
 }
 
-export default StrapiAdapter;
-export { StrapiAdapter };
-export * from "./types";
+export default LegacyStrapiAdapter;
+export { LegacyStrapiAdapter };
