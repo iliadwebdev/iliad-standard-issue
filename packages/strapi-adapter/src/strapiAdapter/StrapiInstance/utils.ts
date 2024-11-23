@@ -40,7 +40,10 @@ export function parseStrapiInstanceParams(params: StrapiInstanceParams) {
   const { strapiApiLocation, strapiBearerToken, hermesOptions, client } =
     validateParams(params);
 
-  return mergeDefaults<StrapiInstanceParams>(
+  return mergeDefaults<
+    StrapiInstanceParams,
+    Legacy_Recursive_Required<StrapiInstanceParams>
+  >(
     {
       strapiApiLocation: strapiApiLocation.toString(),
       strapiBearerToken: strapiBearerToken?.toString(),
@@ -48,7 +51,7 @@ export function parseStrapiInstanceParams(params: StrapiInstanceParams) {
       client,
     },
     defaultInstanceParams
-  ) as Recursive_Required<StrapiInstanceParams> & {
+  ) as Legacy_Recursive_Required<StrapiInstanceParams> & {
     strapiBearerToken: string | undefined;
     strapiApiLocation: string;
   };

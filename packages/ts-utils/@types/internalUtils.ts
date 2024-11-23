@@ -33,4 +33,13 @@ export namespace IUtils {
   export type OptionalKeys<T> = {
     [K in keyof T]-?: T extends Record<K, T[K]> ? never : K;
   }[keyof T];
+
+  // Copies definitions of custom utility types
+  export type RecursiveRequiredHelper<T> = T extends Falsable<infer U>
+    ? Falsable<Recursive_Required<U>>
+    : T extends Optional<infer U>
+    ? Optional<Recursive_Required<U>>
+    : NonNullable<T> extends object
+    ? Recursive_Required<NonNullable<T>>
+    : NonNullable<T>;
 }

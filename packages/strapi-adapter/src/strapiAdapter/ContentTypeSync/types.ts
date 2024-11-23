@@ -13,7 +13,7 @@ export type ContentTypesSyncOptions = {
 };
 
 export type StrictContentTypesSyncOptions =
-  Recursive_Required<ContentTypesSyncOptions>;
+  Legacy_Recursive_Required<ContentTypesSyncOptions>;
 
 export type ContentTypeSyncParams = {
   // contentTypesSyncOptions: ContentTypesSyncOptions;

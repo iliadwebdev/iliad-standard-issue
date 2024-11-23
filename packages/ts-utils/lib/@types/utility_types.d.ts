@@ -22,10 +22,15 @@ type StandardResponse<T, E = NetworkError> = XOR<{
 }, ErrorResponse<E>>;
 type FalsyPart<T> = Extract<T, IUtils.Falsy>;
 type NotFalsy<T> = Exclude<T, IUtils.Falsy>;
-type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+type Falsable<T> = T | false;
 type Nullable<T> = T | null;
+type PickOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+type Optional<T> = undefined | T;
 type Recursive_Required<T> = {
-    [K in keyof T]-?: NonNullable<T[K]> extends object ? Recursive_Required<NonNullable<T[K]>> : NonNullable<T[K]>;
+    [K in keyof T]-?: IUtils.RecursiveRequiredHelper<T[K]>;
+};
+type Legacy_Recursive_Required<T> = {
+    [K in keyof T]-?: NonNullable<T[K]> extends object ? Legacy_Recursive_Required<NonNullable<T[K]>> : NonNullable<T[K]>;
 };
 type DefaultParams<T> = Recursive_OptionalFieldsOf<T>;
 type OptionalFieldsOf<T> = {
@@ -38,4 +43,4 @@ type BinaryPermutations<N extends number> = N extends 0 ? "" : PrependBit<Binary
 type NumericalRange<F extends number, T extends number> = IntRange<F, T>;
 type IntRange<F extends number, T extends number> = Exclude<IUtils.Enumerate<T>, IUtils.Enumerate<F>>;
 
-export type { BinaryPermutations, DefaultParams, ErrorResponse, FalsyPart, IntRange, NotFalsy, Nullable, NumericalRange, OR, Optional, OptionalFieldsOf, Recursive_OptionalFieldsOf, Recursive_Required, StandardResponse, Without, XOR };
+export type { BinaryPermutations, DefaultParams, ErrorResponse, Falsable, FalsyPart, IntRange, Legacy_Recursive_Required, NotFalsy, Nullable, NumericalRange, OR, Optional, OptionalFieldsOf, PickOptional, Recursive_OptionalFieldsOf, Recursive_Required, StandardResponse, Without, XOR };

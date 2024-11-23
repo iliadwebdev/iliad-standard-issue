@@ -1,4 +1,4 @@
-import { mainStrapiAdapterTest } from './testing';
+import { mainStrapiAdapterTest, mainThothTest } from './testing';
 
 (async () => {
   // console.log(process.cwd());
@@ -6,5 +6,6 @@ import { mainStrapiAdapterTest } from './testing';
 
   console.log('running');
   // await mainHermesTest();
+  // await mainThothTest();
   await mainStrapiAdapterTest();
 })();

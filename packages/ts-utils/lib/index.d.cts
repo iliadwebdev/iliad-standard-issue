@@ -1,1 +1,1 @@
-export { mergeDefaults, sync } from './utils/index.cjs';
+export { mergeDefaults } from './utils/index.cjs';

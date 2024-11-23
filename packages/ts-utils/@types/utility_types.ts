@@ -33,13 +33,22 @@ export type StandardResponse<T, E = NetworkError> = XOR<
 export type FalsyPart<T> = Extract<T, IUtils.Falsy>; // Returns the falsy part of a type
 export type NotFalsy<T> = Exclude<T, IUtils.Falsy>; // Returns the non-falsy part of a type
 
-export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>; // Makes a property optional. Not really sure why I made this.
+export type Falsable<T> = T | false; // Makes a type falsable
 export type Nullable<T> = T | null; // Makes a type nullable
+
+export type PickOptional<T, K extends keyof T> = Omit<T, K> &
+  Partial<Pick<T, K>>; // Copy a type and make some fields optional
+export type Optional<T> = undefined | T; // Makes a type explicitely optional
 
 // Recursive_Required<T> recursively makes all fields of T required. Useful for taking params that were optional and making a type that has been populated with default values.
 export type Recursive_Required<T> = {
+  [K in keyof T]-?: IUtils.RecursiveRequiredHelper<T[K]>;
+};
+
+// Where did things go wrong?
+export type Legacy_Recursive_Required<T> = {
   [K in keyof T]-?: NonNullable<T[K]> extends object
-    ? Recursive_Required<NonNullable<T[K]>>
+    ? Legacy_Recursive_Required<NonNullable<T[K]>>
     : NonNullable<T[K]>;
 };
 

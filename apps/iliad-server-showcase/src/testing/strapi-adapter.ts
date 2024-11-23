@@ -21,29 +21,32 @@ const strapi = new StrapiInstance({
 })
   .label('Server Test')
   .withContentTypes({
-    alwaysBlock: true,
     outDir: typesDir,
   });
 
-export const mainStrapiAdapterTest = async () => {
+export const mainStrapiAdapterTest = async () =>
+  // await strapi.syncContentTypes();
+  // strapi.syncContentTypes({
+  //   outDir: typesDir,
+  // });
+
   console.log('Strapi instantiated, running Strapi Adapter Test');
-  const { data, error } = await strapi.getCollection<'api::event.event'>(
-    'events',
-    1,
-    99,
-    {
-      sort: 'earliestVenueStart:asc',
-      filters: {
-        earliestVenueStart: { $gte: new Date().toISOString() },
-      },
-      populate: 'venues',
-    },
-  );
-
-  await strapi.getCollection<'api::event.event'>('events', 1, 99, {
-    populate: ['venues', 'venues.buttons'],
+const { data, error } = await strapi.getCollection<'api::event.event'>(
+  'events',
+  1,
+  99,
+  {
     sort: 'earliestVenueStart:asc',
-  });
+    filters: {
+      earliestVenueStart: { $gte: new Date().toISOString() },
+    },
+    populate: 'venues',
+  },
+);
 
-  console.log({ data, error });
-};
+await strapi.getCollection<'api::event.event'>('events', 1, 99, {
+  populate: ['venues', 'venues.buttons'],
+  sort: 'earliestVenueStart:asc',
+});
+
+console.log({ data, error });

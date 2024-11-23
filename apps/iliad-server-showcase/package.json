@@ -35,6 +35,7 @@
   "dependencies": {
     "@iliad.dev/hermes": "*",
     "@iliad.dev/strapi-adapter": "*",
+    "@iliad.dev/thoth": "*",
     "@iliad.dev/typescript-config": "*",
     "dotenv": "^16.4.5",
     "nodemon": "^3.1.7",

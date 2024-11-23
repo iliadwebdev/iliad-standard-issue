@@ -2,7 +2,7 @@
 import { defaultContentTypesSyncOptions } from "./data";
 
 // Utils
-import { sync } from "@iliad.dev/ts-utils";
+
 import { Hermes } from "@iliad.dev/hermes";
 import prettyBytes from "pretty-bytes";
 import deepmerge from "deepmerge";
@@ -20,7 +20,7 @@ function writeContentTypes(
   data: ContentTypesResponse
 ): StandardResponse<string> {
   const { outDir, names } = options;
-  const [contentTypes, components] = data;
+  const [components, contentTypes] = data;
 
   console.log("writing content types");
   try {
@@ -90,10 +90,6 @@ export async function downloadContentTypes(
   return { data: null };
 }
 
-export const downloadContentTypesSync = sync(downloadContentTypes, {
-  timeout: 3000,
-});
-
 function shouldBlock(
   options: StrictContentTypesSyncOptions,
   log: boolean = false
@@ -123,15 +119,6 @@ export function downloadContentTypesDynamic(
 ): StandardResponse<null> {
   const start = performance.now();
 
-  if (false && shouldBlock(options, true)) {
-    const { error } = downloadContentTypesSync(hermes, options, start);
-    if (error !== undefined) {
-      console.error("Error downloading content types syncronously", error);
-      // @ts-ignore - Feature delayed.
-      return { error };
-    }
-    console.log("Content types downloaded syncronously");
-  }
   // Content types already exist, so we don't need to wait for the download
   downloadContentTypes(hermes, options, start).then(({ data, error }) => {
     if (error !== undefined) {

@@ -8,11 +8,7 @@
  * @param {Recursive_OptionalFieldsOf<T>} defaults - The default values to merge into the object.
  * @returns {Recursive_Required<T>} - The resulting object with all default fields included.
  */
-declare function mergeDefaults<T>(obj: T | undefined, defaults: Recursive_OptionalFieldsOf<T>): Recursive_Required<T>;
-type SyncOptions = {
-    throwOnError?: boolean;
-    timeout?: number;
-};
-declare function sync<Args extends any[], R>(fn: (...args: Args) => Promise<R>, options?: SyncOptions): (...args: Args) => StandardResponse<R>;
+type RRU<T> = Recursive_Required<T> | Legacy_Recursive_Required<T>;
+declare function mergeDefaults<T, RR extends RRU<T> = Legacy_Recursive_Required<T>>(obj: T | undefined, defaults: Recursive_OptionalFieldsOf<T>): RR;
 
-export { mergeDefaults, sync };
+export { mergeDefaults };

@@ -10,6 +10,7 @@ declare namespace IUtils {
     type OptionalKeys<T> = {
         [K in keyof T]-?: T extends Record<K, T[K]> ? never : K;
     }[keyof T];
+    type RecursiveRequiredHelper<T> = T extends Falsable<infer U> ? Falsable<Recursive_Required<U>> : T extends Optional<infer U> ? Optional<Recursive_Required<U>> : NonNullable<T> extends object ? Recursive_Required<NonNullable<T>> : NonNullable<T>;
 }
 
 export { IUtils };

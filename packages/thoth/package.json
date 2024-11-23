@@ -26,7 +26,9 @@
   },
   "dependencies": {
     "@iliad.dev/primitive-extensions": "*",
-    "@iliad.dev/ts-utils": "*"
+    "@iliad.dev/ts-utils": "*",
+    "chalk": "^5.3.0",
+    "ora": "^8.1.1"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.1",
