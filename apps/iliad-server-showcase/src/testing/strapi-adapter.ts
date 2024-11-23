@@ -31,22 +31,8 @@ export const mainStrapiAdapterTest = async () =>
   // });
 
   console.log('Strapi instantiated, running Strapi Adapter Test');
-const { data, error } = await strapi.getCollection<'api::event.event'>(
-  'events',
-  1,
-  99,
-  {
-    sort: 'earliestVenueStart:asc',
-    filters: {
-      earliestVenueStart: { $gte: new Date().toISOString() },
-    },
-    populate: 'venues',
-  },
-);
 
-await strapi.getCollection<'api::event.event'>('events', 1, 99, {
-  populate: ['venues', 'venues.buttons'],
-  sort: 'earliestVenueStart:asc',
-});
-
-console.log({ data, error });
+const { data: data2, error: error2 } =
+  await strapi.getCollection<'api::article.article'>('articles', 1, 99, {});
+console.log(data2.data[0]);
+console.log({ data2, error2 });

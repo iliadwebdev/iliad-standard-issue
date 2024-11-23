@@ -10,7 +10,14 @@ import {
 import { Hermes } from "@iliad.dev/hermes";
 import { Common } from "@strapi/strapi";
 
-import { QueryStringCollection, QueryStringEntry } from "./types";
+import {
+  QueryStringCollection,
+  QueryStringEntry,
+  GetContentTypeFromEntry,
+  CollectionTypeNames,
+  SingleTypeNames,
+  UIDFromPluralName,
+} from "./types";
 import { Feature, FeatureParams } from "../Feature";
 import { StrapiUtils } from "@utils";
 
@@ -159,6 +166,7 @@ class StrapiAdapter extends Feature {
     pageSize: number = 25,
     query: QueryStringCollection<TContentTypeUID> = "",
     _hermes: Hermes = this.hermes
+    // test?: GetContentTypeFromEntry<typeof collection>
   ): Promise<StandardResponse<APIResponseCollection<TContentTypeUID>>> {
     let _q = StrapiUtils.sanitizeQuery(query, false);
     let __q = `?pagination[pageSize]=${pageSize}&pagination[page]=${page}`;
@@ -178,7 +186,39 @@ class StrapiAdapter extends Feature {
       return { data: undefined, error } as ErrorResponse;
     }
 
-    return await StrapiUtils.coerceData(data, collection);
+    return await StrapiUtils.coerceData(data, collection as string);
+  }
+
+  // 5. Corrected getCollectionTest Function
+  async getCollectionTest<
+    PN extends CollectionTypeNames,
+    TContentTypeUID extends Common.UID.CollectionType = UIDFromPluralName<PN>,
+  >(
+    collection: PN,
+    page: number = 1,
+    pageSize: number = 25,
+    query: QueryStringCollection<TContentTypeUID> = "",
+    _hermes: Hermes = this.hermes
+  ): Promise<StandardResponse<APIResponseCollection<TContentTypeUID>>> {
+    let _q = StrapiUtils.sanitizeQuery(query, false);
+    let __q = `?pagination[pageSize]=${pageSize}&pagination[page]=${page}`;
+
+    if (_q) {
+      __q += `&${_q}`;
+    }
+
+    let { data, error } = await this.getWithClient(`${collection}${__q}`, {
+      next: { tags: [collection, "atlas::full-revalidation"] },
+    });
+
+    if (error) {
+      console.error(`Error fetching collection ${collection}:`, error, {
+        query: __q,
+      });
+      return { data: undefined, error } as ErrorResponse;
+    }
+
+    return await StrapiUtils.coerceData<TContentTypeUID>(data, collection);
   }
 
   async getEntry<TContentTypeUID extends Common.UID.ContentType>(

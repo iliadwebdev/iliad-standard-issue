@@ -1,5 +1,3 @@
-import "@iliad.dev/ts-utils/@types";
-
 // UTILS
 import { createHermesInstance, parseStrapiInstanceParams } from "./utils";
 import classes from "multiple-extend";

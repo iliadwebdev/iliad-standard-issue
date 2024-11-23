@@ -673,7 +673,7 @@ export interface PluginRedirectsRedirect extends Schema.CollectionType {
         'moved_permanently_301',
         'temporary_redirect_307',
         'gone_410',
-        'unavailable_for_legal_reasons_451'
+        'unavailable_for_legal_reasons_451',
       ]
     > &
       Attribute.Required &
@@ -1206,7 +1206,7 @@ export interface ApiEventEvent extends Schema.CollectionType {
         [
           'Limited Seating:limited-seats',
           'Adults Only:adults-only',
-          'Discounted Pricing:discounted-pricing'
+          'Discounted Pricing:discounted-pricing',
         ]
       >;
     slug: Attribute.UID<'api::event.event', 'plainTitle'> & Attribute.Required;
