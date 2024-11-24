@@ -18,6 +18,9 @@ import {
   QueryStringEntry,
   CrudQueryFull,
   CTUID,
+  // OPENAPI TYPINGS
+  HttpMethod,
+  FetchResponse,
 } from "./types";
 import { Feature, FeatureParams } from "../Feature";
 import { StrapiUtils } from "@utils";
@@ -43,10 +46,12 @@ class StrapiAdapter extends Feature {
   }
 
   private normalizedFetch<T>(
-    method: RequestInit["method"],
+    method: HttpMethod,
     url: string | URL,
     options: RequestInit = {}
-  ): Promise<StandardResponse<T>> {
+  ): Promise<
+    StandardResponse<FetchResponse<Paths[Path][Method], Init, Media>>
+  > {
     return this.hermes.fetch<T>(normalizeUrl(url), {
       ...options,
       method,
@@ -54,32 +59,32 @@ class StrapiAdapter extends Feature {
   }
 
   // REST OPERATIONS
-  public async get<R>(
+  public async GET<R>(
     url: string | URL,
     options?: any
   ): Promise<StandardResponse<R>> {
-    return this.normalizedFetch<R>("GET", url, options);
+    return this.normalizedFetch<R>("get", url, options);
   }
 
-  public async post<R>(
+  public async POST<R>(
     url: string | URL,
     options?: any
   ): Promise<StandardResponse<R>> {
-    return this.normalizedFetch<R>("POST", url, options);
+    return this.normalizedFetch<R>("post", url, options);
   }
 
-  public async put<R>(
+  public async PUT<R>(
     url: string | URL,
     options?: any
   ): Promise<StandardResponse<R>> {
-    return this.normalizedFetch<R>("PUT", url, options);
+    return this.normalizedFetch<R>("put", url, options);
   }
 
-  private async deleteREST<R>(
+  private async DELETE<R>(
     url: string | URL,
     options?: any
   ): Promise<StandardResponse<R>> {
-    return this.normalizedFetch<R>("DELETE", url, options);
+    return this.normalizedFetch<R>("delete", url, options);
   }
 
   // CRUD OPERATIONS
@@ -97,7 +102,7 @@ class StrapiAdapter extends Feature {
       query: params,
     });
 
-    return this.get<APIResponseData<UID>>(url);
+    return this.GET<APIResponseData<UID>>(url);
   }
 
   public async find<
@@ -112,7 +117,7 @@ class StrapiAdapter extends Feature {
       query: params,
     });
 
-    return this.get<APIResponseCollection<UID>>(url);
+    return this.GET<APIResponseCollection<UID>>(url);
   }
 
   public async create<
@@ -132,7 +137,7 @@ class StrapiAdapter extends Feature {
       body: JSON.stringify({ data }),
     };
 
-    return this.post<APIResponseData<UID>>(url, options);
+    return this.POST<APIResponseData<UID>>(url, options);
   }
 
   public async update<
@@ -153,7 +158,7 @@ class StrapiAdapter extends Feature {
       body: JSON.stringify({ data }),
     };
 
-    return this.put<APIResponseData<UID>>(url, options);
+    return this.PUT<APIResponseData<UID>>(url, options);
   }
 
   public async delete<
@@ -168,7 +173,7 @@ class StrapiAdapter extends Feature {
       endpoint,
     });
 
-    return this.deleteREST<APIResponseData<UID>>(url);
+    return this.DELETE<APIResponseData<UID>>(url);
   }
 
   // FINISH CRUD OPERATIONS, THEN MAKE RAW REST OPERATIONS.

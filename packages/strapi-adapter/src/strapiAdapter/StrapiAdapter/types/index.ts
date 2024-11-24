@@ -91,3 +91,8 @@ export type QueryStringEntry<TContentTypeUID extends CTUID> =
   | Params.Pick<TContentTypeUID, "populate">
   | string
   | "*";
+
+// ========================================
+// OPENAI TYPES
+// ========================================
+export * from "./openapi";

@@ -9,5 +9,6 @@ export const defaultContentTypesSyncOptions: Recursive_OptionalFieldsOf<ContentT
     names: {
       contentTypes: "contentTypes.d.ts",
       components: "components.d.ts",
+      api: "api.d.ts",
     },
   };

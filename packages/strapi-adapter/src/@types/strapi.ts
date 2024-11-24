@@ -153,3 +153,9 @@ export type StrapiResponse<T extends Common.UID.ContentType> =
   | APIResponse<T>;
 
 export type { Common, Attribute, Utils };
+
+// declare module "@strapi/strapi" {
+//   export module Shared {
+//     export interface Paths {}
+//   }
+// }

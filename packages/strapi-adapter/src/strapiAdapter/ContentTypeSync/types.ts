@@ -1,4 +1,4 @@
-export type ContentTypesResponse = [string, string];
+export type ContentTypesResponse = Array<string>;
 
 export type ContentTypesSyncOptions = {
   blockOnFirstDownload?: boolean;
@@ -9,6 +9,7 @@ export type ContentTypesSyncOptions = {
   names?: {
     contentTypes?: string;
     components?: string;
+    api?: string;
   };
 };
 

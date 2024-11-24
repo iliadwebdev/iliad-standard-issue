@@ -20,7 +20,7 @@ function writeContentTypes(
   data: ContentTypesResponse
 ): StandardResponse<string> {
   const { outDir, names } = options;
-  const [components, contentTypes] = data;
+  const [api, components, contentTypes] = data;
 
   console.log("writing content types");
   try {
@@ -28,6 +28,9 @@ function writeContentTypes(
       encoding: "utf8",
     });
     fs.writeFileSync(`${outDir}/${names.components}`, components, {
+      encoding: "utf8",
+    });
+    fs.writeFileSync(`${outDir}/${names.api}`, api, {
       encoding: "utf8",
     });
   } catch (error) {
@@ -40,10 +43,10 @@ function writeContentTypes(
     };
   }
 
-  const contentTypesSize = Buffer.byteLength(contentTypes, "utf8");
-  const componentsSize = Buffer.byteLength(components, "utf8");
+  const diskSize = prettyBytes(
+    data.reduce((acc, curr) => acc + Buffer.byteLength(curr, "utf8"), 0)
+  );
 
-  const diskSize = prettyBytes(contentTypesSize + componentsSize);
   return { data: diskSize };
 }
 
