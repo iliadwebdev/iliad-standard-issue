@@ -38,10 +38,17 @@ const strapi = new StrapiInstance({
   });
 
 export const mainStrapiAdapterTest = async () => {
-  console.log('Strapi instantiated, running Strapi Adapter Test');
-  const { data, error } = strapi.getCollection();
+  // console.log('Strapi instantiated, running Strapi Adapter Test');
+  const { data, error } = await strapi.find('events', {
+    populate: ['venues', 'coverImage'],
+    filters: {
+      earliestVenueStart: {
+        $gte: new Date().toISOString(),
+      },
+    },
+  });
 
-  console.log('Data:', data);
+  console.log({ data, error });
 };
 // await strapi.syncContentTypes();
 // strapi.syncContentTypes({

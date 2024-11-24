@@ -50,7 +50,10 @@ function writeContentTypes(
 export async function requestNewContentTypes(
   hermes: Hermes
 ): Promise<StandardResponse<null>> {
-  const { data, error } = await hermes.axios.post<string>("/content-types");
+  const { data, error } = await hermes.axios.post<string>(
+    "/content-types",
+    undefined
+  );
   if (error !== undefined) {
     console.error("Error requesting new content types", error);
     return { error };

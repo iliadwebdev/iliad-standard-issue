@@ -8,8 +8,9 @@ import {
   ErrorResponse,
 } from "@types";
 import { Hermes, HermesRequestInit } from "@iliad.dev/hermes";
-import { normalizeUrl, normalizeParams } from "./utils";
+import { normalizeUrl, apiEndpoint, createUrl } from "./utils";
 import { Common } from "@strapi/strapi";
+import qs from "qs";
 
 import {
   GetContentTypeFromEntry,
@@ -18,9 +19,9 @@ import {
   UIDFromPluralName,
   QueryStringEntry,
   SingleTypeNames,
-  CrudQueryCreate,
-  CrudQueryFind,
   CTUID,
+  CrudQueryFull,
+  CrudQueryBasic,
 } from "./types";
 import { Feature, FeatureParams } from "../Feature";
 import { StrapiUtils } from "@utils";
@@ -33,7 +34,10 @@ class StrapiAdapter extends Feature {
     super(props);
 
     let { client, hermes } = props;
+
+    hermes.hermesOptions.extractData = true;
     this.hermes = hermes;
+
     if (client !== "fetch") {
       console.warn(
         "Axios is currently not supported. Defaulting to fetch instead."
@@ -83,20 +87,26 @@ class StrapiAdapter extends Feature {
   }
 
   // CRUD OPERATIONS
-  public async find<E extends CollectionTypeNames, UID extends CTUID>(
-    collection: E,
-    params: CrudQueryFind<UID>
+  public async find<
+    E extends CollectionTypeNames,
+    UID extends CTUID = UIDFromPluralName<E>,
+  >(
+    collection: E & {},
+    params: CrudQueryFull<UID>
   ): Promise<StandardResponse<APIResponseCollection<UID>>> {
-    return this.get<APIResponseCollection<UID>>(
-      collection,
-      normalizeParams(params)
-    );
+    // Combine http://<location>/api/<collection><params>
+    const url = createUrl({
+      endpoint: apiEndpoint(collection),
+      query: params,
+    });
+
+    console.log(url);
+    return this.get<APIResponseCollection<UID>>(url);
   }
 
   // Continue this pattern
 
   // SEMANTIC OPERATIONS
-
   private async getWithClient<T extends Common.UID.ContentType>(
     url: string | URL,
     options?: any

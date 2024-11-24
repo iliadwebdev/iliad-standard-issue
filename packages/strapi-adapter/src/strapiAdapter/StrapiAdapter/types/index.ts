@@ -46,6 +46,8 @@ export type GetContentTypeFromEntry<T extends CTUID> = "test" | "test2";
 
 export type CTUID = Common.UID.ContentType; // Content Type UID
 
+export type CrudQuery<T extends CTUID> = CrudQueryBasic<T> | CrudQueryFull<T>;
+
 type QueryStringAll<TContentTypeUID extends CTUID> = Params.Pick<
   TContentTypeUID,
   | "publicationState"
@@ -58,11 +60,21 @@ type QueryStringAll<TContentTypeUID extends CTUID> = Params.Pick<
   | "_q"
 >;
 
-export type CrudQueryFind<TContentTypeUID extends CTUID> = Params.Pick<
-  TContentTypeUID,
-  "publicationState" | "pagination" | "filters" | "plugin" | "sort"
->;
-export type CrudQueryCreate<TContentTypeUID extends CTUID> = Params.Pick<
+export type CrudQueryFull<TContentTypeUID extends CTUID> =
+  | Params.Pick<
+      TContentTypeUID,
+      | "publicationState"
+      | "pagination"
+      | "filters"
+      | "plugin"
+      | "sort"
+      | "populate"
+      | "fields"
+    >
+  | string
+  | "*";
+
+export type CrudQueryBasic<TContentTypeUID extends CTUID> = Params.Pick<
   TContentTypeUID,
   "populate" | "fields"
 >;
