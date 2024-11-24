@@ -7,21 +7,17 @@ import {
   ContextClient,
   ErrorResponse,
 } from "@types";
-import { Hermes, HermesRequestInit } from "@iliad.dev/hermes";
 import { normalizeUrl, apiEndpoint, createUrl } from "./utils";
+import { Hermes } from "@iliad.dev/hermes";
 import { Common } from "@strapi/strapi";
-import qs from "qs";
 
 import {
-  GetContentTypeFromEntry,
   QueryStringCollection,
   CollectionTypeNames,
   UIDFromPluralName,
   QueryStringEntry,
-  SingleTypeNames,
-  CTUID,
   CrudQueryFull,
-  CrudQueryBasic,
+  CTUID,
 } from "./types";
 import { Feature, FeatureParams } from "../Feature";
 import { StrapiUtils } from "@utils";
@@ -79,7 +75,7 @@ class StrapiAdapter extends Feature {
     return this.normalizedFetch<R>("PUT", url, options);
   }
 
-  public async delete<R>(
+  private async deleteREST<R>(
     url: string | URL,
     options?: any
   ): Promise<StandardResponse<R>> {
@@ -87,6 +83,23 @@ class StrapiAdapter extends Feature {
   }
 
   // CRUD OPERATIONS
+  public async findOne<
+    E extends CollectionTypeNames,
+    UID extends CTUID = UIDFromPluralName<E>,
+  >(
+    collection: E & {},
+    id: number | string,
+    params?: CrudQueryFull<UID>
+  ): Promise<StandardResponse<APIResponseData<UID>>> {
+    const endpoint = `${apiEndpoint(collection)}/${id}`;
+    const url = createUrl({
+      endpoint,
+      query: params,
+    });
+
+    return this.get<APIResponseData<UID>>(url);
+  }
+
   public async find<
     E extends CollectionTypeNames,
     UID extends CTUID = UIDFromPluralName<E>,
@@ -94,17 +107,75 @@ class StrapiAdapter extends Feature {
     collection: E & {},
     params: CrudQueryFull<UID>
   ): Promise<StandardResponse<APIResponseCollection<UID>>> {
-    // Combine http://<location>/api/<collection><params>
     const url = createUrl({
       endpoint: apiEndpoint(collection),
       query: params,
     });
 
-    console.log(url);
     return this.get<APIResponseCollection<UID>>(url);
   }
 
-  // Continue this pattern
+  public async create<
+    E extends CollectionTypeNames,
+    UID extends CTUID = UIDFromPluralName<E>,
+  >(
+    collection: E & {},
+    data: Partial<Record<UID, any>>
+  ): Promise<StandardResponse<APIResponseData<UID>>> {
+    const endpoint = apiEndpoint(collection);
+    const url = createUrl({
+      endpoint,
+    });
+
+    const options = {
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data }),
+    };
+
+    return this.post<APIResponseData<UID>>(url, options);
+  }
+
+  public async update<
+    E extends CollectionTypeNames,
+    UID extends CTUID = UIDFromPluralName<E>,
+  >(
+    collection: E & {},
+    id: number | string,
+    data: Partial<Record<UID, any>>
+  ): Promise<StandardResponse<APIResponseData<UID>>> {
+    const endpoint = `${apiEndpoint(collection)}/${id}`;
+    const url = createUrl({
+      endpoint,
+    });
+
+    const options = {
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data }),
+    };
+
+    return this.put<APIResponseData<UID>>(url, options);
+  }
+
+  public async delete<
+    E extends CollectionTypeNames,
+    UID extends CTUID = UIDFromPluralName<E>,
+  >(
+    collection: E & {},
+    id: number | string
+  ): Promise<StandardResponse<APIResponseData<UID>>> {
+    const endpoint = `${apiEndpoint(collection)}/${id}`;
+    const url = createUrl({
+      endpoint,
+    });
+
+    return this.deleteREST<APIResponseData<UID>>(url);
+  }
+
+  // FINISH CRUD OPERATIONS, THEN MAKE RAW REST OPERATIONS.
+  // REST OPERATIONS SHOULD HAVE AUTO-COMPLETED ENDPOINTS, IF POSSIBLE.
+  // I MAY NEED TO GENERATE THESE ON THE SERVER.
+
+  // THEN ALL IS LEFT TO DO IS MAKE THOTH AND INTEGRATE, THEN CORE FOUR + 1 IS DONE.
 
   // SEMANTIC OPERATIONS
   private async getWithClient<T extends Common.UID.ContentType>(
