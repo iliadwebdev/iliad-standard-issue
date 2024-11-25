@@ -36,6 +36,7 @@ function writeContentTypes(
   } catch (error) {
     console.error("Error writing content types", error);
     return {
+      data: undefined,
       error: {
         message: "Error writing content types",
         code: 500,
@@ -47,7 +48,7 @@ function writeContentTypes(
     data.reduce((acc, curr) => acc + Buffer.byteLength(curr, "utf8"), 0)
   );
 
-  return { data: diskSize };
+  return { data: diskSize, error: undefined };
 }
 
 export async function requestNewContentTypes(
@@ -59,11 +60,11 @@ export async function requestNewContentTypes(
   );
   if (error !== undefined) {
     console.error("Error requesting new content types", error);
-    return { error };
+    return { error, data: undefined };
   }
 
   console.log("New content types requested", data);
-  return { data: null };
+  return { data: null, error: undefined };
 }
 
 export async function downloadContentTypes(
@@ -76,7 +77,7 @@ export async function downloadContentTypes(
     await hermes.axios.get<ContentTypesResponse>("/content-types");
   if ($1error !== undefined) {
     console.error("Error downloading content types", $1error);
-    return { error: $1error };
+    return { error: $1error, data: undefined };
   }
 
   const { data: diskSize, error: $2error } = writeContentTypes(
@@ -85,7 +86,7 @@ export async function downloadContentTypes(
   );
   if ($2error !== undefined) {
     console.error("Error writing content types", $2error);
-    return { error: $2error };
+    return { error: $2error, data: undefined };
   }
 
   const ts = (performance.now() - start).toFixed(2);
@@ -93,7 +94,7 @@ export async function downloadContentTypes(
     `Content types downloaded and written to disk (${diskSize}) in ${ts}ms`
   );
 
-  return { data: null };
+  return { data: null, error: undefined };
 }
 
 function shouldBlock(
@@ -135,7 +136,7 @@ export function downloadContentTypesDynamic(
     console.log("Content types downloaded asyncronously"); // This is handled by the downloadContentTypes function
   });
 
-  return { data: null };
+  return { data: null, error: undefined };
 }
 
 export function doContentTypesExist({

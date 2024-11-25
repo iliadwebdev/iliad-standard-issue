@@ -8,6 +8,7 @@ class Authentication extends Feature {
 
   auth(): ErrorResponse {
     return {
+      data: undefined,
       error: { message: "Not implemented", code: 500 },
     };
   }

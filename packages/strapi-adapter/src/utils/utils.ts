@@ -5,11 +5,9 @@ import qs from "qs";
 import type {
   StrapiData,
   StrapiEntry,
-  ErrorResponse,
   ContextClient,
   StrapiMetaData,
   StrapiResponse,
-  SuccessResponse,
   StrapiDataObject,
   StrapiResponseType,
 } from "../@types/adapter";
@@ -63,7 +61,13 @@ namespace StrapiUtils {
     id?: number | string,
     extractSingleCollectionResponse: boolean = false,
     client?: ContextClient
-  ): Promise<SuccessResponse<any> | ErrorResponse> {
+  ): Promise<
+    | {
+        data: any;
+        error?: undefined;
+      }
+    | ErrorResponse
+  > {
     let result: StrapiEntry | Array<StrapiEntry> | StrapiResponse<T>;
     let apiResponse: StrapiResponse<T>;
     let type: StrapiResponseType;
@@ -95,15 +99,20 @@ namespace StrapiUtils {
     }
 
     return { data: result, error: undefined } as
-      | SuccessResponse<any>
+      | {
+          data: StrapiEntry;
+          error?: undefined;
+        }
       | ErrorResponse;
   }
+
   export function indexArrayFromMeta(meta: StrapiMetaData): number[] {
     return Array(meta.pagination.pageCount)
       .fill(0)
       .map((_, i) => i + 2)
       .slice(0, meta.pagination.pageCount - 1);
   }
+
   export function mergeDefaultHermesOptions(
     options: Partial<HermesOptions> = {}
   ): HermesOptions {
@@ -113,6 +122,7 @@ namespace StrapiUtils {
       ...options,
     } as HermesOptions;
   }
+
   export async function extractStrapiData<
     TContentTypeUID extends Common.UID.ContentType,
   >(input: StrapiData<TContentTypeUID> | StrapiDataObject<TContentTypeUID>) {

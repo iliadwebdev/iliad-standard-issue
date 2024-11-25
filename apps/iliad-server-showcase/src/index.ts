@@ -4,7 +4,7 @@ import { mainStrapiAdapterTest, mainThothTest } from './testing';
   // console.log(process.cwd());
   // console.log(process.env);
 
-  console.log('running');
+  // console.log('running');
   // await mainHermesTest();
   // await mainThothTest();
   await mainStrapiAdapterTest();

@@ -26,6 +26,7 @@ class ContentTypeSync extends Feature {
     if (!this.contentTypesSyncOptions) {
       console.error("No content types sync options set.");
       return {
+        data: undefined,
         error: { message: "No content types sync options set.", code: 500 },
       };
     }

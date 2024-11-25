@@ -1,7 +1,6 @@
 // === Utility Types ===
 // Utility types are a way to create new types by transforming or combining other types. 🧠
 // =====================
-
 import { IUtils } from "./internalUtils";
 
 declare global {
@@ -15,37 +14,33 @@ declare global {
 
   // LOGICAL UTILITY TYPES
   // =====================
-  export type Without<T, U> = {
-      [P in Exclude<keyof T, keyof U>]?: never;
-  };
+  export type OR<T, U> = T | U; // This is pretty useless, may remove.
+
 
   export type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
 
-  export type OR<T, U> = T | U;
-
   // DATA PROCESSING UTILITY TYPES
   // =============================
-  type NetworkError = {
-      message: string;
-      code: number;
-  };
-
   // Error response is useful for handling guaranteed error responses.
   export type ErrorResponse<E = {
       message: string;
       code: number;
   }> = {
-      data?: undefined;
+      data: undefined;
       error: E;
   };
 
-  export type StandardResponse<T, E = NetworkError> = XOR<{
-      data: T;
-      error?: undefined;
-  }, ErrorResponse<E>>;
+  export type StandardResponse<T, E = IUtils.NetworkError> = XOR<IUtils.SuccessResponse<T>, ErrorResponse<E>>;
 
   // TYPE DECLARATION UTILITIES
   // ==========================
+  export type LiteralUnion<T extends U, U = string> = T | (U & {}); // Allows for a union of string literals, while also allowing arbitrary strings. Preserves autocomplete.
+
+
+  export type Without<T, U> = {
+      [P in Exclude<keyof T, keyof U>]?: never;
+  };
+
   export type FalsyPart<T> = Extract<T, IUtils.Falsy>; // Returns the falsy part of a type
 
 
@@ -89,12 +84,18 @@ declare global {
 
   // GENERATOR UTILITIES
   // ===================
-  // @ts-ignore
-  export type BinaryPermutations<N extends number> = N extends 0 ? "" : PrependBit<BinaryPermutations<Decrement<N>>>;
-
   export type NumericalRange<F extends number, T extends number> = IntRange<F, T>;
 
   export type IntRange<F extends number, T extends number> = Exclude<IUtils.Enumerate<T>, IUtils.Enumerate<F>>;
+
+  // @ts-ignore
+  export type BinaryPermutations<N extends number> = N extends 0 ? "" : PrependBit<BinaryPermutations<Decrement<N>>>;
+
+  // STRING UTILITIES
+  // ================
+  export type StartsWith<T extends string, C extends string = ""> = T extends `${C}${string}` ? T : never;
+
+  export type EndsWith<T extends string, C extends string = ""> = T extends `${string}${C}` ? T : never;
 
 }
 

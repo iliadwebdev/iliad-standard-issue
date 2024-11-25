@@ -1,7 +1,8 @@
 import type { Attribute, Common, Utils } from "@strapi/strapi";
-import { HttpMethod } from "openapi-typescript-helpers";
 
+// export type SemanticResponse<Expected extends ER, UID extends Common.UID.ContentType> = StandardResponse<APIResponse<UID>> | ErrorResponse;
 type IDProperty = { id: number };
+type ER = "collection" | "entry";
 
 export type StrapiError = {
   data: null;
@@ -154,9 +155,3 @@ export type StrapiResponse<T extends Common.UID.ContentType> =
   | APIResponse<T>;
 
 export type { Common, Attribute, Utils };
-
-// declare module "@strapi/strapi" {
-//   export module Shared {
-//     export interface Paths {}
-//   }
-// }

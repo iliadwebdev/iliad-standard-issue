@@ -18,8 +18,8 @@
     },
     "./@types": {
       "types": "./@types/index.d.ts",
-      "import": "./@types/index.js",
-      "require": "./@types/index.cjs"
+      "import": "./lib/@types/index.js",
+      "require": "./lib/@types/index.cjs"
     }
   },
   "files": [

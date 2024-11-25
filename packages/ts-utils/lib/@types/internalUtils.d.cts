@@ -1,4 +1,12 @@
 declare namespace IUtils {
+    type NetworkError = {
+        message: string;
+        code: number;
+    };
+    type SuccessResponse<T> = {
+        data: T;
+        error: undefined;
+    };
     type BuildArray<Length extends number, Accumulator extends unknown[] = []> = Accumulator["length"] extends Length ? Accumulator : BuildArray<Length, [...Accumulator, unknown]>;
     type Decrement<N extends number> = BuildArray<N> extends [
         infer _,

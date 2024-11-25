@@ -1,33 +1,17 @@
-import {
-  StrapiInstance,
-  LegacyStrapiInstance,
-} from '@iliad.dev/strapi-adapter';
-
+import { StrapiInstance } from '@iliad.dev/strapi-adapter';
+// import { APIResponseData } from '@iliad.dev/strapi-adapter';
 import { config } from 'dotenv';
 import path from 'path';
 config();
 
-const strapiApiLocation = process.env.STRAPI_API_URL || '';
-const strapiBearerToken = process.env.STRAPI_API_KEY || '';
+// This is where types will be stored. Is there a way I can move this cache
+// to the node_module itself? Is that even desirable?
 const typesDir = path.resolve(process.cwd(), './src/@types');
 
-console.log('Beginning');
-const legacyStrapi = new LegacyStrapiInstance({
-  strapiApiLocation: `${strapiApiLocation}/api`,
-  strapiBearerToken: strapiBearerToken,
-  client: 'fetch',
-  hermesOptions: {
-    verboseLogging: false,
-  },
-})
-  .label('Server Test (Legacy)')
-  .withContentTypes({
-    outDir: typesDir,
-  });
-
+// Instantiate a new StrapiInstance
 const strapi = new StrapiInstance({
-  strapiApiLocation: `${strapiApiLocation}`,
-  strapiBearerToken: strapiBearerToken,
+  strapiApiLocation: process.env.STRAPI_API_URL,
+  strapiBearerToken: process.env.STRAPI_API_KEY,
   client: 'fetch',
   hermesOptions: {
     verboseLogging: false,
@@ -39,28 +23,52 @@ const strapi = new StrapiInstance({
   });
 
 export const mainStrapiAdapterTest = async () => {
-  // console.log('Strapi instantiated, running Strapi Adapter Test');
-  const { data, error } = await strapi.find('events', {
-    populate: ['venues', 'coverImage'],
+  // await strapi.findOne('events', 1, {
+  //   filters: {
+  //     earliestVenueStart: {
+  //       $gte: new Date().toISOString(),
+  //     },
+  //   },
+  // });
+
+  // type A = APIResponseData<'api::event.event'>;
+
+  // const a: A = {} as any;
+
+  // @ts-ignore
+  const result = await strapi.findOne('events', 1, {
     filters: {
       earliestVenueStart: {
-        $gte: new Date().toISOString(),
+        $gte: '2021-09-01T00:00:00.000Z',
       },
     },
   });
 
-  type A = IliadStrapiAdapter.paths;
+  strapi.findOne('articles-page', 1, {
+    filters: {
+      featuredArticle: {
+        $not: null,
+      },
+    },
+  });
 
-  const { data: data2, error: error2 } = await strapi.GET('');
+  const { data, error } = await strapi.GET('/events/{id}', {
+    params: {
+      path: {
+        id: 1,
+      },
+    },
+  });
 
   console.log({ data, error });
-  console.log({ data2, error });
+
+  // const { data, error } = await strapi.find('events', {
+  //   populate: ['venues', 'coverImage'],
+  //   filters: {
+  //     earliestVenueStart: {
+  //       $gte: new Date().toISOString(),
+  //     },
+  //   },
+  // });
+  // console.log({ data, error });
 };
-
-type A = Testing;
-type B = IliadStrapiAdapter.components;
-
-// await strapi.syncContentTypes();
-// strapi.syncContentTypes({
-//   outDir: typesDir,
-// });

@@ -1,4 +1,4 @@
-import { HermesMethod, HermesOptions, StandardResponse, HermesAxiosInstance } from '../@types/hermes.cjs';
+import { HermesMethod, HermesOptions, HermesAxiosInstance } from '../@types/hermes.cjs';
 import { AxiosInstance } from 'axios';
 import { parse, stringify } from 'qs';
 

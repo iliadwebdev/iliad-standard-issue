@@ -1,6 +1,8 @@
 import { deepmerge } from "deepmerge-ts";
 import deasync from "deasync";
 
+export * from "./typeguards"; // Type guard functions
+
 /**
  * Merges the provided object with the default values, ensuring that all fields
  * from the defaults are present in the resulting object.

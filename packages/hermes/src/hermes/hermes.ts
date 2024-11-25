@@ -1,3 +1,5 @@
+// import "@iliad.dev/ts-utils/@types";
+
 // Dependencies
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 import { parse, stringify } from "qs";
@@ -11,9 +13,7 @@ import { getFormattedName, getTimestamp } from "../utils/helpers";
 // Types
 import {
   HermesAxiosInstance,
-  StandardResponse,
   HermesOptions,
-  ErrorMessage,
   HermesMethod,
 } from "../@types/hermes";
 
@@ -69,7 +69,7 @@ class Hermes {
             data: undefined,
             error:
               (error?.response?.data as any)?.error ||
-              (error.response.data as ErrorMessage),
+              (error.response.data as ErrorResponse),
           };
         } else {
           return {

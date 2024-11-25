@@ -1,19 +1,17 @@
+import { Hermes } from "@iliad.dev/hermes";
+import { Common } from "@strapi/strapi";
+import {
+  QueryStringCollection,
+  QueryStringEntry,
+} from "../StrapiAdapter/types";
 import {
   APIResponseCollection,
   APIResponseData,
   StrapiResponse,
   // INTERNAL TYPINGS
-  StandardResponse,
   ContextClient,
-  ErrorResponse,
 } from "@types";
-import { Hermes } from "@iliad.dev/hermes";
-import { Common } from "@strapi/strapi";
 
-import {
-  QueryStringCollection,
-  QueryStringEntry,
-} from "../StrapiAdapter/types";
 import { Feature, FeatureParams } from "../Feature";
 import { StrapiUtils } from "@utils";
 

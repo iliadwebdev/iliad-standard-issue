@@ -7,29 +7,21 @@ import type {
   Common,
 } from "./strapi";
 
+export type Flavor = "crud" | "rest" | "semantic";
+
 type ErrorMessage = {
   message: string;
   code: number;
 };
 
-type SuccessResponse<T> = {
-  data: T;
-  error: undefined;
-};
-
-type ErrorResponse = {
-  data: undefined;
-  error: ErrorMessage;
-};
-
 type StrapiEntry = {
-  id: number;
   attributes: any;
+  id: number;
 };
 
 type TransformedStrapiEntry = {
-  id: number;
   [key: string]: any;
+  id: number;
 };
 
 type StrapiMetaData = {
@@ -45,15 +37,14 @@ type StrapiMetaData = {
 export type StringLike = string | EnvVariable | URL;
 type EnvVariable = string | undefined;
 
-type StandardResponse<T> = SuccessResponse<T> | ErrorResponse;
 type StrapiResponseType = "entry" | "collection";
 
 export type ContextClient = "axios" | "fetch";
 
 export type StrapiData<T extends Common.UID.ContentType> =
   | APIResponseCollection<T>
-  | APIResponse<T>
-  | APIResponseData<T>;
+  | APIResponseData<T>
+  | APIResponse<T>;
 
 export type StrapiDataObject<T extends Common.UID.ContentType> = {
   [key: string]: StrapiData<T>;
@@ -62,11 +53,8 @@ export type StrapiDataObject<T extends Common.UID.ContentType> = {
 export {
   TransformedStrapiEntry,
   StrapiResponseType,
-  StandardResponse,
-  SuccessResponse,
   StrapiResponse,
   StrapiMetaData,
-  ErrorResponse,
   ErrorMessage,
   EnvVariable,
   StrapiEntry,

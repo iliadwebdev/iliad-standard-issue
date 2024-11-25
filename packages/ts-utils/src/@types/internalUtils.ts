@@ -1,4 +1,7 @@
 export namespace IUtils {
+  export type NetworkError = { message: string; code: number };
+  export type SuccessResponse<T> = { data: T; error: undefined };
+
   // Helper type to build an array of a given length
   export type BuildArray<
     Length extends number,

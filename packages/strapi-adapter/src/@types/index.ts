@@ -1,3 +1,5 @@
+import "@iliad.dev/ts-utils/@types";
+
 export * from "./adapter";
 export * from "./strapi";
 

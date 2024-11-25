@@ -1,3 +1,6 @@
+export { extendsType } from './typeguards/index.js';
+export { extendsString, isString } from './typeguards/isString.js';
+
 /**
  * Merges the provided object with the default values, ensuring that all fields
  * from the defaults are present in the resulting object.

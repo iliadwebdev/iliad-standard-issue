@@ -1,5 +1,5 @@
 import { Hermes } from '@iliad.dev/hermes';
-const hermes = new Hermes('iliad-server-showcase', {});
+const hermes = new Hermes({});
 export const mainHermesTest = async () => {
   console.log('running Hermes Test');
 

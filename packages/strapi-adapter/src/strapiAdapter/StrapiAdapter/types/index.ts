@@ -1,4 +1,10 @@
-import { Common, ContextClient } from "../../../@types";
+import {
+  APIResponse,
+  APIResponseCollection,
+  APIResponseData,
+  Common,
+  ContextClient,
+} from "../../../@types";
 import { Utils, Schema } from "@strapi/strapi";
 import { ContentTypeInfo } from "@strapi/types/dist/types/core/schemas";
 import { Hermes } from "@iliad.dev/hermes";
@@ -24,12 +30,19 @@ export type ContentTypeUIDs = {
 }[keyof Common.Schemas];
 
 export type CollectionTypeNames = keyof PluralNameToUID;
+export type ContentTypeNames = CollectionTypeNames | SingleTypeNames;
 
 export type SingleTypeNames = {
   [K in keyof Common.Schemas]: Common.Schemas[K] extends Schema.SingleType
     ? Common.Schemas[K]["info"]["singularName"]
     : never;
 }[keyof Common.Schemas];
+
+export type SingleNameToUID = {
+  [K in keyof Common.Schemas as Common.Schemas[K] extends Schema.SingleType
+    ? Common.Schemas[K]["info"]["singularName"]
+    : never]: K;
+};
 
 // Extract UID from plural name
 export type PluralNameToUID = {
@@ -41,6 +54,29 @@ export type PluralNameToUID = {
 // Extract UID from plural name
 export type UIDFromPluralName<PN extends keyof PluralNameToUID> =
   PluralNameToUID[PN];
+
+export type UIDFromSingleName<SN extends keyof SingleNameToUID> =
+  SingleNameToUID[SN];
+
+export type UIDFromContentTypeName<E extends ContentTypeNames> =
+  E extends CollectionTypeNames ? UIDFromPluralName<E> : UIDFromSingleName<E>;
+
+// export type DefaultUIDFronContentTypeName<E extends Common.UID.ContentType> =
+//   E extends CollectionTypeNames ? UIDFromPluralName<E> : UIDFromSingleName<E>;
+
+export type CrudCollectionResponse<T extends CTUID> = StandardResponse<
+  APIResponseCollection<T>
+>;
+export type CrudSingleResponse<T extends CTUID> = StandardResponse<
+  APIResponse<T>
+>;
+
+export type CrudResponse<
+  T extends CTUID,
+  E extends ContentTypeNames,
+> = StandardResponse<
+  E extends CollectionTypeNames ? APIResponseCollection<T> : APIResponse<T>
+>;
 
 export type GetContentTypeFromEntry<T extends CTUID> = "test" | "test2";
 
@@ -84,7 +120,15 @@ export type QueryStringCollection<TContentTypeUID extends CTUID> =
       TContentTypeUID,
       "populate" | "pagination" | "sort" | "filters" | "publicationState"
     >
-  | string
+  | LiteralUnion<
+      Extract<
+        Params.Pick<
+          TContentTypeUID,
+          "populate" | "pagination" | "sort" | "filters" | "publicationState"
+        >,
+        StartsWith<string, "?">
+      >
+    >
   | "*";
 
 export type QueryStringEntry<TContentTypeUID extends CTUID> =

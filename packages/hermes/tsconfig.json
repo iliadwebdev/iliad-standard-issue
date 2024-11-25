@@ -13,6 +13,6 @@
     "noUncheckedIndexedAccess": true /* Add 'undefined' to a type when accessed using an index. */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
-  "include": ["src", "src/@types"],
+  "include": ["src", "src/@types", "node_modules/@iliad.dev/ts-utils/@types"],
   "exclude": ["node_modules", "dist", "lib"]
 }
