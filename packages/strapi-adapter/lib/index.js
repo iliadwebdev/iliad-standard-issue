@@ -1,6 +1,6 @@
 import {
   StrapiInstance_default
-} from "./chunk-4YO6CUNB.js";
+} from "./chunk-3UIX24VL.js";
 import {
   legacy_default
 } from "./chunk-QT2LFROR.js";
@@ -12,8 +12,8 @@ import "./chunk-ID6QRM43.js";
 import "./chunk-6TCAKOC4.js";
 import "./chunk-COXFRSCN.js";
 import "./chunk-PPCCCJ27.js";
-import "./chunk-U2ZIU4VP.js";
-import "./chunk-NE5WG4KL.js";
+import "./chunk-3MFXXWIR.js";
+import "./chunk-6GTT2U24.js";
 import "./chunk-VP54ABXQ.js";
 import "./chunk-ESWMQ2BU.js";
 import "./chunk-4AHPJ27J.js";

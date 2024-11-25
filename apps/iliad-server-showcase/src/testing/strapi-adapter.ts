@@ -44,23 +44,34 @@ export const mainStrapiAdapterTest = async () => {
     },
   });
 
-  strapi.findOne('articles-page', 1, {
-    filters: {
-      featuredArticle: {
-        $not: null,
-      },
-    },
-  });
+  // const { data: test, error: e2 } = await strapi.findOne('articles-page', 1, {
+  //   filters: {
+  //     featuredArticle: {
+  //       $not: null,
+  //     },
+  //   },
+  // });
 
-  const { data, error } = await strapi.GET('/events/{id}', {
-    params: {
-      path: {
-        id: 1,
-      },
-    },
-  });
+  const { data: data3, error: error3 } = await strapi.update(
+    'galleries',
+    1,
+    {},
+  );
 
-  console.log({ data, error });
+  console.log({ data3, error3 });
+
+  // const { data, error } = await strapi.GET('/events/{id}', {
+  //   params: {
+  //     path: {
+  //       id: 1,
+  //     },
+  //   },
+  // });
+
+  // test;
+
+  // console.log({ data, error });
+  // data;
 
   // const { data, error } = await strapi.find('events', {
   //   populate: ['venues', 'coverImage'],

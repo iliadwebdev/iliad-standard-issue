@@ -1,9 +1,13 @@
-import { StandardResponse, ErrorResponse } from "@iliad.dev/ts-utils/@types";
+import {
+  StandardResponse,
+  ErrorResponse,
+  NamedTuple,
+  XOR,
+} from "@iliad.dev/ts-utils/@types";
 
 // Types
 import { Common } from "@strapi/strapi";
 import {
-  APIResponseCollectionMetadata,
   APIResponseCollection,
   APIResponseData,
   StrapiResponse,
@@ -12,21 +16,18 @@ import {
   Flavor,
 } from "@types";
 import {
-  CrudCollectionResponse,
-  CrudSingleResponse,
-  CrudResponse,
-  UIDFromContentTypeName,
   QueryStringCollection,
   CollectionTypeNames,
-  ContentTypeNames,
-  UIDFromSingleName,
   UIDFromPluralName,
   QueryStringEntry,
   CrudQueryFull,
+  CreateData,
   CTUID,
   // OPENAPI TYPINGS
   FetchResponse,
-  SingleTypeNames,
+  UIDFromName,
+  UpdateData,
+  Names,
 } from "./types";
 
 // Utilities
@@ -46,10 +47,33 @@ import {
 // Classes
 import { Feature, FeatureParams } from "../Feature";
 
-// type RestResponse<
-// Path extends PathsWithMethod<IliadStrapiAdapter.paths, "get">,
-// Init extends MaybeOptionalInit<IliadStrapiAdapter.paths[Path]
-// > = Promise<>>
+declare namespace CRUD {
+  type FN<T> = Promise<StandardResponse<T>>;
+  type SingleUpdateParams<
+    API extends Names<"singular", "single">,
+    UID extends CTUID = UIDFromName<API>,
+  > = NamedTuple<
+    [
+      collection: API,
+      data: UpdateData<UID>["data"],
+      query?: Omit<UpdateData<UID>, "data">,
+      options?: RequestInit,
+    ]
+  >;
+
+  type CollectionUpdateParams<
+    API extends Names<"plural", "collection">,
+    UID extends CTUID = UIDFromName<API>,
+  > = NamedTuple<
+    [
+      collection: API,
+      id: string | number,
+      data: UpdateData<UID>["data"],
+      query?: Omit<UpdateData<UID>, "data">,
+      options?: RequestInit,
+    ]
+  >;
+}
 
 class StrapiAdapter extends Feature {
   client: ContextClient = "fetch"; // I should probably change this to fetch, given that most of the time this is being use in Next.js.
@@ -76,12 +100,20 @@ class StrapiAdapter extends Feature {
     flavor: Flavor = "crud"
   ): Promise<StandardResponse<R>> {
     if (flavor !== "rest") {
+      console.log({
+        url,
+        options,
+      });
       return this.hermes.fetch<R>(url, options as RequestInit);
     }
 
     const _options = options as FetchOptions<URI>;
     const [finalUrl, requestInit] = parseFetchOptions(url, _options);
 
+    console.log({
+      requestInit,
+      finalUrl,
+    });
     const { data, error } = await this.hermes.fetch<R>(finalUrl, requestInit);
     if (error !== undefined) {
       return { error, data: undefined };
@@ -268,15 +300,38 @@ class StrapiAdapter extends Feature {
   }
 
   // CRUD OPERATIONS
-  public async findOne<
-    E extends ContentTypeNames,
-    UID extends CTUID = UIDFromContentTypeName<E>,
+  // https://docs-v4.strapi.io/dev-docs/api/rest
+  // ILIAD: NOTE: This find needs to be split into findSingle and findCollection
+  public async find<
+    API extends Names<"plural", "all">,
+    UID extends CTUID = UIDFromName<API>,
   >(
-    collection: E & {},
+    collection: API,
+    query?: CrudQueryFull<UID>,
+    options?: RequestInit
+  ): CRUD.FN<APIResponseCollection<UID>> {
+    const url = createUrl({
+      endpoint: apiEndpoint(collection),
+      query,
+    });
+
+    return this.normalizedFetch<APIResponseCollection<UID>>(
+      normalizeUrl(url),
+      wm("get", options)
+    );
+  }
+
+  // https://docs-v4.strapi.io/dev-docs/api/rest
+  // ILIAD: NOTE: This find needs to be split into findSingle and findCollection
+  public async findOne<
+    API extends Names<"singular", "all">,
+    UID extends CTUID = UIDFromName<API>,
+  >(
+    collection: API,
     id: number | string,
     query?: CrudQueryFull<UID>,
     options?: RequestInit
-  ): Promise<StandardResponse<APIResponse<UID>>> {
+  ): CRUD.FN<APIResponse<UID>> {
     const url = createUrl({
       endpoint: `${apiEndpoint(collection)}/${id}`,
       query,
@@ -288,75 +343,111 @@ class StrapiAdapter extends Feature {
     );
   }
 
-  public async find<
-    E extends ContentTypeNames,
-    UID extends CTUID = UIDFromContentTypeName<E>,
+  public async create<
+    API extends Names<"plural", "all">,
+    UID extends CTUID = UIDFromName<API>,
   >(
-    collection: E & {},
-    query?: CrudQueryFull<UID>,
+    collection: API,
+    data: CreateData<UID>["data"],
+    query?: Omit<CreateData<UID>, "data">,
     options?: RequestInit
-  ): Promise<StandardResponse<APIResponseCollection<UID>>> {
+  ): Promise<StandardResponse<APIResponseData<UID>>> {
     const url = createUrl({
       endpoint: apiEndpoint(collection),
       query,
     });
 
-    return this.normalizedFetch<APIResponseCollection<UID>>(
+    console.log({ data });
+
+    return this.normalizedFetch<APIResponseData<UID>>(
       normalizeUrl(url),
-      wm("get")
+      wm("post", {
+        ...options,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data }),
+      })
     );
   }
 
-  public async create<
-    E extends CollectionTypeNames,
-    UID extends CTUID = UIDFromPluralName<E>,
+  private async updateSingle<
+    API extends Names<"singular", "single">,
+    UID extends CTUID = UIDFromName<API>,
   >(
-    collection: E & {},
-    data: Partial<Record<UID, any>>
+    collection: API,
+    data: UpdateData<UID>["data"],
+    query?: Omit<UpdateData<UID>, "data">,
+    options?: RequestInit
   ): Promise<StandardResponse<APIResponseData<UID>>> {
     const url = createUrl({
-      endpoint: apiEndpoint(collection),
-    });
-
-    const options = wm("post", {
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ data }),
+      endpoint: `${apiEndpoint(collection)}`,
+      query,
     });
 
     return this.normalizedFetch<APIResponseData<UID>>(
       normalizeUrl(url),
-      options
+      wm("put", {
+        // Single types are updated with PUT requests.
+        ...options,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data }),
+      })
+    );
+  }
+
+  // https://docs-v4.strapi.io/dev-docs/api/rest
+  private async updateCollection<
+    API extends Names<"plural", "collection">,
+    UID extends CTUID = UIDFromName<API>,
+  >(
+    collection: API,
+    id: number | string,
+    data: UpdateData<UID>["data"],
+    query?: Omit<UpdateData<UID>, "data">,
+    options?: RequestInit
+  ): Promise<StandardResponse<APIResponseData<UID>>> {
+    const url = createUrl({
+      endpoint: `${apiEndpoint(collection)}/${id}`,
+      query,
+    });
+
+    return this.normalizedFetch<APIResponseData<UID>>(
+      normalizeUrl(url),
+      wm("post", {
+        // Collection types are updated with POST requests.
+        ...options,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data }),
+      })
     );
   }
 
   public async update<
-    E extends CollectionTypeNames,
-    UID extends CTUID = UIDFromPluralName<E>,
+    API extends Names<"singular", "single"> | Names<"plural", "collection">,
+    UID extends CTUID = UIDFromName<API>,
   >(
-    collection: E & {},
-    id: number | string,
-    data: Partial<Record<UID, any>>
+    ...args: XOR<
+      CRUD.CollectionUpdateParams<API, UID>,
+      CRUD.SingleUpdateParams<API, UID>
+    >
   ): Promise<StandardResponse<APIResponseData<UID>>> {
-    const url = createUrl({
-      endpoint: `${apiEndpoint(collection)}/${id}`,
-    });
-
-    const options = wm("post", {
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ data }),
-    });
-
-    return this.normalizedFetch<APIResponseData<UID>>(
-      normalizeUrl(url),
-      options
-    );
+    if (typeof args[1] === "object") {
+      // Single-type update
+      const [collection, data, query, options] =
+        args as CRUD.SingleUpdateParams<API, UID>;
+      return this.updateSingle(collection, data, query, options);
+    } else {
+      // Collection-based update
+      const [collection, id, data, query, options] =
+        args as CRUD.CollectionUpdateParams<API, UID>;
+      return this.updateCollection(collection, id, data, query, options);
+    }
   }
 
   public async delete<
-    E extends CollectionTypeNames,
-    UID extends CTUID = UIDFromPluralName<E>,
+    API extends CollectionTypeNames,
+    UID extends CTUID = UIDFromPluralName<API>,
   >(
-    collection: E & {},
+    collection: API,
     id: number | string
   ): Promise<StandardResponse<APIResponseData<UID>>> {
     const url = createUrl({

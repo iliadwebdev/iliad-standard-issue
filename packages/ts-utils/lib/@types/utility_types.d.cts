@@ -1,7 +1,9 @@
 import { IUtils } from './internalUtils.cjs';
+import { XOR } from 'ts-xor';
+export { XOR } from 'ts-xor';
 
 type OR<T, U> = T | U;
-type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
+
 type ErrorResponse<E = {
     message: string;
     code: number;
@@ -20,6 +22,9 @@ type Falsable<T> = T | false;
 type Nullable<T> = T | null;
 type PickOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 type Optional<T> = undefined | T;
+type NamedTuple<T extends readonly unknown[]> = {
+    [K in keyof T]: T[K];
+};
 type Recursive_Required<T> = {
     [K in keyof T]-?: IUtils.RecursiveRequiredHelper<T[K]>;
 };
@@ -39,4 +44,4 @@ type BinaryPermutations<N extends number> = N extends 0 ? "" : PrependBit<Binary
 type StartsWith<T extends string, C extends string = ""> = T extends `${C}${string}` ? T : never;
 type EndsWith<T extends string, C extends string = ""> = T extends `${string}${C}` ? T : never;
 
-export type { BinaryPermutations, DefaultParams, EndsWith, ErrorResponse, Falsable, FalsyPart, IntRange, Legacy_Recursive_Required, LiteralUnion, NotFalsy, Nullable, NumericalRange, OR, Optional, OptionalFieldsOf, PickOptional, Recursive_OptionalFieldsOf, Recursive_Required, StandardResponse, StartsWith, Without, XOR };
+export type { BinaryPermutations, DefaultParams, EndsWith, ErrorResponse, Falsable, FalsyPart, IntRange, Legacy_Recursive_Required, LiteralUnion, NamedTuple, NotFalsy, Nullable, NumericalRange, OR, Optional, OptionalFieldsOf, PickOptional, Recursive_OptionalFieldsOf, Recursive_Required, StandardResponse, StartsWith, Without };

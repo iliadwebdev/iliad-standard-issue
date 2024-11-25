@@ -7,6 +7,12 @@ import {
 } from "../../../@types";
 import { Utils, Schema } from "@strapi/strapi";
 import { ContentTypeInfo } from "@strapi/types/dist/types/core/schemas";
+import {
+  PaginatedResult,
+  PartialEntity,
+  Result,
+  Entity,
+} from "@strapi/types/dist/modules/entity-service";
 import { Hermes } from "@iliad.dev/hermes";
 import { Params } from "./params";
 
@@ -31,12 +37,7 @@ export type ContentTypeUIDs = {
 
 export type CollectionTypeNames = keyof PluralNameToUID;
 export type ContentTypeNames = CollectionTypeNames | SingleTypeNames;
-
-export type SingleTypeNames = {
-  [K in keyof Common.Schemas]: Common.Schemas[K] extends Schema.SingleType
-    ? Common.Schemas[K]["info"]["singularName"]
-    : never;
-}[keyof Common.Schemas];
+export type SingleTypeNames = keyof SingleNameToUID;
 
 export type SingleNameToUID = {
   [K in keyof Common.Schemas as Common.Schemas[K] extends Schema.SingleType
@@ -50,6 +51,35 @@ export type PluralNameToUID = {
     ? Common.Schemas[K]["info"]["pluralName"]
     : never]: K;
 };
+
+export type Names<
+  Txt extends "singular" | "plural" | "both",
+  Type extends "collection" | "single" | "all",
+> = {
+  [K in keyof Common.Schemas]: Common.Schemas[K] extends (
+    Type extends "all"
+      ? Schema.CollectionType | Schema.SingleType
+      : Type extends "collection"
+        ? Schema.CollectionType
+        : Schema.SingleType
+  )
+    ? Common.Schemas[K]["info"][Txt extends "singular"
+        ? "singularName"
+        : Txt extends "plural"
+          ? "pluralName"
+          : "singularName" | "pluralName"]
+    : never;
+}[keyof Common.Schemas] & {};
+
+export type UIDFromName<N extends string> = {
+  [K in keyof Common.Schemas]: Common.Schemas[K] extends Schema.ContentType
+    ? Common.Schemas[K]["info"]["singularName"] extends N
+      ? K
+      : Common.Schemas[K]["info"]["pluralName"] extends N
+        ? K
+        : never
+    : never;
+}[keyof Common.Schemas];
 
 // Extract UID from plural name
 export type UIDFromPluralName<PN extends keyof PluralNameToUID> =
@@ -82,7 +112,23 @@ export type GetContentTypeFromEntry<T extends CTUID> = "test" | "test2";
 
 export type CTUID = Common.UID.ContentType; // Content Type UID
 
-export type CrudQuery<T extends CTUID> = CrudQueryBasic<T> | CrudQueryFull<T>;
+export type CrudQuery<T extends CTUID> =
+  | Partial<
+      Params.Pick<
+        T,
+        | "publicationState"
+        | "data:partial"
+        | "pagination"
+        | "populate"
+        | "filters"
+        | "plugin"
+        | "fields"
+        | "data"
+        | "sort"
+        | "_q"
+      >
+    >
+  | "*";
 
 type QueryStringAll<TContentTypeUID extends CTUID> = Params.Pick<
   TContentTypeUID,
@@ -96,6 +142,19 @@ type QueryStringAll<TContentTypeUID extends CTUID> = Params.Pick<
   | "_q"
 >;
 
+export type CreateData<UID extends CTUID> = Params.Pick<
+  UID,
+  "data" | "fields" | "populate"
+>;
+
+export type UpdateData<UID extends CTUID> = Params.Pick<
+  UID,
+  "data:partial" | "fields" | "populate"
+>;
+export type DeleteData<UID extends CTUID> = Params.Pick<
+  UID,
+  "fields" | "populate"
+>;
 export type CrudQueryFull<TContentTypeUID extends CTUID> =
   | Params.Pick<
       TContentTypeUID,

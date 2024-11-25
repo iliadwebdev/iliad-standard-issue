@@ -1,4 +1,12 @@
-import { QueryStringCollection, CrudQuery, HttpMethod } from "./types";
+import {
+  QueryStringCollection,
+  CrudQuery,
+  HttpMethod,
+  CTUID,
+  UpdateData,
+  CreateData,
+  DeleteData,
+} from "./types";
 
 import { createFinalURL, FetchOptions } from "openapi-fetch";
 import { extendsType } from "@iliad.dev/ts-utils";
@@ -30,7 +38,7 @@ function removeTrailingSlash(url: string): string {
 type CreateUrlParams = {
   baseLocation?: string | URL;
   endpoint?: string | URL;
-  query?: CrudQuery<any>;
+  query?: object | string; // This may need to be strongly typed.
 };
 
 export function createUrl(
@@ -59,6 +67,7 @@ export function createUrl(
   }
 }
 
+// ILIAD: NOTE: This needs to be configurable.
 export function apiEndpoint(collection: string) {
   return `/api/${collection}`;
 }
@@ -193,4 +202,11 @@ export function parseSemanticQuery(query: QueryStringCollection<any>): object {
   }
 
   return parsedQuery;
+}
+
+// Used to disambiguate Collection and Single Type operations
+export function isSingleOverload(
+  idOrData: number | string | UpdateData<CTUID>["data"]
+): idOrData is object {
+  return !(typeof idOrData === "number" || typeof idOrData === "string");
 }

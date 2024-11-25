@@ -2,13 +2,15 @@
 // Utility types are a way to create new types by transforming or combining other types. 🧠
 // =====================
 import { IUtils } from "./internalUtils"; // Ugly code goes in the poop box
+import type { XOR } from "ts-xor";
 
 // LOGICAL UTILITY TYPES
 // =====================
 export type OR<T, U> = T | U; // This is pretty useless, may remove.
-export type XOR<T, U> = T | U extends object
-  ? (Without<T, U> & U) | (Without<U, T> & T)
-  : T | U;
+export type { XOR };
+// export type XOR<T, U> = T | U extends object
+//   ? (Without<T, U> & U) | (Without<U, T> & T)
+//   : T | U;
 
 // DATA PROCESSING UTILITY TYPES
 // =============================
@@ -37,6 +39,10 @@ export type Nullable<T> = T | null; // Makes a type nullable
 export type PickOptional<T, K extends keyof T> = Omit<T, K> &
   Partial<Pick<T, K>>; // Copy a type and make some fields optional
 export type Optional<T> = undefined | T; // Makes a type explicitely optional
+
+export type NamedTuple<T extends readonly unknown[]> = {
+  [K in keyof T]: T[K];
+};
 
 // Recursive_Required<T> recursively makes all fields of T required. Useful for taking params that were optional and making a type that has been populated with default values.
 export type Recursive_Required<T> = {
