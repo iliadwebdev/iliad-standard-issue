@@ -1,8 +1,12 @@
 {
   "extends": "@iliad.dev/typescript-config/node-server.json",
   "compilerOptions": {
-    "rootDir": "./src",
+    // "rootDir": "src",
     "outDir": "dist",
+    "declaration": true,
+    "isolatedModules": false,
+    "typeRoots": ["./src/@types", "./node_modules/@types"],
   },
-  "include": ["src"]
+  "include": ["src", "src/@types"],
+  "exclude": ["node_modules"]
 }

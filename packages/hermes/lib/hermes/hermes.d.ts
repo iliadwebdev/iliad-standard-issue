@@ -17,7 +17,7 @@ declare class Hermes {
     axiosInstance: AxiosInstance;
     constructor(options?: HermesOptions);
     private mergeHermesOptions;
-    private normalizeResponse;
+    normalizeResponse<T>(promise: Promise<T>, extractData?: boolean): Promise<StandardResponse<T>>;
     private transformVerboseLog;
     private log;
     private error;

@@ -1,4 +1,5 @@
 import type { Attribute, Common, Utils } from "@strapi/strapi";
+import { HttpMethod } from "openapi-typescript-helpers";
 
 type IDProperty = { id: number };
 

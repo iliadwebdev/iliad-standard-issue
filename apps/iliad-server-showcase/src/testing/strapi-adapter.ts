@@ -2,6 +2,7 @@ import {
   StrapiInstance,
   LegacyStrapiInstance,
 } from '@iliad.dev/strapi-adapter';
+
 import { config } from 'dotenv';
 import path from 'path';
 config();
@@ -48,8 +49,17 @@ export const mainStrapiAdapterTest = async () => {
     },
   });
 
+  type A = IliadStrapiAdapter.paths;
+
+  const { data: data2, error: error2 } = await strapi.GET('');
+
   console.log({ data, error });
+  console.log({ data2, error });
 };
+
+type A = Testing;
+type B = IliadStrapiAdapter.components;
+
 // await strapi.syncContentTypes();
 // strapi.syncContentTypes({
 //   outDir: typesDir,

@@ -1,11 +1,12 @@
-import { CTUID, CrudQuery } from "./types";
+import { CTUID, CrudQuery, HttpMethod } from "./types";
+
 import qs from "qs";
 
 export async function restOperation() {}
 
 export async function crudOperation() {}
 
-export function normalizeUrl(url: string | URL, api: boolean = true) {
+export function normalizeUrl(url: string | number, api: boolean = true) {
   let str = url.toString();
 
   if (!api) return str;
@@ -34,6 +35,15 @@ export function createUrl({ endpoint, query }: CreateUrlParams) {
 
 export function apiEndpoint(collection: string) {
   return `/api/${collection}`;
+}
+
+export function wm(
+  method: HttpMethod,
+  option: RequestInit = {}
+): RequestInit & {
+  method: HttpMethod;
+} {
+  return { ...option, method: method || "get" };
 }
 
 // async getCollectionTest<

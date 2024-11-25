@@ -7,7 +7,7 @@ import {
   ContextClient,
   ErrorResponse,
 } from "@types";
-import { normalizeUrl, apiEndpoint, createUrl } from "./utils";
+import { normalizeUrl, apiEndpoint, createUrl, wm } from "./utils";
 import { Hermes } from "@iliad.dev/hermes";
 import { Common } from "@strapi/strapi";
 
@@ -24,9 +24,17 @@ import {
 } from "./types";
 import { Feature, FeatureParams } from "../Feature";
 import { StrapiUtils } from "@utils";
+import { MediaType } from "./types";
+import { PathsWithMethod } from "openapi-typescript-helpers";
+import { MaybeOptionalInit } from "openapi-fetch";
+import createClient from "openapi-fetch";
+
+type MethodRequiredRequestInit = RequestInit & { method: HttpMethod };
+type ISAKeys = Extract<keyof IliadStrapiAdapter.paths, string>;
 
 class StrapiAdapter extends Feature {
   client: ContextClient = "fetch"; // I should probably change this to fetch, given that most of the time this is being use in Next.js.
+  private openApiClient: ReturnType<typeof createClient>;
   hermes: Hermes;
 
   constructor(props: FeatureParams) {
@@ -37,54 +45,76 @@ class StrapiAdapter extends Feature {
     hermes.hermesOptions.extractData = true;
     this.hermes = hermes;
 
+    this.openApiClient = createClient<
+      IliadStrapiAdapter.paths,
+      "application/json"
+    >({
+      headers: (this.hermes.baseHeaders || {}) as any,
+      baseUrl: this.hermes.baseUrl || undefined,
+    });
+
     if (client !== "fetch") {
       console.warn(
         "Axios is currently not supported. Defaulting to fetch instead."
       );
     }
-    // this.client = client;
   }
 
-  private normalizedFetch<T>(
-    method: HttpMethod,
-    url: string | URL,
-    options: RequestInit = {}
-  ): Promise<
-    StandardResponse<FetchResponse<Paths[Path][Method], Init, Media>>
-  > {
-    return this.hermes.fetch<T>(normalizeUrl(url), {
-      ...options,
-      method,
-    });
+  private async normalizedFetch<R>(
+    url: string,
+    options: MethodRequiredRequestInit,
+    o: boolean = false
+  ): Promise<StandardResponse<R>> {
+    return this.hermes.fetch<R>(url, options);
   }
 
   // REST OPERATIONS
   public async GET<R>(
-    url: string | URL,
+    url: string | ISAKeys,
     options?: any
-  ): Promise<StandardResponse<R>> {
-    return this.normalizedFetch<R>("get", url, options);
+  ): Promise<StandardResponse<R>>;
+  public async GET(
+    url: string | ISAKeys,
+    options?: any
+  ): ReturnType<typeof this.normalizedFetch>;
+  public async GET(url: string | ISAKeys, options?: any) {
+    return this.normalizedFetch(normalizeUrl(url), wm("get", options));
   }
 
   public async POST<R>(
-    url: string | URL,
+    url: string | ISAKeys,
     options?: any
-  ): Promise<StandardResponse<R>> {
-    return this.normalizedFetch<R>("post", url, options);
+  ): Promise<StandardResponse<R>>;
+  public async POST(
+    url: string | ISAKeys,
+    options?: any
+  ): ReturnType<typeof this.normalizedFetch>;
+  public async POST(url: string | ISAKeys, options?: any) {
+    return this.normalizedFetch(normalizeUrl(url), wm("post", options));
   }
 
   public async PUT<R>(
-    url: string | URL,
+    url: string | ISAKeys,
     options?: any
-  ): Promise<StandardResponse<R>> {
-    return this.normalizedFetch<R>("put", url, options);
+  ): Promise<StandardResponse<R>>;
+  public async PUT(
+    url: string | ISAKeys,
+    options?: any
+  ): ReturnType<typeof this.normalizedFetch>;
+  public async PUT(url: string | ISAKeys, options?: any) {
+    return this.normalizedFetch(normalizeUrl(url), wm("put", options));
   }
 
-  private async DELETE<R>(
-    url: string | URL,
+  public async DELETE<R>(
+    url: string | ISAKeys,
     options?: any
-  ): Promise<StandardResponse<R>> {
-    return this.normalizedFetch<R>("delete", url, options);
+  ): Promise<StandardResponse<R>>;
+  public async DELETE(
+    url: string | ISAKeys,
+    options?: any
+  ): ReturnType<typeof this.normalizedFetch>;
+  public async DELETE(url: string | ISAKeys, options?: any) {
+    return this.normalizedFetch(normalizeUrl(url), wm("delete", options));
   }
 
   // CRUD OPERATIONS
@@ -419,3 +449,38 @@ class StrapiAdapter extends Feature {
 export default StrapiAdapter;
 export { StrapiAdapter };
 export * from "./types";
+
+// private async normalizedFetch<
+// R extends any,
+// Path extends PathsWithMethod<
+//   IliadStrapiAdapter.Paths,
+//   MethodRequiredRequestInit["method"]
+// >,
+// Init extends MaybeOptionalInit<
+//   IliadStrapiAdapter.Paths[Path],
+//   MethodRequiredRequestInit["method"]
+// >,
+// >(
+// url: Path,
+// options: MethodRequiredRequestInit
+// ): Promise<
+// StandardResponse<
+//   R extends undefined
+//     ? FetchResponse<
+//         IliadStrapiAdapter.Paths[Path][MethodRequiredRequestInit["method"]],
+//         Init,
+//         MediaType
+//       >["data"]
+//     : R
+// >
+// > {
+// return this.hermes.fetch<
+//   R extends undefined
+//     ? FetchResponse<
+//         IliadStrapiAdapter.Paths[Path][MethodRequiredRequestInit["method"]],
+//         Init,
+//         MediaType
+//       >["data"]
+//     : R
+// >(url, options);
+// }

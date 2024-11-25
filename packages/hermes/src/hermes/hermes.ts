@@ -49,7 +49,7 @@ class Hermes {
   }
 
   // This coerces all responses to Golang style {data, error} responses. Anything else is just AIDS past a certain point of complexity.
-  private normalizeResponse<T>(
+  public normalizeResponse<T>(
     promise: Promise<T>,
     extractData: boolean = this.hermesOptions.extractData ?? true
   ): Promise<StandardResponse<T>> {

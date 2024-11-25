@@ -11,22 +11,27 @@
     "declaration": true,
     "module": "ESNext" /* Specify what module code is generated. */,
     /* Type Checking */
+    "typeRoots": [
+      "./src/@types",
+      "./node_modules/@types"
+    ] /* List of folders to include type definitions from. */,
     "allowImportingTsExtensions": true,
     "noUncheckedIndexedAccess": true /* Add 'undefined' to a type when accessed using an index. */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "allowJs": true,
     "strict": true /* Enable all strict type-checking options. */,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
       "@features": ["./src/strapiAdapter"],
       "@types": ["./src/@types"],
       "@utils": ["./src/utils"]
     }
   },
-  "exclude": ["rollup.config.js", "node_modules/*", "dist"],
+
+  "exclude": ["rollup.config.js", "node_modules/*", "dist", "lib"],
   "include": [
     "node_modules/@iliad.dev/ts-utils/@globals",
     "src/@types/**/*",
-    "src"
+    "src/**/*"
   ]
 }
