@@ -14,12 +14,13 @@ import {
 } from "./types";
 import { FeatureParams } from "../Feature/types";
 import { Feature } from "../Feature";
+import Options from "@classes/Options";
 
 // This class facilitates the contentType syncronization feature.
 
 class ContentTypeSync extends Feature {
-  constructor(featureParams: FeatureParams) {
-    super(featureParams);
+  constructor(options: Options) {
+    super(options);
   }
 
   async syncContentTypes(): Promise<StandardResponse<null>> {

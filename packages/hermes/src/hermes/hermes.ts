@@ -36,8 +36,9 @@ class Hermes {
   baseHeaders?: object | null;
   networkMethod?: HermesMethod | null;
   originLocation: string = "Anonymous";
-  hermesOptions: HermesOptions;
+
   axiosInstance: AxiosInstance = axios.create();
+  hermesOptions: HermesOptions;
 
   constructor(options: HermesOptions = defaultHermesOptions) {
     this.hermesOptions = this.mergeHermesOptions(options);

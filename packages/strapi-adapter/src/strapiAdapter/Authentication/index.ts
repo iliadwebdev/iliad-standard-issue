@@ -1,9 +1,10 @@
 import { FeatureParams } from "../Feature/types";
 import Feature from "../Feature";
+import Options from "@classes/Options";
 
 class Authentication extends Feature {
-  constructor(props: FeatureParams) {
-    super(props);
+  constructor(options: Options) {
+    super(options);
   }
 
   auth(): ErrorResponse {

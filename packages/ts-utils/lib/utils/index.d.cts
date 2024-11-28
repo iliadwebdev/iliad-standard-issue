@@ -13,5 +13,7 @@ export { extendsString, isString } from './typeguards/isString.cjs';
  */
 type RRU<T> = Recursive_Required<T> | Legacy_Recursive_Required<T>;
 declare function mergeDefaults<T, RR extends RRU<T> = Legacy_Recursive_Required<T>>(obj: T | undefined, defaults: Recursive_OptionalFieldsOf<T>): RR;
+type UnionWithoutUndefined<T> = T extends undefined ? never : T;
+declare function isError<T extends object>(error: ErrorResponse["error"] | undefined, data?: Partial<T>): data is UnionWithoutUndefined<T>;
 
-export { mergeDefaults };
+export { isError, mergeDefaults };

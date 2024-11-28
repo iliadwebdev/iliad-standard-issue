@@ -1,19 +1,23 @@
-import { Hermes } from "@iliad.dev/hermes";
-
 import { StrictContentTypesSyncOptions } from "@features";
-import { FeatureParams } from "./types";
-import { ContextClient } from "@types";
+import { WarningConfig } from "../StrapiInstance/types";
+import { Hermes } from "@iliad.dev/hermes";
+import Options from "@classes/Options";
 
 // This is the base Feature class that holds information common to all features.
 class Feature {
   protected contentTypesSyncOptions: Nullable<StrictContentTypesSyncOptions> =
     null;
-  client: ContextClient = "axios"; // I should probably change this to fetch, given that most of the time this is being use in Next.js.
+
+  options: Options;
+  warnings: WarningConfig;
   hermes: Hermes;
 
-  constructor({ client, hermes }: FeatureParams) {
-    this.hermes = hermes;
-    this.client = client;
+  constructor(options: Options) {
+    this.warnings = options.warnings;
+    this.hermes = options.hermes;
+
+    // Options need to be considered a static object, for the most part.
+    this.options = options;
   }
 
   protected withContentTypes(options: any): void {}

@@ -10,6 +10,7 @@ import type { StrapiInstanceParams } from "./types";
 import ContentTypeSync from "../ContentTypeSync";
 import Authentication from "../Authentication";
 import StrapiAdapter from "../StrapiAdapter";
+import Options from "@classes/Options";
 
 // https://strapi-sdk-js.netlify.app/api/
 export interface StrapiInstance extends StrapiAdapter, ContentTypeSync {} // Tricking intellisense
@@ -19,18 +20,8 @@ export class StrapiInstance extends classes(
   StrapiAdapter
 ) {
   constructor(params: StrapiInstanceParams) {
-    // Parse and validate the Strapi instance parameters, applying defaults where necessary.
-    const { strapiApiLocation, strapiBearerToken, hermesOptions, client } =
-      parseStrapiInstanceParams(params);
-
-    super({
-      client, // Tell our Strapi Adapter what networking library to use.
-      hermes: createHermesInstance(
-        hermesOptions,
-        strapiApiLocation,
-        strapiBearerToken
-      ),
-    });
+    const options = new Options(params);
+    super(options);
   }
 
   // STATIC CONSTRUCTOR
@@ -40,7 +31,7 @@ export class StrapiInstance extends classes(
 
   // FACTORY FUNCTIONS
   public label(label: string): StrapiInstance {
-    this.hermes.setLabel(label);
+    this.options.hermes.setLabel(label);
     return this;
   }
 

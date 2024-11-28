@@ -1,350 +1,249 @@
-import {
-  StandardResponse,
-  ErrorResponse,
-  NamedTuple,
-  XOR,
-} from "@iliad.dev/ts-utils/@types";
-
 // Types
-import { Common } from "@strapi/strapi";
+import { FetchOptions, InitParam } from "openapi-fetch";
 import {
+  APIResponseCollectionMetadata,
   APIResponseCollection,
   APIResponseData,
-  StrapiResponse,
   ContextClient,
   APIResponse,
+  WithPage,
   Flavor,
 } from "@types";
 import {
-  QueryStringCollection,
-  CollectionTypeNames,
   UIDFromPluralName,
-  QueryStringEntry,
   CrudQueryFull,
-  CreateData,
-  CTUID,
-  // OPENAPI TYPINGS
-  FetchResponse,
   UIDFromName,
+  CreateData,
   UpdateData,
   Names,
+  CTUID,
+  CRUD,
+  REST,
 } from "./types";
-
-// Utilities
-import { FetchOptions, InitParam, MaybeOptionalInit } from "openapi-fetch";
-import { PathsWithMethod } from "openapi-typescript-helpers";
-import { mergeDefaults } from "@iliad.dev/ts-utils";
-import { Hermes } from "@iliad.dev/hermes";
 import {
-  parseSemanticQuery,
-  parseFetchOptions,
-  normalizeUrl,
-  apiEndpoint,
-  createUrl,
-  wm,
-} from "./utils";
+  StandardResponse,
+  ErrorResponse,
+  XOR,
+} from "@iliad.dev/ts-utils/@types";
 
 // Classes
-import { Feature, FeatureParams } from "../Feature";
+import Options from "@classes/Options";
+import { Feature } from "../Feature";
 
-declare namespace CRUD {
-  type FN<T> = Promise<StandardResponse<T>>;
-  type SingleUpdateParams<
-    API extends Names<"singular", "single">,
-    UID extends CTUID = UIDFromName<API>,
-  > = NamedTuple<
-    [
-      collection: API,
-      data: UpdateData<UID>["data"],
-      query?: Omit<UpdateData<UID>, "data">,
-      options?: RequestInit,
-    ]
-  >;
-
-  type CollectionUpdateParams<
-    API extends Names<"plural", "collection">,
-    UID extends CTUID = UIDFromName<API>,
-  > = NamedTuple<
-    [
-      collection: API,
-      id: string | number,
-      data: UpdateData<UID>["data"],
-      query?: Omit<UpdateData<UID>, "data">,
-      options?: RequestInit,
-    ]
-  >;
-}
+// Utilities
+import Warnings from "@WarningsRegistry";
+import * as u from "./utils";
 
 class StrapiAdapter extends Feature {
   client: ContextClient = "fetch"; // I should probably change this to fetch, given that most of the time this is being use in Next.js.
-  hermes: Hermes;
 
-  constructor(props: FeatureParams) {
-    super(props);
+  constructor(options: Options) {
+    super(options);
 
-    let { client, hermes } = props;
+    const { client } = this.options;
 
-    hermes.hermesOptions.extractData = true;
-    this.hermes = hermes;
+    // The client should not have the option to extract data.
+    // Hermes API needs to be consolidated to Axios-style API, regardless of the client.
+    this.hermes.hermesOptions.extractData = false;
 
-    if (client !== "fetch") {
-      console.warn(
-        "Axios is currently not supported. Defaulting to fetch instead."
-      );
-    }
+    Warnings.warnIfNormalizeData(this.warnings, this.options);
+    Warnings.warnIfAxios(this.warnings, client);
   }
 
+  // This is the final fetch method that is used by the adapter.
   private async normalizedFetch<R, URI extends string = string>(
     url: URI,
     options: FetchOptions<URI> | RequestInit,
     flavor: Flavor = "crud"
   ): Promise<StandardResponse<R>> {
-    if (flavor !== "rest") {
-      console.log({
-        url,
-        options,
-      });
-      return this.hermes.fetch<R>(url, options as RequestInit);
+    if (u.shouldUseFetch(flavor, options)) {
+      const { data, error } = await this.hermes.fetch<R>(url, options);
+
+      if (error !== undefined) return { error, data: undefined };
+      return { data, error: undefined };
     }
 
-    const _options = options as FetchOptions<URI>;
-    const [finalUrl, requestInit] = parseFetchOptions(url, _options);
-
-    console.log({
-      requestInit,
-      finalUrl,
-    });
+    const [finalUrl, requestInit] = u.parseFetchOptions(url, options);
     const { data, error } = await this.hermes.fetch<R>(finalUrl, requestInit);
-    if (error !== undefined) {
-      return { error, data: undefined };
-    }
 
+    if (error !== undefined) return { error, data: undefined };
     return { data, error: undefined };
   }
 
-  // REST OPERATIONS
+  // ========================================================================
+  // REST OPERATIONS - Allows arbitrary access to the Strapi API.
+  // ========================================================================
   public async GET<
-    Path extends PathsWithMethod<IliadStrapiAdapter.paths, "get">,
-    Init extends MaybeOptionalInit<IliadStrapiAdapter.paths[Path], "get">,
-  >(
-    url: Path,
-    ...init: InitParam<Init>
-  ): Promise<
-    StandardResponse<
-      FetchResponse<
-        IliadStrapiAdapter.paths[Path]["get"],
-        Init,
-        "application/json"
-      >["data"]
-    >
-  > {
-    const _url = normalizeUrl(url);
-    const params = init.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+    Path extends REST.Path,
+    Init extends REST.Init<Path> = REST.Init<Path>,
+  >(url: Path, ...init: InitParam<Init>): REST.FN<Path, Init, "get"> {
+    // Normalize user inputs
+    const params = {
+      ...u.normalizeRestParams(init),
+      method: "get",
+    };
 
-    // @ts-ignore
-    return this.normalizedFetch(_url, { ...params, method: "get" }, "rest");
+    return this.normalizedFetch(u.normalizeUrl(url), params, "rest");
   }
 
   public async POST<
-    Path extends PathsWithMethod<IliadStrapiAdapter.paths, "post">,
-    Init extends MaybeOptionalInit<IliadStrapiAdapter.paths[Path], "post">,
-  >(
-    url: Path,
-    ...init: InitParam<Init>
-  ): Promise<
-    StandardResponse<
-      FetchResponse<
-        IliadStrapiAdapter.paths[Path]["post"],
-        Init,
-        "application/json"
-      >["data"]
-    >
-  > {
-    const _url = normalizeUrl(url);
-    const params = init.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+    Path extends REST.Path<"post">,
+    Init extends REST.Init<Path, "post"> = REST.Init<Path, "post">,
+  >(url: Path, ...init: InitParam<Init>): REST.FN<Path, Init, "post"> {
+    // Normalize user inputs
+    const params = {
+      ...u.normalizeRestParams(init),
+      method: "post",
+    };
 
-    // @ts-ignore
-    return this.normalizedFetch(_url, { ...params, method: "post" }, "rest");
+    return this.normalizedFetch(u.normalizeUrl(url), params, "rest");
   }
 
   public async PUT<
-    Path extends PathsWithMethod<IliadStrapiAdapter.paths, "put">,
-    Init extends MaybeOptionalInit<IliadStrapiAdapter.paths[Path], "put">,
-  >(
-    url: Path,
-    ...init: InitParam<Init>
-  ): Promise<
-    StandardResponse<
-      FetchResponse<
-        IliadStrapiAdapter.paths[Path]["put"],
-        Init,
-        "application/json"
-      >["data"]
-    >
-  > {
-    const _url = normalizeUrl(url);
-    const params = init.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+    Path extends REST.Path<"put">,
+    Init extends REST.Init<Path, "put"> = REST.Init<Path, "put">,
+  >(url: Path, ...init: InitParam<Init>): REST.FN<Path, Init, "put"> {
+    // Normalize user inputs
+    const params = {
+      ...u.normalizeRestParams(init),
+      method: "put",
+    };
 
-    // @ts-ignore
-    return this.normalizedFetch(_url, { ...params, method: "put" }, "rest");
+    return this.normalizedFetch(u.normalizeUrl(url), params, "rest");
   }
 
   public async DELETE<
-    Path extends PathsWithMethod<IliadStrapiAdapter.paths, "delete">,
-    Init extends MaybeOptionalInit<IliadStrapiAdapter.paths[Path], "delete">,
-  >(
-    url: Path,
-    ...init: InitParam<Init>
-  ): Promise<
-    StandardResponse<
-      FetchResponse<
-        IliadStrapiAdapter.paths[Path]["delete"],
-        Init,
-        "application/json"
-      >["data"]
-    >
-  > {
-    const _url = normalizeUrl(url);
-    const params = init.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+    Path extends REST.Path<"delete">,
+    Init extends REST.Init<Path, "delete"> = REST.Init<Path, "delete">,
+  >(url: Path, ...init: InitParam<Init>): REST.FN<Path, Init, "delete"> {
+    // Normalize user inputs
+    const params = {
+      ...u.normalizeRestParams(init),
+      method: "delete",
+    };
 
-    // @ts-ignore
-    return this.normalizedFetch(_url, { ...params, method: "delete" }, "rest");
+    return this.normalizedFetch(u.normalizeUrl(url), params, "rest");
   }
 
   public async OPTIONS<
-    Path extends PathsWithMethod<IliadStrapiAdapter.paths, "options">,
-    Init extends MaybeOptionalInit<IliadStrapiAdapter.paths[Path], "options">,
-  >(
-    url: Path,
-    ...init: InitParam<Init>
-  ): Promise<
-    StandardResponse<
-      FetchResponse<
-        IliadStrapiAdapter.paths[Path]["options"],
-        Init,
-        "application/json"
-      >["data"]
-    >
-  > {
-    const _url = normalizeUrl(url);
-    const params = init.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+    Path extends REST.Path<"options">,
+    Init extends REST.Init<Path, "options"> = REST.Init<Path, "options">,
+  >(url: Path, ...init: InitParam<Init>): REST.FN<Path, Init, "options"> {
+    // Normalize user inputs
+    const params = {
+      ...u.normalizeRestParams(init),
+      method: "options",
+    };
 
-    // @ts-ignore
-    return this.normalizedFetch(_url, { ...params, method: "options" }, "rest");
+    return this.normalizedFetch(u.normalizeUrl(url), params, "rest");
   }
 
   public async HEAD<
-    Path extends PathsWithMethod<IliadStrapiAdapter.paths, "head">,
-    Init extends MaybeOptionalInit<IliadStrapiAdapter.paths[Path], "head">,
-  >(
-    url: Path,
-    ...init: InitParam<Init>
-  ): Promise<
-    StandardResponse<
-      FetchResponse<
-        IliadStrapiAdapter.paths[Path]["head"],
-        Init,
-        "application/json"
-      >["data"]
-    >
-  > {
-    const _url = normalizeUrl(url);
-    const params = init.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+    Path extends REST.Path<"head">,
+    Init extends REST.Init<Path, "head"> = REST.Init<Path, "head">,
+  >(url: Path, ...init: InitParam<Init>): REST.FN<Path, Init, "head"> {
+    // Normalize user inputs
+    const params = {
+      ...u.normalizeRestParams(init),
+      method: "head",
+    };
 
-    // @ts-ignore
-    return this.normalizedFetch(_url, { ...params, method: "head" }, "rest");
+    return this.normalizedFetch(u.normalizeUrl(url), params, "rest");
   }
 
   public async PATCH<
-    Path extends PathsWithMethod<IliadStrapiAdapter.paths, "patch">,
-    Init extends MaybeOptionalInit<IliadStrapiAdapter.paths[Path], "patch">,
-  >(
-    url: Path,
-    ...init: InitParam<Init>
-  ): Promise<
-    StandardResponse<
-      FetchResponse<
-        IliadStrapiAdapter.paths[Path]["patch"],
-        Init,
-        "application/json"
-      >["data"]
-    >
-  > {
-    const _url = normalizeUrl(url);
-    const params = init.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+    Path extends REST.Path<"patch">,
+    Init extends REST.Init<Path, "patch"> = REST.Init<Path, "patch">,
+  >(url: Path, ...init: InitParam<Init>): REST.FN<Path, Init, "patch"> {
+    // Normalize user inputs
+    const params = {
+      ...u.normalizeRestParams(init),
+      method: "patch",
+    };
 
-    // @ts-ignore
-    return this.normalizedFetch(_url, { ...params, method: "patch" }, "rest");
+    return this.normalizedFetch(u.normalizeUrl(url), params, "rest");
   }
 
   public async TRACE<
-    Path extends PathsWithMethod<IliadStrapiAdapter.paths, "trace">,
-    Init extends MaybeOptionalInit<IliadStrapiAdapter.paths[Path], "trace">,
-  >(
-    url: Path,
-    ...init: InitParam<Init>
-  ): Promise<
-    StandardResponse<
-      FetchResponse<
-        IliadStrapiAdapter.paths[Path]["trace"],
-        Init,
-        "application/json"
-      >["data"]
-    >
-  > {
-    const _url = normalizeUrl(url);
-    const params = init.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+    Path extends REST.Path<"trace">,
+    Init extends REST.Init<Path, "trace"> = REST.Init<Path, "trace">,
+  >(url: Path, ...init: InitParam<Init>): REST.FN<Path, Init, "trace"> {
+    // Normalize user inputs
+    const params = {
+      ...u.normalizeRestParams(init),
+      method: "trace",
+    };
 
-    // @ts-ignore
-    return this.normalizedFetch(_url, { ...params, method: "trace" }, "rest");
+    return this.normalizedFetch(u.normalizeUrl(url), params, "rest");
   }
-
-  // CRUD OPERATIONS
-  // https://docs-v4.strapi.io/dev-docs/api/rest
-  // ILIAD: NOTE: This find needs to be split into findSingle and findCollection
+  // ========================================================================
+  // CRUD OPERATIONS  -  https://docs-v4.strapi.io/dev-docs/api/rest
+  // ========================================================================
+  // Find entries in a collection. Not applicable to single types.
   public async find<
-    API extends Names<"plural", "all">,
+    API extends Names<"plural", "collection">,
     UID extends CTUID = UIDFromName<API>,
   >(
     collection: API,
     query?: CrudQueryFull<UID>,
     options?: RequestInit
   ): CRUD.FN<APIResponseCollection<UID>> {
-    const url = createUrl({
-      endpoint: apiEndpoint(collection),
+    const url = u.createUrl({
+      endpoint: u.apiEndpoint(collection),
       query,
     });
 
-    return this.normalizedFetch<APIResponseCollection<UID>>(
-      normalizeUrl(url),
-      wm("get", options)
+    return await this.normalizedFetch<APIResponseCollection<UID>>(
+      u.normalizeUrl(url),
+      u.wm("get", options)
     );
   }
 
-  // https://docs-v4.strapi.io/dev-docs/api/rest
-  // ILIAD: NOTE: This find needs to be split into findSingle and findCollection
+  // Find one entry out of a collection, or fetch a single type.
   public async findOne<
-    API extends Names<"singular", "all">,
+    API extends Names<"singular", "single"> | Names<"plural", "collection">,
     UID extends CTUID = UIDFromName<API>,
   >(
-    collection: API,
-    id: number | string,
-    query?: CrudQueryFull<UID>,
-    options?: RequestInit
+    ...args: XOR<
+      CRUD.FindOneParamsSingle<API, UID>,
+      CRUD.FindOneParamsCollection<API, UID>
+    >
   ): CRUD.FN<APIResponse<UID>> {
-    const url = createUrl({
-      endpoint: `${apiEndpoint(collection)}/${id}`,
-      query,
-    });
+    let options: RequestInit = {};
+    let url: string;
+
+    if (u.overrideHasId(args)) {
+      const [collection, id, query, _options] =
+        args as CRUD.FindOneParamsCollection<API, UID>;
+
+      _options && (options = _options);
+      url = u.createUrl({
+        endpoint: `${u.apiEndpoint(collection)}/${id}`,
+        query,
+      });
+    } else {
+      const [collection, query, _options] = args as CRUD.FindOneParamsSingle<
+        API,
+        UID
+      >;
+
+      _options && (options = _options);
+      url = u.createUrl({
+        endpoint: `${u.apiEndpoint(collection)}`,
+        query,
+      });
+    }
 
     return this.normalizedFetch<APIResponse<UID>>(
-      normalizeUrl(url),
-      wm("get", options)
+      u.normalizeUrl(url),
+      u.wm("get", options)
     );
   }
 
+  // Create a new entry in a collection. Not applicable to single types.
+  // (?) Is there a use-case for creating a single type?
   public async create<
-    API extends Names<"plural", "all">,
+    API extends Names<"plural", "collection">,
     UID extends CTUID = UIDFromName<API>,
   >(
     collection: API,
@@ -352,16 +251,14 @@ class StrapiAdapter extends Feature {
     query?: Omit<CreateData<UID>, "data">,
     options?: RequestInit
   ): Promise<StandardResponse<APIResponseData<UID>>> {
-    const url = createUrl({
-      endpoint: apiEndpoint(collection),
+    const url = u.createUrl({
+      endpoint: u.apiEndpoint(collection),
       query,
     });
 
-    console.log({ data });
-
     return this.normalizedFetch<APIResponseData<UID>>(
-      normalizeUrl(url),
-      wm("post", {
+      u.normalizeUrl(url),
+      u.wm("post", {
         ...options,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data }),
@@ -369,6 +266,47 @@ class StrapiAdapter extends Feature {
     );
   }
 
+  public async update<
+    API extends CRUD.UpdateNames,
+    UID extends CTUID = UIDFromName<API>,
+  >(
+    ...args: XOR<
+      CRUD.CollectionUpdateParams<API, UID>,
+      CRUD.SingleUpdateParams<API, UID>
+    >
+  ): Promise<StandardResponse<APIResponseData<UID>>> {
+    if (u.overrideHasId(args)) {
+      // Collection-based update
+      return this.updateCollection(
+        ...(args as CRUD.CollectionUpdateParams<API, UID>)
+      );
+    }
+
+    // Single-type update
+    return this.updateSingle(...(args as CRUD.SingleUpdateParams<API, UID>));
+  }
+
+  // Create an entry in a collection. Not applicable to single types.
+  // (?) Is there a use-case for deleting a single type?
+  public async delete<
+    API extends Names<"plural", "collection">,
+    UID extends CTUID = UIDFromPluralName<API>,
+  >(
+    collection: API,
+    id: number | string,
+    options?: RequestInit
+  ): Promise<StandardResponse<APIResponseData<UID>>> {
+    const url = u.createUrl({
+      endpoint: `${u.apiEndpoint(collection)}/${id}`,
+    });
+
+    return this.normalizedFetch<APIResponseData<UID>>(
+      u.normalizeUrl(url),
+      u.wm("delete", options)
+    );
+  }
+
+  // Private implementation of the update method, when updating a single type.
   private async updateSingle<
     API extends Names<"singular", "single">,
     UID extends CTUID = UIDFromName<API>,
@@ -378,15 +316,15 @@ class StrapiAdapter extends Feature {
     query?: Omit<UpdateData<UID>, "data">,
     options?: RequestInit
   ): Promise<StandardResponse<APIResponseData<UID>>> {
-    const url = createUrl({
-      endpoint: `${apiEndpoint(collection)}`,
+    const url = u.createUrl({
+      endpoint: `${u.apiEndpoint(collection)}`,
       query,
     });
 
+    // Single types are updated with PUT requests.
     return this.normalizedFetch<APIResponseData<UID>>(
-      normalizeUrl(url),
-      wm("put", {
-        // Single types are updated with PUT requests.
+      u.normalizeUrl(url),
+      u.wm("put", {
         ...options,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data }),
@@ -394,7 +332,7 @@ class StrapiAdapter extends Feature {
     );
   }
 
-  // https://docs-v4.strapi.io/dev-docs/api/rest
+  // Private implementation of the update method, when updating a collection.
   private async updateCollection<
     API extends Names<"plural", "collection">,
     UID extends CTUID = UIDFromName<API>,
@@ -405,15 +343,15 @@ class StrapiAdapter extends Feature {
     query?: Omit<UpdateData<UID>, "data">,
     options?: RequestInit
   ): Promise<StandardResponse<APIResponseData<UID>>> {
-    const url = createUrl({
-      endpoint: `${apiEndpoint(collection)}/${id}`,
+    const url = u.createUrl({
+      endpoint: `${u.apiEndpoint(collection)}/${id}`,
       query,
     });
 
+    // Collection types are updated with POST requests.
     return this.normalizedFetch<APIResponseData<UID>>(
-      normalizeUrl(url),
-      wm("post", {
-        // Collection types are updated with POST requests.
+      u.normalizeUrl(url),
+      u.wm("post", {
         ...options,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data }),
@@ -421,266 +359,164 @@ class StrapiAdapter extends Feature {
     );
   }
 
-  public async update<
-    API extends Names<"singular", "single"> | Names<"plural", "collection">,
+  // ========================================================================
+  // CRUD OPERATIONS  -  So I don't have to open the docs every four seconds.
+  // ========================================================================
+
+  async getEntry<
+    API extends Names<"plural", "collection">,
     UID extends CTUID = UIDFromName<API>,
   >(
-    ...args: XOR<
-      CRUD.CollectionUpdateParams<API, UID>,
-      CRUD.SingleUpdateParams<API, UID>
-    >
-  ): Promise<StandardResponse<APIResponseData<UID>>> {
-    if (typeof args[1] === "object") {
-      // Single-type update
-      const [collection, data, query, options] =
-        args as CRUD.SingleUpdateParams<API, UID>;
-      return this.updateSingle(collection, data, query, options);
-    } else {
-      // Collection-based update
-      const [collection, id, data, query, options] =
-        args as CRUD.CollectionUpdateParams<API, UID>;
-      return this.updateCollection(collection, id, data, query, options);
-    }
-  }
-
-  public async delete<
-    API extends CollectionTypeNames,
-    UID extends CTUID = UIDFromPluralName<API>,
-  >(
     collection: API,
-    id: number | string
-  ): Promise<StandardResponse<APIResponseData<UID>>> {
-    const url = createUrl({
-      endpoint: `${apiEndpoint(collection)}/${id}`,
+    id: number | string,
+    query?: CrudQueryFull<UID>,
+    options?: RequestInit
+  ): CRUD.FN<APIResponse<UID>> {
+    const url = u.createUrl({
+      endpoint: `${u.apiEndpoint(collection)}/${id}`,
+      query,
     });
 
-    return this.normalizedFetch<APIResponseData<UID>>(
-      normalizeUrl(url),
-      wm("delete")
+    return this.normalizedFetch<APIResponse<UID>>(
+      u.normalizeUrl(url),
+      u.wm("get", options)
     );
   }
 
-  // FINISH CRUD OPERATIONS, THEN MAKE RAW REST OPERATIONS.
-  // REST OPERATIONS SHOULD HAVE AUTO-COMPLETED ENDPOINTS, IF POSSIBLE.
-  // I MAY NEED TO GENERATE THESE ON THE SERVER.
-
-  // THEN ALL IS LEFT TO DO IS MAKE THOTH AND INTEGRATE, THEN CORE FOUR + 1 IS DONE.
-
-  // SEMANTIC OPERATIONS
-  private async getWithClient<T extends Common.UID.ContentType>(
-    url: string | URL,
-    options?: any
-  ): Promise<StandardResponse<StrapiResponse<T>>> {
-    url = url as string;
-    let response;
-
-    if (this.client === "axios") {
-      response = await this.hermes.axios.get(url, options);
-      response = response.data;
-    } else {
-      response = await this.hermes.fetch(url, options);
-    }
-
-    return response as StandardResponse<StrapiResponse<T>>;
-  }
-
-  // GET FUNCTIONS
-  async getFullCollection<TContentTypeUID extends Common.UID.ContentType>(
-    collection: string,
-    query: QueryStringCollection<TContentTypeUID> = "",
-    _hermes: Hermes = this.hermes
-  ): Promise<StandardResponse<APIResponseCollection<TContentTypeUID>>> {
-    return {
-      data: undefined,
-      error: {
-        message: "Not implemented",
-        code: 501,
-      },
-    };
-
-    // query = StrapiUtils.sanitizeQuery(query);
-
-    // let data: APIResponseData<TContentTypeUID>[] = [];
-    // let meta;
-
-    // _firstPage: {
-    //   let { data: firstPage, error } = await this.getCollection(
-    //     collection,
-    //     1,
-    //     25,
-    //     query
-    //   );
-
-    //   if (error) {
-    //     console.error(`Error fetching collection ${collection}:`, error, {
-    //       query,
-    //     });
-    //     return { data: undefined, error } as ErrorResponse;
-    //   }
-
-    //   if (!firstPage) {
-    //     console.error(`No data returned from Strapi`);
-    //     return {
-    //       data: undefined,
-    //       error: { message: "No data returned from Strapi", code: 500 },
-    //     } as ErrorResponse;
-    //   }
-
-    //   meta = firstPage.meta;
-    //   data = firstPage.data as APIResponseData<TContentTypeUID>[];
-    // }
-
-    // let indexArray = StrapiUtils.indexArrayFromMeta(meta);
-
-    // let promises = indexArray.map(async (i) => {
-    //   let { data: page, error } = await this.getCollection(
-    //     collection,
-    //     i,
-    //     25,
-    //     query
-    //   );
-
-    //   if (error) {
-    //     console.error(`Error fetching collection ${collection}:`, error, {
-    //       query,
-    //     });
-    //     return { data: undefined, error } as ErrorResponse;
-    //   }
-
-    //   if (!page) {
-    //     console.error(`No data returned from Strapi`);
-    //     return {
-    //       data: undefined,
-    //       error: { message: "No data returned from Strapi", code: 500 },
-    //     } as ErrorResponse;
-    //   }
-
-    //   return page.data as APIResponseData<TContentTypeUID>[];
-    // });
-
-    // let pages = await Promise.all(promises);
-
-    // pages.forEach((page) => {
-    //   if (Array.isArray(page)) {
-    //     data = data.concat(page);
-    //   }
-    // });
-
-    // return await StrapiUtils.coerceData(
-    //   {
-    //     meta,
-    //     data,
-    //   } as StrapiResponse<TContentTypeUID>,
-    //   collection
-    // );
-  }
-
-  async getEntryBySlug<TContentTypeUID extends Common.UID.ContentType>(
-    collection: string,
-    slug: string,
-    query: QueryStringEntry<TContentTypeUID> = "",
-    _hermes: Hermes = this.hermes
-  ): Promise<StandardResponse<APIResponseData<TContentTypeUID>>> {
-    return {
-      data: undefined,
-      error: {
-        message: "Not implemented",
-        code: 501,
-      },
-    };
-
-    // let _q = StrapiUtils.sanitizeQuery(query, false);
-    // let __q = `&filters[slug][$eq]=${slug}`;
-
-    // if (_q) {
-    //   __q += `&${_q}`;
-    // }
-
-    // let { data, error } = await this.getCollection(collection, 1, 1, __q);
-
-    // if (error) {
-    //   console.error(
-    //     `Error fetching entry by slug ${collection}/${slug}:`,
-    //     error,
-    //     { query: __q }
-    //   );
-    //   return { data: undefined, error } as ErrorResponse;
-    // }
-
-    // return await StrapiUtils.coerceData(data, collection, slug, true);
-  }
-
-  async getCollection<
-    PN extends CollectionTypeNames,
-    TContentTypeUID extends Common.UID.CollectionType = UIDFromPluralName<PN>,
+  async getEntryBySlug<
+    API extends Names<"plural", "collection">,
+    UID extends CTUID = UIDFromName<API>,
   >(
-    collection: PN,
-    query: QueryStringCollection<TContentTypeUID> = "",
-    options: RequestInit = {}
-  ): Promise<StandardResponse<APIResponseCollection<TContentTypeUID>>> {
-    const parsedQuery: object = mergeDefaults(parseSemanticQuery(query), {
-      pagination: { pageSize: 25, page: 1 },
-    });
-
-    const url = createUrl({
-      endpoint: apiEndpoint(collection),
-      query: parsedQuery,
+    collection: API,
+    slug: string,
+    query?: CrudQueryFull<UID>,
+    options?: RequestInit
+  ): CRUD.FN<APIResponse<UID>> {
+    const url = u.createUrl({
+      endpoint: u.apiEndpoint(collection),
+      query: u.mergeQuery(query, {
+        filters: {
+          slug: {
+            $eq: slug,
+          },
+        },
+      }),
     });
 
     const { data, error } = await this.normalizedFetch<
-      APIResponseCollection<TContentTypeUID>
-    >(normalizeUrl(url), wm("get", options));
+      APIResponseCollection<UID>
+    >(u.normalizeUrl(url), u.wm("get", options));
 
-    if (error) {
-      console.error(`Error fetching collection ${collection}:`, error);
-      console.debug({ error, query, options, url, parsedQuery });
+    if (error !== undefined) return { data: undefined, error };
+
+    if (!data?.data?.[0] || data === undefined) {
+      // Not certain this state is possible to reach.
       return {
         data: undefined,
-        error: {
-          message: "Error fetching collection",
-          code: 500,
-        },
+        error: { message: "No entry found for slug", code: 404 },
       };
     }
 
     return {
-      data: undefined,
-      error: {
-        message: "Not implemented",
-        code: 501,
-      },
+      data: { data: data.data[0] },
+      error: undefined,
     };
   }
 
-  async getCollectionTest<
-    PN extends CollectionTypeNames,
-    TContentTypeUID extends Common.UID.CollectionType = UIDFromPluralName<PN>,
+  async getCollection<
+    API extends Names<"plural", "collection">,
+    UID extends CTUID = UIDFromName<API>,
   >(
-    collection: PN,
-    page: number = 1,
-    pageSize: number = 25,
-    query: QueryStringCollection<TContentTypeUID> = "",
-    _hermes: Hermes = this.hermes
-  ): Promise<StandardResponse<APIResponseCollection<TContentTypeUID>>> {
-    // let _q = StrapiUtils.sanitizeQuery(query, false);
-    let __q = `?pagination[pageSize]=${pageSize}&pagination[page]=${page}`;
-
-    if (__q) {
-      __q += `&${__q}`;
-    }
-
-    let { data, error } = await this.getWithClient(`${collection}${__q}`, {
-      next: { tags: [collection, "atlas::full-revalidation"] },
+    collection: API,
+    query?: CrudQueryFull<UID>,
+    options?: RequestInit
+  ): CRUD.FN<APIResponseCollection<UID>> {
+    const parsedQuery: object = u.mergeQuery(u.parseSemanticQuery(query), {
+      pagination: { pageSize: 25, page: 1 },
     });
 
-    if (error) {
-      console.error(`Error fetching collection ${collection}:`, error, {
-        query: __q,
-      });
-    }
-    return { data: undefined, error } as ErrorResponse;
+    const url = u.createUrl({
+      endpoint: u.apiEndpoint(collection),
+      query: parsedQuery,
+    });
 
-    // return await StrapiUtils.coerceData<TContentTypeUID>(data, collection);
+    return this.normalizedFetch<APIResponseCollection<UID>>(
+      u.normalizeUrl(url),
+      u.wm("get", options)
+    );
+  }
+
+  async getFullCollection<
+    API extends Names<"plural", "collection">,
+    UID extends CTUID = UIDFromName<API>,
+  >(
+    collection: API,
+    query?: CrudQueryFull<UID>,
+    options?: RequestInit
+  ): CRUD.FN<APIResponseCollection<UID>> {
+    const cEntries: WithPage<APIResponseData<UID>>[] = [];
+    let meta: APIResponseCollectionMetadata;
+
+    const initialQuery = u.mergeQuery(query, {
+      pagination: { pageSize: 25, page: 1 },
+    });
+
+    fetchFirstPage: {
+      let { data: firstPage, error } = await this.find(
+        collection,
+        initialQuery,
+        options
+      );
+
+      if (error || !firstPage) {
+        console.error(`Error fetching collection ${collection}:`, error, {
+          query,
+        });
+        return { data: undefined, error } as ErrorResponse;
+      }
+
+      const withPageNumber = u.addPageToEntriesArray(firstPage.data, 1);
+      meta = firstPage.meta;
+
+      cEntries.push(...withPageNumber);
+    }
+
+    if (Number(meta?.pagination?.pageCount) <= 1) {
+      const data = { data: cEntries, meta };
+      return { data, error: undefined };
+    }
+
+    // ILIAD: TODO: NOTE: This concurrent fetch is neat, but it puts the pages out of order.
+    const promises = u.indexArrayFromMeta(meta).map(async (pageNumber) => {
+      const { data: page, error } = await this.find(
+        collection,
+        u.mergeQuery(initialQuery, {
+          pagination: { page: pageNumber },
+        }),
+        options
+      );
+
+      if (error || !page) {
+        console.error(`Error fetching collection ${collection}:`, error);
+        console.debug({ query });
+
+        return { error };
+      }
+
+      return u.addPageToEntriesArray(page.data, pageNumber);
+    });
+
+    // Fetch all pages concurrently... unsure if this is the best way to do this.
+    (await Promise.all(promises)).forEach((page) => {
+      if (Array.isArray(page)) cEntries.push(...page);
+    });
+
+    const data = {
+      data: u.sortAndRemovePagesFromEntriesArray(cEntries),
+      meta,
+    };
+
+    return { data, error: undefined };
   }
 
   protected withContentTypes(options: any): void {}
@@ -689,111 +525,3 @@ class StrapiAdapter extends Feature {
 export default StrapiAdapter;
 export { StrapiAdapter };
 export * from "./types";
-
-// <TContentTypeUID extends Common.UID.CollectionType>(
-//   collection: string,
-//   page: number = 1,
-//   pageSize: number = 25,
-//   query: QueryStringCollection<TContentTypeUID> = "",
-//   _hermes: Hermes = this.hermes
-//   // test?: GetContentTypeFromEntry<typeof collection>
-// ): Promise<StandardResponse<APIResponseCollection<TContentTypeUID>>> {
-//   let _q = StrapiUtils.sanitizeQuery(query, false);
-//   let __q = `?pagination[pageSize]=${pageSize}&pagination[page]=${page}`;
-
-//   if (_q) {
-//     __q += `&${_q}`;
-//   }
-
-//   let { data, error } = await this.getWithClient(`${collection}${__q}`, {
-//     next: { tags: [collection, "atlas::full-revalidation"] },
-//   });
-
-//   if (error) {
-//     console.error(`Error fetching collection ${collection}:`, error, {
-//       query: __q,
-//     });
-//     return { data: undefined, error } as ErrorResponse;
-//   }
-
-//   return await StrapiUtils.coerceData(data, collection as string);
-// }
-
-// 5. Corrected getCollectionTest Function
-
-// async getEntry<TContentTypeUID extends Common.UID.ContentType>(
-//   collection: string,
-//   id: number,
-//   query: QueryStringCollection<TContentTypeUID> = "",
-//   _hermes: Hermes = this.hermes
-// ): Promise<StandardResponse<APIResponseData<TContentTypeUID>>> {
-//   query = StrapiUtils.sanitizeQuery(query);
-
-//   let { data, error } = await this.getWithClient(
-//     `${collection}/${id}${query}`,
-//     {
-//       next: { tags: [collection, "atlas::full-revalidation"] },
-//     }
-//   );
-
-//   if (error) {
-//     console.error(`Error fetching entry ${collection}:`, error, { query });
-//     return { data: undefined, error } as ErrorResponse;
-//   }
-
-//   return await StrapiUtils.coerceData(data, collection, id);
-// }
-
-// async getSingle<TContentTypeUID extends Common.UID.ContentType>(
-//   collection: string,
-//   query: QueryStringCollection<TContentTypeUID> = "",
-//   _hermes: Hermes = this.hermes
-// ): Promise<StandardResponse<APIResponseData<TContentTypeUID>>> {
-//   query = StrapiUtils.sanitizeQuery(query);
-
-//   let { data, error } = await this.getWithClient(`${collection}${query}`, {
-//     next: { tags: [collection, "atlas::full-revalidation"] },
-//   });
-
-//   if (error) {
-//     console.error(`Error fetching entry ${collection}:`, error, { query });
-//     return { data: undefined, error } as ErrorResponse;
-//   }
-
-//   return await StrapiUtils.coerceData(data, collection);
-// }
-
-// private async normalizedFetch<
-// R extends any,
-// Path extends PathsWithMethod<
-//   IliadStrapiAdapter.Paths,
-//   MethodRequiredRequestInit["method"]
-// >,
-// Init extends MaybeOptionalInit<
-//   IliadStrapiAdapter.Paths[Path],
-//   MethodRequiredRequestInit["method"]
-// >,
-// >(
-// url: Path,
-// options: MethodRequiredRequestInit
-// ): Promise<
-// StandardResponse<
-//   R extends undefined
-//     ? FetchResponse<
-//         IliadStrapiAdapter.Paths[Path][MethodRequiredRequestInit["method"]],
-//         Init,
-//         MediaType
-//       >["data"]
-//     : R
-// >
-// > {
-// return this.hermes.fetch<
-//   R extends undefined
-//     ? FetchResponse<
-//         IliadStrapiAdapter.Paths[Path][MethodRequiredRequestInit["method"]],
-//         Init,
-//         MediaType
-//       >["data"]
-//     : R
-// >(url, options);
-// }

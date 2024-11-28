@@ -18,8 +18,8 @@ class Hermes {
     __publicField(this, "baseHeaders");
     __publicField(this, "networkMethod");
     __publicField(this, "originLocation", "Anonymous");
-    __publicField(this, "hermesOptions");
     __publicField(this, "axiosInstance", axios.create());
+    __publicField(this, "hermesOptions");
     this.hermesOptions = this.mergeHermesOptions(options);
     this.originLocation = this.hermesOptions.originLocation ?? "Anonymous";
   }

@@ -1,38 +1,27 @@
 import {
-  QueryStringCollection,
-  CrudQuery,
-  HttpMethod,
-  CTUID,
-  UpdateData,
-  CreateData,
-  DeleteData,
-} from "./types";
+  APIResponseCollectionMetadata,
+  GetValues,
+  WithPage,
+  Flavor,
+  WithoutPage,
+} from "@types";
+import { QueryStringCollection, HttpMethod, CTUID, UpdateData } from "./types";
+import { FetchOptions, InitParam } from "openapi-fetch";
 
-import { createFinalURL, FetchOptions } from "openapi-fetch";
-import { extendsType } from "@iliad.dev/ts-utils";
-import qs from "qs";
+// Utils
 import {
-  createQuerySerializer,
   defaultBodySerializer,
+  createFinalURL,
   mergeHeaders,
 } from "openapi-fetch";
-
-export async function restOperation() {}
-
-export async function crudOperation() {}
+import deepmerge from "deepmerge";
+import qs from "qs";
 
 export function normalizeUrl(url: string | number, api: boolean = true) {
   let str = url.toString();
 
   if (!api || str.startsWith("/api")) return str;
   return str.startsWith("/") ? `/api${str}` : `/api/${str}`;
-}
-
-function removeTrailingSlash(url: string): string {
-  if (url.endsWith("/")) {
-    return url.substring(0, url.length - 1);
-  }
-  return url;
 }
 
 type CreateUrlParams = {
@@ -182,8 +171,9 @@ function ensureQuestionMark(query: string) {
   return query.startsWith("?") ? query : `?${query}`;
 }
 
-export function parseSemanticQuery(query: QueryStringCollection<any>): object {
-  if (!extendsType<string>(query)) return query; // If it already an object, return it.
+export function parseSemanticQuery(query?: QueryStringCollection<any>): object {
+  if (!query) return {}; // If no query is passed, return an empty object.
+  if (typeof query !== "string") return query; // If it already an object, return it.
 
   let parsedQuery: object;
 
@@ -209,4 +199,72 @@ export function isSingleOverload(
   idOrData: number | string | UpdateData<CTUID>["data"]
 ): idOrData is object {
   return !(typeof idOrData === "number" || typeof idOrData === "string");
+}
+
+export function overrideHasId<T extends any[] = any[]>(args: any[]): args is T {
+  if (typeof args[1] === "number") return true;
+  if (typeof args[1] === "string") return true;
+  return false;
+}
+
+export function validateApi(api: string): string {
+  if (!api.startsWith("/")) return `/${api}`;
+  return api;
+}
+
+export function mergeQuery<T extends QueryStringCollection<any>>(
+  query: T = {} as T,
+  additional: object
+): T {
+  const queryObject = parseSemanticQuery(query);
+
+  return deepmerge(queryObject, additional) as T;
+}
+
+export function indexArrayFromMeta(
+  meta: APIResponseCollectionMetadata
+): number[] {
+  return Array(meta.pagination.pageCount)
+    .fill(0)
+    .map((_, i) => i + 2)
+    .slice(0, meta.pagination.pageCount - 1);
+}
+
+export function shouldUseFetch<T>(
+  flavor: Flavor,
+  options: FetchOptions<T> | RequestInit
+): options is RequestInit {
+  return flavor !== "rest";
+}
+
+export function sortAndRemovePagesFromEntriesArray<
+  T extends WithPage<{ attributes: GetValues<any>; id: number }>,
+  R extends Array<WithoutPage<T>> = Array<WithoutPage<T>>,
+>(entries: Array<T>): R {
+  const withoutPage = entries
+    .sort((a, b) => a.page - b.page)
+    .map((entry) => {
+      const { page, ...rest } = entry;
+      return rest;
+    });
+  return withoutPage as R;
+}
+
+export function addPageToEntry(
+  entry: { attributes: any; id: number },
+  pageNumber: number
+): WithPage<typeof entry> {
+  return { ...entry, page: pageNumber };
+}
+
+export function addPageToEntriesArray<
+  UID extends CTUID,
+  R extends Array<{ attributes: GetValues<UID>; id: number }>,
+>(entries: R, pageNumber: number): Array<WithPage<R[number]>> {
+  return entries.map((entry) => addPageToEntry(entry, pageNumber));
+}
+
+// Utility function to normalize REST params
+export function normalizeRestParams<Init>(init: Init[]): Init {
+  return init.reduce((acc, curr) => ({ ...acc, ...curr }), {} as Init);
 }

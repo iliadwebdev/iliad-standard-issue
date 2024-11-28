@@ -20,3 +20,12 @@ export function mergeDefaults<
 >(obj: T | undefined, defaults: Recursive_OptionalFieldsOf<T>): RR {
   return deepmerge(defaults, obj || {}) as RR;
 }
+
+type UnionWithoutUndefined<T> = T extends undefined ? never : T;
+
+export function isError<T extends object>(
+  error: ErrorResponse["error"] | undefined,
+  data: Partial<T> = {}
+): data is UnionWithoutUndefined<T> {
+  return !!error;
+}

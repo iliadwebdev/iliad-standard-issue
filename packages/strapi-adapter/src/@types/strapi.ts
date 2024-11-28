@@ -155,3 +155,6 @@ export type StrapiResponse<T extends Common.UID.ContentType> =
   | APIResponse<T>;
 
 export type { Common, Attribute, Utils };
+
+export type WithPage<T> = T & { page: number };
+export type WithoutPage<T> = Omit<T, "page">;

@@ -13,8 +13,8 @@ declare class Hermes {
     baseHeaders?: object | null;
     networkMethod?: HermesMethod | null;
     originLocation: string;
-    hermesOptions: HermesOptions;
     axiosInstance: AxiosInstance;
+    hermesOptions: HermesOptions;
     constructor(options?: HermesOptions);
     private mergeHermesOptions;
     normalizeResponse<T>(promise: Promise<T>, extractData?: boolean): Promise<StandardResponse<T>>;

@@ -2,14 +2,21 @@
 // More maintainable this way.
 
 // Types
+import type {
+  PopulatedStrapiInstanceParams,
+  StrapiInstanceParams,
+  WarningConfig,
+  WarningFn,
+} from "../types";
 import { Hermes, HermesOptions } from "@iliad.dev/hermes";
-import type { StrapiInstanceParams } from "./types";
 
 // Utils
 import { mergeDefaults } from "@iliad.dev/ts-utils";
+import warnings from "./warnings";
 
 // Data
-import { defaultHermesOptions, defaultInstanceParams } from "./data";
+import { defaultHermesOptions, defaultInstanceParams } from "../data";
+import { ContextClient } from "@types";
 
 // Create new Hermes instance with the Strapi API location as the base URL.
 // And applies the default options to the instance, if not provided.
@@ -36,27 +43,30 @@ export function createHermesInstance(
 }
 
 // Parse the Strapi instance parameters.
-export function parseStrapiInstanceParams(params: StrapiInstanceParams) {
+export function parseStrapiInstanceParams(
+  params: StrapiInstanceParams
+): PopulatedStrapiInstanceParams {
   const { strapiApiLocation, strapiBearerToken, hermesOptions, client } =
     validateParams(params);
 
-  warnIfLegacyPattern(strapiApiLocation, params?.suppressLegacyApiWarning);
+  warnings.warnIfLegacyPattern(
+    params.warnings as WarningConfig,
+    strapiApiLocation
+  );
 
   return mergeDefaults<
     StrapiInstanceParams,
     Legacy_Recursive_Required<StrapiInstanceParams>
   >(
     {
-      strapiApiLocation: strapiApiLocation.toString(),
       strapiBearerToken: strapiBearerToken?.toString(),
+      strapiApiLocation: strapiApiLocation.toString(),
+      strapiApiEndpoint: strapiApiLocation.toString(),
       hermesOptions,
       client,
     },
     defaultInstanceParams
-  ) as Legacy_Recursive_Required<StrapiInstanceParams> & {
-    strapiBearerToken: string | undefined;
-    strapiApiLocation: string;
-  };
+  ) as PopulatedStrapiInstanceParams;
 }
 
 // Validate the Strapi instance parameters.
@@ -82,11 +92,4 @@ export function validateParams(
   };
 }
 
-// Warns the user if the Strapi API location is using the legacy pattern.
-function warnIfLegacyPattern(apiLocation: string, suppress: boolean = false) {
-  if (!apiLocation.endsWith("api") || suppress) return;
-  console.warn(
-    `strapiApiLocation is using a legacy pattern. If you meant to include (/api) in your URL, set the suppressLegacyApiWarning option to true. Api Location: \n`,
-    apiLocation
-  );
-}
+export { warnings };

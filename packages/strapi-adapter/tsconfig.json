@@ -23,6 +23,10 @@
     "baseUrl": "./",
     "paths": {
       "@features": ["./src/strapiAdapter"],
+      "@classes*": ["./src/classes*"],
+      "@WarningsRegistry": [
+        "./src/strapiAdapter/StrapiInstance/utils/warnings"
+      ],
       "@types": ["./src/@types"],
       "@utils": ["./src/utils"]
     }

@@ -3,6 +3,10 @@ var _typeguards = require('./typeguards'); _createStarExport(_typeguards);
 function mergeDefaults(obj, defaults) {
   return _deepmergets.deepmerge.call(void 0, defaults, obj || {});
 }
+function isError(error, data = {}) {
+  return !!error;
+}
 
 
-exports.mergeDefaults = mergeDefaults;
+
+exports.isError = isError; exports.mergeDefaults = mergeDefaults;

@@ -18,8 +18,8 @@ class Hermes {
     _chunkETV4XYOVcjs.__publicField.call(void 0, this, "baseHeaders");
     _chunkETV4XYOVcjs.__publicField.call(void 0, this, "networkMethod");
     _chunkETV4XYOVcjs.__publicField.call(void 0, this, "originLocation", "Anonymous");
-    _chunkETV4XYOVcjs.__publicField.call(void 0, this, "hermesOptions");
     _chunkETV4XYOVcjs.__publicField.call(void 0, this, "axiosInstance", _axios2.default.create());
+    _chunkETV4XYOVcjs.__publicField.call(void 0, this, "hermesOptions");
     this.hermesOptions = this.mergeHermesOptions(options);
     this.originLocation = _nullishCoalesce(this.hermesOptions.originLocation, () => ( "Anonymous"));
   }

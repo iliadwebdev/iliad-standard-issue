@@ -1,24 +1,28 @@
-import {
-  APIResponse,
-  APIResponseCollection,
-  APIResponseData,
-  Common,
-  ContextClient,
-} from "../../../@types";
-import { Utils, Schema } from "@strapi/strapi";
-import { ContentTypeInfo } from "@strapi/types/dist/types/core/schemas";
-import {
-  PaginatedResult,
-  PartialEntity,
-  Result,
-  Entity,
-} from "@strapi/types/dist/modules/entity-service";
+import { NamedTuple, XOR } from "@iliad.dev/ts-utils/@types";
 import { Hermes } from "@iliad.dev/hermes";
+import { Schema } from "@strapi/strapi";
 import { Params } from "./params";
+import { MaybeOptionalInit } from "openapi-fetch";
+
+import { FetchResponse } from "openapi-fetch";
+import {
+  APIResponseCollection,
+  ContextClient,
+  APIResponse,
+  Common,
+} from "@types";
+import { PopulatedStrapiInstanceParams } from "src/strapiAdapter/StrapiInstance/types";
+import {
+  HttpMethod,
+  MediaType,
+  PathsWithMethod,
+} from "openapi-typescript-helpers";
 
 export type StrapiAdapterParams = {
+  warnings: PopulatedStrapiInstanceParams["warnings"];
   client: ContextClient;
   hermes: Hermes;
+  api: string;
 };
 
 // Gets all the content types
@@ -35,8 +39,8 @@ export type ContentTypeUIDs = {
     : never;
 }[keyof Common.Schemas];
 
-export type CollectionTypeNames = keyof PluralNameToUID;
 export type ContentTypeNames = CollectionTypeNames | SingleTypeNames;
+export type CollectionTypeNames = keyof PluralNameToUID;
 export type SingleTypeNames = keyof SingleNameToUID;
 
 export type SingleNameToUID = {
@@ -91,9 +95,6 @@ export type UIDFromSingleName<SN extends keyof SingleNameToUID> =
 export type UIDFromContentTypeName<E extends ContentTypeNames> =
   E extends CollectionTypeNames ? UIDFromPluralName<E> : UIDFromSingleName<E>;
 
-// export type DefaultUIDFronContentTypeName<E extends Common.UID.ContentType> =
-//   E extends CollectionTypeNames ? UIDFromPluralName<E> : UIDFromSingleName<E>;
-
 export type CrudCollectionResponse<T extends CTUID> = StandardResponse<
   APIResponseCollection<T>
 >;
@@ -107,8 +108,6 @@ export type CrudResponse<
 > = StandardResponse<
   E extends CollectionTypeNames ? APIResponseCollection<T> : APIResponse<T>
 >;
-
-export type GetContentTypeFromEntry<T extends CTUID> = "test" | "test2";
 
 export type CTUID = Common.UID.ContentType; // Content Type UID
 
@@ -129,18 +128,6 @@ export type CrudQuery<T extends CTUID> =
       >
     >
   | "*";
-
-type QueryStringAll<TContentTypeUID extends CTUID> = Params.Pick<
-  TContentTypeUID,
-  | "publicationState"
-  | "pagination"
-  | "populate"
-  | "filters"
-  | "plugin"
-  | "fields"
-  | "sort"
-  | "_q"
->;
 
 export type CreateData<UID extends CTUID> = Params.Pick<
   UID,
@@ -199,3 +186,115 @@ export type QueryStringEntry<TContentTypeUID extends CTUID> =
 // OPENAI TYPES
 // ========================================
 export * from "./openapi";
+
+declare namespace CRUD {
+  type FN<T> = Promise<StandardResponse<T>>;
+  type UpdateNames =
+    | Names<"plural", "collection">
+    | Names<"singular", "single">;
+  type DeleteNames =
+    | Names<"plural", "collection">
+    | Names<"singular", "single">;
+
+  type SingleUpdateParams<
+    API extends Names<"singular", "single">,
+    UID extends CTUID = UIDFromName<API>,
+  > = NamedTuple<
+    [
+      collection: API,
+      data: UpdateData<UID>["data"],
+      query?: Omit<UpdateData<UID>, "data">,
+      options?: RequestInit,
+    ]
+  >;
+
+  type CollectionUpdateParams<
+    API extends Names<"plural", "collection">,
+    UID extends CTUID = UIDFromName<API>,
+  > = NamedTuple<
+    [
+      collection: API,
+      id: string | number,
+      data: UpdateData<UID>["data"],
+      query?: Omit<UpdateData<UID>, "data">,
+      options?: RequestInit,
+    ]
+  >;
+
+  // FindOneParams
+  type FindOneParamsSingle<
+    API extends Names<"singular", "single">,
+    UID extends CTUID = UIDFromName<API>,
+  > = NamedTuple<
+    [
+      collection: API,
+      query?: CRUD.FindOneQuery<API, UID>,
+      options?: RequestInit,
+    ]
+  >;
+
+  type FindOneParamsCollection<
+    API extends Names<"plural", "collection">,
+    UID extends CTUID = UIDFromName<API>,
+  > = NamedTuple<
+    [
+      collection: API,
+      id: number | string,
+      query?: CRUD.FindOneQuery<API, UID>,
+      options?: RequestInit,
+    ]
+  >;
+
+  // Removes the filter property from the query object when searching for a single item.
+  type FindOneQuery<API, UID extends CTUID> =
+    API extends Names<"singular", "single">
+      ? Omit<CrudQueryFull<UID>, "filters">
+      : CrudQueryFull<UID>;
+}
+
+declare namespace REST {
+  type FN<
+    Path extends REST.Path,
+    Init extends REST.Init<Path>,
+    Method extends HttpMethod = "get",
+    ContentType extends MediaType = "application/json",
+  > = Promise<
+    StandardResponse<
+      FetchResponse<
+        IliadStrapiAdapter.paths[Path][Method],
+        Init,
+        ContentType
+      >["data"]
+    >
+  >;
+
+  type Path<Method extends HttpMethod = "get"> = PathsWithMethod<
+    IliadStrapiAdapter.paths,
+    Method
+  >;
+
+  type Init<
+    Path extends REST.Path,
+    Method extends HttpMethod = "get",
+  > = MaybeOptionalInit<IliadStrapiAdapter.paths[Path], Method>;
+}
+
+export { CRUD, REST };
+
+export interface StrapiError {
+  data: null;
+  error: {
+    status: number;
+    name: string;
+    message: string;
+    details: Record<string, unknown>;
+  };
+}
+
+export type StrapiResponse<T> = XOR<
+  {
+    data: T;
+    meta: Record<string, unknown>;
+  },
+  StrapiError
+>;

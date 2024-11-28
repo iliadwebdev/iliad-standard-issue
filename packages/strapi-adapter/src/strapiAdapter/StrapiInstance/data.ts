@@ -12,8 +12,14 @@ export const defaultHermesOptions: DefaultParams<HermesOptions> = {
 export const defaultInstanceParams: DefaultParams<StrapiInstanceParams> = {
   hermesOptions: defaultHermesOptions,
   strapiBearerToken: undefined,
+  normalizeStrapiData: true,
+  strapiApiEndpoint: "/api",
   client: "axios",
 
   // Warnings
-  suppressLegacyApiWarning: false,
+  warnings: {
+    suppressLegacyApiWarning: false,
+    suppressAxiosWarning: false,
+    suppressNormalizeStrapiData: false,
+  },
 };
