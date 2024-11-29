@@ -1,3 +1,4 @@
+import "@iliad.dev/primitive-extensions";
 import { deepmerge } from "deepmerge-ts";
 import deasync from "deasync";
 
@@ -28,4 +29,54 @@ export function isError<T extends object>(
   data: Partial<T> = {}
 ): data is UnionWithoutUndefined<T> {
   return !!error;
+}
+
+export function uniqueArrayMerge<T extends Array<any> = any[]>(
+  target: any[],
+  source: any[],
+  options: any
+): T {
+  let values: any[] = [];
+
+  for (let i = 0; i < target.length; i++) {
+    if (!source.includes(target[i])) {
+      values.push(target[i]);
+    }
+  }
+
+  for (let i = 0; i < source.length; i++) {
+    if (!target.includes(source[i])) {
+      values.push(source[i]);
+    }
+  }
+
+  return values as T;
+}
+
+export function preferentialArrayMerge<T extends Array<any> = any[]>(
+  prefer: "target" | "source" = "target",
+  unique: boolean = false
+) {
+  return (target: any[], source: any[], options: any): T => {
+    let penultimate: any[] = [];
+    findPenultimate: {
+      if (!target.length && !source.length) {
+        penultimate = target as T;
+        break findPenultimate;
+      }
+
+      if (!target.length) {
+        penultimate = source as T;
+        break findPenultimate;
+      }
+
+      if (!source.length) {
+        penultimate = target as T;
+        break findPenultimate;
+      }
+      penultimate = prefer === "target" ? (target as T) : (source as T);
+    }
+
+    return (unique ? Array.unique(penultimate) : penultimate) as T;
+  };
 }

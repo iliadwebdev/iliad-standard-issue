@@ -11,7 +11,7 @@ import {
   APIResponse,
   Common,
 } from "@types";
-import { PopulatedStrapiInstanceParams } from "src/strapiAdapter/StrapiInstance/types";
+import { PopulatedStrapiInstanceParams } from "../../StrapiInstance/types";
 import {
   HttpMethod,
   MediaType,

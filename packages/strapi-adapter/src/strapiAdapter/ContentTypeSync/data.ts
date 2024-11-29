@@ -2,6 +2,7 @@ import { ContentTypesSyncOptions } from "./types";
 
 export const defaultContentTypesSyncOptions: Recursive_OptionalFieldsOf<ContentTypesSyncOptions> =
   {
+    contentTypesEndpoint: "/content-types",
     blockOnFirstDownload: true,
     logBlockReasons: false,
     requestOnSync: false,

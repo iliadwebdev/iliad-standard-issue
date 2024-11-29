@@ -30,6 +30,7 @@ declare global {
 
   interface Array<T> {
     insertAtIndex(index: number, element: T): Array<T>;
+    unique(equalityFunction?: Function): Array<T>;
     randomize(seed?: string | number): Array<T>;
     includesAll(arr: Array<T>): boolean;
     includesAny(arr: Array<T>): boolean;
@@ -38,6 +39,7 @@ declare global {
   }
 
   interface ArrayConstructor {
+    unique(arr: Array<any>, equalityFunction?: Function): Array<any>;
     randomize(arr: Array<any>, seed?: string | number): Array<any>;
     ofLength(length: number, value?: any): Array<any>;
     empty(length: number): Array<any>;

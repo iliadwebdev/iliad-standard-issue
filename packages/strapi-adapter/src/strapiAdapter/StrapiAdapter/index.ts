@@ -189,7 +189,7 @@ class StrapiAdapter extends Feature {
     options?: RequestInit
   ): CRUD.FN<APIResponseCollection<UID>> {
     const url = u.createUrl({
-      endpoint: u.apiEndpoint(collection),
+      endpoint: super.apiEndpoint(collection),
       query,
     });
 
@@ -218,7 +218,7 @@ class StrapiAdapter extends Feature {
 
       _options && (options = _options);
       url = u.createUrl({
-        endpoint: `${u.apiEndpoint(collection)}/${id}`,
+        endpoint: `${super.apiEndpoint(collection)}/${id}`,
         query,
       });
     } else {
@@ -229,7 +229,7 @@ class StrapiAdapter extends Feature {
 
       _options && (options = _options);
       url = u.createUrl({
-        endpoint: `${u.apiEndpoint(collection)}`,
+        endpoint: `${super.apiEndpoint(collection)}`,
         query,
       });
     }
@@ -252,7 +252,7 @@ class StrapiAdapter extends Feature {
     options?: RequestInit
   ): Promise<StandardResponse<APIResponseData<UID>>> {
     const url = u.createUrl({
-      endpoint: u.apiEndpoint(collection),
+      endpoint: super.apiEndpoint(collection),
       query,
     });
 
@@ -297,7 +297,7 @@ class StrapiAdapter extends Feature {
     options?: RequestInit
   ): Promise<StandardResponse<APIResponseData<UID>>> {
     const url = u.createUrl({
-      endpoint: `${u.apiEndpoint(collection)}/${id}`,
+      endpoint: `${super.apiEndpoint(collection)}/${id}`,
     });
 
     return this.normalizedFetch<APIResponseData<UID>>(
@@ -317,7 +317,7 @@ class StrapiAdapter extends Feature {
     options?: RequestInit
   ): Promise<StandardResponse<APIResponseData<UID>>> {
     const url = u.createUrl({
-      endpoint: `${u.apiEndpoint(collection)}`,
+      endpoint: `${super.apiEndpoint(collection)}`,
       query,
     });
 
@@ -344,7 +344,7 @@ class StrapiAdapter extends Feature {
     options?: RequestInit
   ): Promise<StandardResponse<APIResponseData<UID>>> {
     const url = u.createUrl({
-      endpoint: `${u.apiEndpoint(collection)}/${id}`,
+      endpoint: `${super.apiEndpoint(collection)}/${id}`,
       query,
     });
 
@@ -373,7 +373,7 @@ class StrapiAdapter extends Feature {
     options?: RequestInit
   ): CRUD.FN<APIResponse<UID>> {
     const url = u.createUrl({
-      endpoint: `${u.apiEndpoint(collection)}/${id}`,
+      endpoint: `${super.apiEndpoint(collection)}/${id}`,
       query,
     });
 
@@ -393,7 +393,7 @@ class StrapiAdapter extends Feature {
     options?: RequestInit
   ): CRUD.FN<APIResponse<UID>> {
     const url = u.createUrl({
-      endpoint: u.apiEndpoint(collection),
+      endpoint: super.apiEndpoint(collection),
       query: u.mergeQuery(query, {
         filters: {
           slug: {
@@ -407,9 +407,10 @@ class StrapiAdapter extends Feature {
       APIResponseCollection<UID>
     >(u.normalizeUrl(url), u.wm("get", options));
 
+    console.log(data, error);
     if (error !== undefined) return { data: undefined, error };
 
-    if (!data?.data?.[0] || data === undefined) {
+    if (!u.collectionContainsValidData<UID>(data)) {
       // Not certain this state is possible to reach.
       return {
         data: undefined,
@@ -418,7 +419,7 @@ class StrapiAdapter extends Feature {
     }
 
     return {
-      data: { data: data.data[0] },
+      data: { data: data.data?.[0] },
       error: undefined,
     };
   }
@@ -436,7 +437,7 @@ class StrapiAdapter extends Feature {
     });
 
     const url = u.createUrl({
-      endpoint: u.apiEndpoint(collection),
+      endpoint: super.apiEndpoint(collection),
       query: parsedQuery,
     });
 

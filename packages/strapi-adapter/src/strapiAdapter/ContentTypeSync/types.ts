@@ -2,10 +2,11 @@ export type ContentTypesResponse = Array<string>;
 
 export type ContentTypesSyncOptions = {
   blockOnFirstDownload?: boolean;
+  contentTypesEndpoint?: string;
+  outDir: string | undefined;
   logBlockReasons?: boolean;
   requestOnSync?: boolean;
   alwaysBlock?: boolean;
-  outDir: string;
   names?: {
     contentTypes?: string;
     components?: string;

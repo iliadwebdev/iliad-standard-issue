@@ -45,7 +45,7 @@ const warnings = {
   warnIfNormalizeData: createWarning(
     "suppressNormalizeStrapiData",
     function (suppress, options: Options) {
-      if (suppress || !options?.normalizeStrapiResponse) return;
+      if (suppress || !options?.normalizeStrapiData) return;
       console.warn(
         "normalizeStrapiData is not yet implemented. Data will be returned in the style of the v4 Strapi API."
       );

@@ -1,6 +1,5 @@
 import {
   normalizeContentTypesOptions,
-  downloadContentTypesDynamic,
   requestNewContentTypes,
   downloadContentTypes,
   doContentTypesExist,
@@ -24,7 +23,7 @@ class ContentTypeSync extends Feature {
   }
 
   async syncContentTypes(): Promise<StandardResponse<null>> {
-    if (!this.contentTypesSyncOptions) {
+    if (this.options.contentTypesSyncOptions === undefined) {
       console.error("No content types sync options set.");
       return {
         data: undefined,
@@ -32,11 +31,15 @@ class ContentTypeSync extends Feature {
       };
     }
 
-    if (this.contentTypesSyncOptions.requestOnSync === true) {
-      await requestNewContentTypes(this.hermes);
+    if (this.options.contentTypesSyncOptions.requestOnSync === true) {
+      await requestNewContentTypes(this.hermes, this.contentTypeEndpoint);
     }
 
-    return downloadContentTypes(this.hermes, this.contentTypesSyncOptions);
+    return downloadContentTypes(
+      this.hermes,
+      this.options.contentTypesSyncOptions,
+      this.contentTypeEndpoint
+    );
   }
 
   get Hermes(): Hermes {
@@ -56,13 +59,16 @@ class ContentTypeSync extends Feature {
     return normalizeContentTypesOptions(options);
   }
 
-  public withContentTypes(options: ContentTypesSyncOptions): void {
-    const strictOptions = this.setContentTypesSyncOptions(options);
-    downloadContentTypesDynamic(this.hermes, strictOptions);
+  private get contentTypeEndpoint(): string {
+    const endpoint = super.apiEndpoint(
+      this.options.contentTypesSyncOptions.contentTypesEndpoint
+    );
+    console.log("endpoint", endpoint);
+    return endpoint;
   }
 
   async requestNewContentTypes(): Promise<StandardResponse<null>> {
-    return requestNewContentTypes(this.hermes);
+    return requestNewContentTypes(this.hermes, this.contentTypeEndpoint);
   }
 }
 

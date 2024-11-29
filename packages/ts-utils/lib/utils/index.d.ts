@@ -15,5 +15,7 @@ type RRU<T> = Recursive_Required<T> | Legacy_Recursive_Required<T>;
 declare function mergeDefaults<T, RR extends RRU<T> = Legacy_Recursive_Required<T>>(obj: T | undefined, defaults: Recursive_OptionalFieldsOf<T>): RR;
 type UnionWithoutUndefined<T> = T extends undefined ? never : T;
 declare function isError<T extends object>(error: ErrorResponse["error"] | undefined, data?: Partial<T>): data is UnionWithoutUndefined<T>;
+declare function uniqueArrayMerge<T extends Array<any> = any[]>(target: any[], source: any[], options: any): T;
+declare function preferentialArrayMerge<T extends Array<any> = any[]>(prefer?: "target" | "source", unique?: boolean): (target: any[], source: any[], options: any) => T;
 
-export { isError, mergeDefaults };
+export { isError, mergeDefaults, preferentialArrayMerge, uniqueArrayMerge };

@@ -6,6 +6,6 @@ import { mainStrapiAdapterTest, mainThothTest } from './testing';
 
   // console.log('running');
   // await mainHermesTest();
-  // await mainThothTest();
-  await mainStrapiAdapterTest();
+  await mainThothTest();
+  // await mainStrapiAdapterTest();
 })();

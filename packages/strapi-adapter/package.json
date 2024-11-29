@@ -1,6 +1,6 @@
 {
   "name": "@iliad.dev/strapi-adapter",
-  "version": "0.0.46",
+  "version": "0.1.3",
   "description": "Utility functions to simplify interactions with Strapi backend.",
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
   "dependencies": {
     "@iliad.dev/hermes": "*",
     "@iliad.dev/ts-utils": "*",
+    "@iliad.dev/thoth": "*",
     "@strapi/strapi": "^4.24.2",
     "@strapi/types": "^5.4.1",
     "deasync": "^0.1.30",

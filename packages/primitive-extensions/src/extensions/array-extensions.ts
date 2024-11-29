@@ -34,8 +34,8 @@ Array.prototype.randomize = function (seed?: number | string): Array<any> {
     typeof seed === "number"
       ? seed
       : seed
-      ? seed.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
-      : Date.now() * Math.random();
+        ? seed.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
+        : Date.now() * Math.random();
 
   let _this = this;
 
@@ -67,6 +67,21 @@ Array.randomize = function (arr: Array<any>, seed?: number | string) {
   return arr.randomize(seed);
 };
 
+// Gets all unique values in an array, accepts a custom equality function
+Array.prototype.unique = function (equalityFunction?: Function) {
+  const eqf = equalityFunction || ((a: unknown, b: unknown) => a === b);
+  let result: Array<any> = [];
+
+  for (let i = 0; i < this.length; i++) {
+    let current = this[i];
+    if (!result.some((el) => eqf(el, current))) {
+      result.push(current);
+    }
+  }
+
+  return result;
+};
+
 /**
  * Creates a new array with the specified length and optional value for each element.
  * @param length The length of the new array.
@@ -81,4 +96,9 @@ Array.ofLength = function (length: number, value?: any) {
 
 Array.empty = function (length: number) {
   return Array.from({ length }).fill(null);
+};
+
+// Static version of Array.unique
+Array.unique = function (arr: Array<any>, equalityFunction?: Function) {
+  return arr.unique(equalityFunction);
 };

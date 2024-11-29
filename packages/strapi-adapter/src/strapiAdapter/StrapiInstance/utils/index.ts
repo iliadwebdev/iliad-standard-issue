@@ -6,7 +6,6 @@ import type {
   PopulatedStrapiInstanceParams,
   StrapiInstanceParams,
   WarningConfig,
-  WarningFn,
 } from "../types";
 import { Hermes, HermesOptions } from "@iliad.dev/hermes";
 
@@ -15,8 +14,8 @@ import { mergeDefaults } from "@iliad.dev/ts-utils";
 import warnings from "./warnings";
 
 // Data
+import { normalizeContentTypesOptions } from "../../ContentTypeSync/utils";
 import { defaultHermesOptions, defaultInstanceParams } from "../data";
-import { ContextClient } from "@types";
 
 // Create new Hermes instance with the Strapi API location as the base URL.
 // And applies the default options to the instance, if not provided.
@@ -46,12 +45,24 @@ export function createHermesInstance(
 export function parseStrapiInstanceParams(
   params: StrapiInstanceParams
 ): PopulatedStrapiInstanceParams {
-  const { strapiApiLocation, strapiBearerToken, hermesOptions, client } =
-    validateParams(params);
+  const {
+    contentTypesSyncOptions,
+    strapiApiEndpoint,
+    strapiApiLocation,
+    strapiBearerToken,
+    hermesOptions,
+    client,
+  } = validateParams(params);
 
   warnings.warnIfLegacyPattern(
     params.warnings as WarningConfig,
     strapiApiLocation
+  );
+
+  const ctso = normalizeContentTypesOptions(
+    contentTypesSyncOptions || {
+      outDir: undefined,
+    }
   );
 
   return mergeDefaults<
@@ -60,8 +71,9 @@ export function parseStrapiInstanceParams(
   >(
     {
       strapiBearerToken: strapiBearerToken?.toString(),
+      strapiApiEndpoint: strapiApiEndpoint?.toString(),
       strapiApiLocation: strapiApiLocation.toString(),
-      strapiApiEndpoint: strapiApiLocation.toString(),
+      contentTypesSyncOptions: ctso,
       hermesOptions,
       client,
     },

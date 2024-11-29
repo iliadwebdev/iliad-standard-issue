@@ -1,12 +1,14 @@
 import {
   APIResponseCollectionMetadata,
+  APIResponseCollection,
+  APIResponseData,
+  WithoutPage,
   GetValues,
   WithPage,
   Flavor,
-  WithoutPage,
 } from "@types";
 import { QueryStringCollection, HttpMethod, CTUID, UpdateData } from "./types";
-import { FetchOptions, InitParam } from "openapi-fetch";
+import { FetchOptions } from "openapi-fetch";
 
 // Utils
 import {
@@ -56,10 +58,10 @@ export function createUrl(
   }
 }
 
-// ILIAD: NOTE: This needs to be configurable.
-export function apiEndpoint(collection: string) {
-  return `/api/${collection}`;
-}
+// // ILIAD: NOTE: This needs to be configurable.
+// export function apiEndpoint(collection: string) {
+//   return `/api/${collection}`;
+// }
 
 export function wm(
   method: HttpMethod,
@@ -267,4 +269,15 @@ export function addPageToEntriesArray<
 // Utility function to normalize REST params
 export function normalizeRestParams<Init>(init: Init[]): Init {
   return init.reduce((acc, curr) => ({ ...acc, ...curr }), {} as Init);
+}
+
+type NotUndefined<T> = T extends undefined ? never : T;
+type HasValidData<UID extends CTUID> = APIResponseCollection<UID> & {
+  data: [NotUndefined<APIResponseData<UID>>, ...APIResponseData<UID>[]];
+};
+
+export function collectionContainsValidData<UID extends CTUID>(
+  data: APIResponseCollection<UID>
+): data is HasValidData<UID> {
+  return data?.data?.[0]?.attributes !== undefined;
 }

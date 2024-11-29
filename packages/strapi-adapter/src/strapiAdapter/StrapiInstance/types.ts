@@ -1,6 +1,10 @@
 // All types specific to the Strapi Instance will live here, for now.
 import type { StringLike, ContextClient } from "@types";
 import type { HermesOptions } from "@iliad.dev/hermes";
+import {
+  ContentTypesSyncOptions,
+  StrictContentTypesSyncOptions,
+} from "../ContentTypeSync";
 
 export type StrapiInstanceParams = {
   strapiBearerToken?: StringLike;
@@ -9,7 +13,9 @@ export type StrapiInstanceParams = {
   hermesOptions?: HermesOptions;
   client?: ContextClient;
 
+  contentTypesSyncOptions?: ContentTypesSyncOptions; // Options for syncing content types with the remote Strapi server.
   normalizeStrapiData?: boolean; // Whether or not to place all Strapi responses inside an array with a key of "data".
+  label?: StringLike; // Label for the Strapi instance.
 
   // Warnings
   warnings?: {
@@ -21,9 +27,11 @@ export type StrapiInstanceParams = {
 
 export type PopulatedStrapiInstanceParams =
   Legacy_Recursive_Required<StrapiInstanceParams> & {
+    contentTypesSyncOptions: StrictContentTypesSyncOptions;
     strapiBearerToken: string | undefined;
     strapiApiLocation: string;
     strapiApiEndpoint: string;
+    label: string;
   };
 
 export type WarningConfig = boolean | PopulatedStrapiInstanceParams["warnings"];

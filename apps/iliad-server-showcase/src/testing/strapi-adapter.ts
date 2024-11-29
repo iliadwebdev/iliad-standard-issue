@@ -11,33 +11,24 @@ const typesDir = path.resolve(process.cwd(), './src/@types');
 const strapi = new StrapiInstance({
   strapiApiLocation: process.env.STRAPI_API_URL,
   strapiBearerToken: process.env.STRAPI_API_KEY,
-  normalizeStrapiResponse: true,
+  label: 'Server Test (Legacy)',
   client: 'fetch',
   hermesOptions: {
     verboseLogging: false,
   },
-})
-  .label('Server Test (Legacy)')
-  .withContentTypes({
+  contentTypesSyncOptions: {
     outDir: typesDir,
-  });
+  },
+});
+
+await strapi.syncContentTypes();
 
 export const mainStrapiAdapterTest = async () => {
-  const result = await strapi.findOne('events', 1, {
-    filters: {
-      earliestVenueStart: {
-        $gte: '2021-09-01T00:00:00.000Z',
-      },
+  const { data: event, error } = await strapi.getFullCollection('events', {
+    populate: {
+      funders: true,
     },
   });
 
-  const { data: test, error: e2 } = await strapi.GET('/articles/{id}', {
-    params: {
-      path: {
-        id: 1,
-      },
-    },
-  });
-
-  console.log({ test: test.data, e2, data: test });
+  console.log({ event, error });
 };

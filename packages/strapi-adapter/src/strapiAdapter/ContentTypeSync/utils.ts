@@ -14,6 +14,7 @@ import {
   ContentTypesSyncOptions,
   ContentTypesResponse,
 } from "./types";
+import Options from "@classes/Options";
 
 function writeContentTypes(
   options: StrictContentTypesSyncOptions,
@@ -52,12 +53,11 @@ function writeContentTypes(
 }
 
 export async function requestNewContentTypes(
-  hermes: Hermes
+  hermes: Hermes,
+  endpoint: string
 ): Promise<StandardResponse<null>> {
-  const { data, error } = await hermes.axios.post<string>(
-    "/content-types",
-    undefined
-  );
+  console.log({ endpoint });
+  const { data, error } = await hermes.axios.post<string>(endpoint, undefined);
   if (error !== undefined) {
     console.error("Error requesting new content types", error);
     return { error, data: undefined };
@@ -70,11 +70,14 @@ export async function requestNewContentTypes(
 export async function downloadContentTypes(
   hermes: Hermes,
   options: StrictContentTypesSyncOptions,
+  endpoint: string,
   start: number = performance.now()
 ): Promise<StandardResponse<null>> {
   console.log("Downloading content types");
   const { data: $1data, error: $1error } =
-    await hermes.axios.get<ContentTypesResponse>("/content-types");
+    await hermes.axios.get<ContentTypesResponse>(endpoint);
+
+  console.log({ endpoint });
   if ($1error !== undefined) {
     console.error("Error downloading content types", $1error);
     return { error: $1error, data: undefined };
@@ -93,48 +96,6 @@ export async function downloadContentTypes(
   console.log(
     `Content types downloaded and written to disk (${diskSize}) in ${ts}ms`
   );
-
-  return { data: null, error: undefined };
-}
-
-function shouldBlock(
-  options: StrictContentTypesSyncOptions,
-  log: boolean = false
-): boolean {
-  const ctExists = doContentTypesExist(options);
-  const _log = log || options.logBlockReasons;
-  const blockReasons: string[] = [];
-
-  // Push block reasons to the blockReasons array
-  if (options.alwaysBlock) blockReasons.push("alwaysBlock");
-  if (options.blockOnFirstDownload && !ctExists)
-    blockReasons.push("blockOnFirstDownload");
-
-  if (_log) {
-    console.log(
-      "Blocking execution until download completes for reasons:",
-      blockReasons.join(", ")
-    );
-  }
-
-  return blockReasons.length > 0;
-}
-
-export function downloadContentTypesDynamic(
-  hermes: Hermes,
-  options: StrictContentTypesSyncOptions
-): StandardResponse<null> {
-  const start = performance.now();
-
-  // Content types already exist, so we don't need to wait for the download
-  downloadContentTypes(hermes, options, start).then(({ data, error }) => {
-    if (error !== undefined) {
-      console.error("Error downloading content types", error);
-      return { error };
-    }
-
-    console.log("Content types downloaded asyncronously"); // This is handled by the downloadContentTypes function
-  });
 
   return { data: null, error: undefined };
 }

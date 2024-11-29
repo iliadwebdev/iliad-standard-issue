@@ -1,51 +1,40 @@
-type LogTypes<CTS extends LogType[] = never> = {
-  log: LogType;
-  info: LogType;
-  warn: LogType;
-  error: LogType;
-  debug: LogType;
-} & {
-  [K in CTS[number]["name"]]: CTS[number];
-};
-
-export type FinalLogConfig<CTS extends LogType[] = never> = {
-  type: keyof LogTypes<CTS>;
-};
-
-type LogType = {
-  name: string;
-};
+import { TimeStampComponents, PolymorphicColor, PadType } from "@types";
+import { StandardPrefix, LoggerParams, LogType } from "@classes/Logger/types";
 
 export type ThothParams = LoggerParams & {
   customTypes?: LogType[];
 };
 
-type TimeStampComponents = "date" | "time" | "milliseconds";
-
-export type LoggerConfig = {
-  prefix: Falsable<{
-    timestamp: Falsable<{
-      components: TimeStampComponents | TimeStampComponents[];
-      fn: Optional<(s: string) => string>; // The last function in the chain should return a string.
-      color?: string;
-    }>;
+export type LoggerParamsConfig = {
+  prefix?: {
+    prefixOrder?: StandardPrefix[];
+    joinString?: string;
+    showTypes?: boolean;
+    padType?: PadType;
+    newLine?: boolean;
+    timestamp: {
+      components?: TimeStampComponents | TimeStampComponents[];
+      color?: PolymorphicColor;
+      fn?: (s: string) => string; // The last function in the chain should return a string.
+      enabled: boolean;
+    };
     // Whether or not to show the namespace (e.g. Iliad, Thoth, Atlas, Gcollective, etc.)
-    module: Falsable<{
-      fn: Optional<(s: string) => string>; // The last function in the chain should return a string.
-      color?: string;
-      name: string;
-    }>;
+    module?: {
+      fn?: (s: string) => string; // The last function in the chain should return a string.
+      color?: PolymorphicColor;
+      enabled: boolean;
+      name?: string;
+    };
     // Whether or not to show the namespace (e.g. Iliad, Thoth, Atlas, Gcollective, etc.)
-    namespace: Falsable<{
-      fn: Optional<(s: string) => string>; // The last function in the chain should return a string.
-      color?: string;
-      name: string;
-    }>;
+    namespace?: {
+      fn?: (s: string) => string; // The last function in the chain should return a string.
+      color?: PolymorphicColor;
+      enabled: boolean;
+      name?: string;
+    };
     // Whether or not to show the manufacturer stamp (Iliad)
-    mfgStamp?: boolean;
-  }>;
-};
-
-export type LoggerParams = {
-  config?: Recursive_OptionalFieldsOf<LoggerConfig>;
+    mfgStamp?: {
+      enabled?: boolean;
+    };
+  };
 };

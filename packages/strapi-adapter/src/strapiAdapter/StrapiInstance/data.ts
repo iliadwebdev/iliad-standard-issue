@@ -1,6 +1,7 @@
 // This is where we'll store configurations and constants for the Instance.
 import { HermesOptions } from "@iliad.dev/hermes";
 import { StrapiInstanceParams } from "./types";
+import { defaultContentTypesSyncOptions } from "../ContentTypeSync/data";
 
 export const defaultHermesOptions: DefaultParams<HermesOptions> = {
   originLocation: undefined,
@@ -10,16 +11,18 @@ export const defaultHermesOptions: DefaultParams<HermesOptions> = {
 };
 
 export const defaultInstanceParams: DefaultParams<StrapiInstanceParams> = {
+  contentTypesSyncOptions: defaultContentTypesSyncOptions,
   hermesOptions: defaultHermesOptions,
   strapiBearerToken: undefined,
-  normalizeStrapiData: true,
+  normalizeStrapiData: false,
   strapiApiEndpoint: "/api",
+  label: "Strapi Adapter",
   client: "axios",
 
   // Warnings
   warnings: {
+    suppressNormalizeStrapiData: false,
     suppressLegacyApiWarning: false,
     suppressAxiosWarning: false,
-    suppressNormalizeStrapiData: false,
   },
 };

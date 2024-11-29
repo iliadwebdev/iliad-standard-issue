@@ -19,6 +19,7 @@
     "baseUrl": ".",
     "paths": {
       "@features": ["./src/strapiAdapter"],
+      "@classes*": ["./src/classes*"],
       "@types": ["./src/@types"],
       "@utils": ["./src/utils"]
     }
