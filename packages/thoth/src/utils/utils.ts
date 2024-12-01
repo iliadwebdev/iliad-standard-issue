@@ -1,6 +1,6 @@
 // Types
 import { PolymorphicColor, ColorFn, RGBColor, HexColor, PadType } from "@types";
-import { LoggerConfig } from "@classes/Logger/types";
+import { LoggerConfig } from "@classes/ThothLog/types.ts";
 
 // Utils
 import chalk, { ForegroundColorName, BackgroundColorName } from "chalk";
@@ -78,10 +78,9 @@ function ensureMsLength(ms: number): string {
 type TimestampComponents = LoggerConfig["prefix"]["timestamp"]["components"];
 export function getTimestamp(components: TimestampComponents): string {
   let finalComponents: string[] = [];
-  console.log({ components });
+
   components = [components].flat();
 
-  console.log(components);
   const now = new Date();
   const date = now.toLocaleDateString();
   const time = now.toLocaleTimeString(undefined, {
@@ -95,7 +94,6 @@ export function getTimestamp(components: TimestampComponents): string {
   if (components.includes("time")) {
     let timeString = time;
     if (components.includes("milliseconds")) {
-      console.log(now.getMilliseconds());
       timeString += `.${ensureMsLength(now.getMilliseconds())}`;
     }
     finalComponents.push(timeString);

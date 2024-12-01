@@ -1,4 +1,4 @@
-import type { LoggerConfig, FinalLogConfig } from "./types";
+import type { LoggerConfig, FinalLogConfig } from "./types.ts";
 
 export const defaultFinalLogConfig: FinalLogConfig = {
   type: "log",
@@ -7,7 +7,7 @@ export const defaultFinalLogConfig: FinalLogConfig = {
 export const defaultLoggerConfig: LoggerConfig = {
   prefix: {
     prefixOrder: ["mfgStamp", "timestamp", "module", "namespace"],
-    joinString: " ",
+    joinString: "",
     padType: "left",
     newLine: false,
     showTypes: true,

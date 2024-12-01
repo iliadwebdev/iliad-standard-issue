@@ -1,5 +1,9 @@
 import { TimeStampComponents, PolymorphicColor, PadType } from "@types";
-import { StandardPrefix, LoggerParams, LogType } from "@classes/Logger/types";
+import {
+  StandardPrefix,
+  LoggerParams,
+  LogType,
+} from "@classes/ThothLog/types.ts";
 
 export type ThothParams = LoggerParams & {
   customTypes?: LogType[];

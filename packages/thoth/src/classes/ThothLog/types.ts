@@ -1,5 +1,6 @@
 import { PolymorphicColor, TimeStampComponents, PadType } from "@types";
-import { LoggerParamsConfig } from "@classes/Thoth/types";
+import { LoggerParamsConfig } from "@classes/Thoth/types.ts";
+import { XOR } from "@iliad.dev/ts-utils/@types";
 
 export type LogTypes<CTS extends LogType[] = never> = {
   debug: LogType;
@@ -12,8 +13,9 @@ export type LogTypes<CTS extends LogType[] = never> = {
 };
 
 export type FinalLogConfig<CTS extends LogType[] = never> = {
-  ext?: "subLogger" | "powerLogger";
+  ext?: XOR<"subLogger", "powerLogger">;
   type: keyof LogTypes<CTS>;
+  spinner?: boolean;
 };
 
 export type LogType = {
