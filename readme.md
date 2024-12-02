@@ -14,11 +14,14 @@ A monorepo containing a suite of tools and packages designed to streamline and s
   - [Table of Contents](#table-of-contents)
   - [Paradigm](#paradigm)
     - [Structure \> syntax](#structure--syntax)
-    - [Transgression](#transgression)
-    - [Adherence](#adherence)
-    - [Recap](#recap)
+      - [Transgression](#transgression)
+      - [Adherence](#adherence)
+      - [Recap](#recap)
     - [Good code is beautiful, beautiful code is good](#good-code-is-beautiful-beautiful-code-is-good)
       - [Transgression + Adherence](#transgression--adherence)
+      - [Recap](#recap-1)
+    - [Single-ish Responsibility Functions](#single-ish-responsibility-functions)
+    - [Purity where Possible](#purity-where-possible)
   - [Packages](#packages)
     - [@iliad.dev/ts-utils](#iliaddevts-utils)
     - [@iliad.dev/primitive-extensions](#iliaddevprimitive-extensions)
@@ -36,7 +39,7 @@ With every project I work on, the more my appreciation grows for predictability,
 
 It can be tempting to abstract every feature away into robust, semantic APIs. This is sometimes appropriate (particurly when constructing the final, public-facing API for a package), but can leading to major headaches when configuring tooling and, frankly, doesn't often save as much time as initially anticipated.
 
-### Transgression
+#### Transgression
 
 I spent a great deal of time building post-installation scripts for [@iliad.dev/standard-issue](https://github.com/iliadwebdev/iliad-standard-issue/tree/main/packages/standard-issue) that would collected components for different environments (e.g. React / Next / Node) into one export under a namespace I don't actually own. What I was hoping to achieve:
 
@@ -51,13 +54,13 @@ import { ExtLink } from "@iliad.dev/standard-issue/next";
 
 This functionality is, of course, possible with enough finangling. But the hours I spent on this feature (that no client will ever see) will take years to pay back through the seconds on the hour I save over the course of the next several years (by which point this code will be outdated and I will probably be an auto mechanic or mossad agent or something).
 
-### Adherence
+#### Adherence
 
 When developing [@iliad.dev/thoth](https://github.com/iliadwebdev/iliad-standard-issue/tree/main/packages/thoth) I was very tempted to try to side-step the necessity for `Node16` module imports imposed by [Ink](https://github.com/vadimdemedes/ink) (brilliant project, btw. utterly unhinged) to preserve my pretty `NodeNext` imports.
 
 While this is - again - possible, I had learned my lesson and simply re-organized my code, so that each module that was required by a file sat at the highest-level of mutual requirement (that is to say, if a **utility** is required by six **classes**, it will sit under the `src/classes/utils` folder. If it is required by six **classes** and a **script**, it may sit under the `src/utils` folder).
 
-### Recap
+#### Recap
 
 When possible, prefer solid, predictable structure over arcane syntax that makes your code look pretty at the expense of a ridiculous number of hours.
 
@@ -74,6 +77,26 @@ This is the perfect opportunity to employ these Syntactic Abstractions from pt o
 #### Transgression + Adherence
 
 !(GoodVsBadCode1)[./md-assets/good-vs-bad-1.png]
+
+#### Recap
+
+Put in the effort to make your code pretty. Mog on other devs, make code readable without headache. Simple as.
+
+### Single-ish Responsibility Functions
+
+Extract complex/compound functionality to semantically named functions, even when that function isn't necessarily re-used. See Point 2.
+
+
+> Will be expanded
+
+### Purity where Possible
+
+Avoid taking data from context whereever possible, try to keep functions as pure as possible. Where unavoidable, extract context-aquisition to functions/hooks/methods then pass that context to a pure function.
+
+Understanding what the heck is going in/out of functions is absolutely critical.
+
+> Will be expanded
+
 
 ## Packages
 
