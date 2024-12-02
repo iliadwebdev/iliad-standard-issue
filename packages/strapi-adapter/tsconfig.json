@@ -28,6 +28,7 @@
         "./src/strapiAdapter/StrapiInstance/utils/warnings"
       ],
       "@types": ["./src/@types"],
+      "@thoth": ["./src/thoth.ts"],
       "@utils": ["./src/utils"]
     }
   },

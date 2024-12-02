@@ -1,12 +1,12 @@
 import { StrictContentTypesSyncOptions } from "@features";
 import { WarningConfig } from "../StrapiInstance/types";
-import { classWithThoth, Thoth } from "@iliad.dev/thoth";
 import { Hermes } from "@iliad.dev/hermes";
+import { Thoth } from "@iliad.dev/thoth";
 import Options from "@classes/Options";
 
 // This is the base Feature class that holds information common to all features.
-interface _Feature extends Thoth {}
-class _Feature {
+interface Feature extends Thoth {}
+class Feature {
   protected contentTypesSyncOptions: Nullable<StrictContentTypesSyncOptions> =
     null;
 
@@ -40,12 +40,6 @@ class _Feature {
     return endpoint;
   }
 }
-
-function withThoth<T>(a: T): T {
-  return a;
-}
-
-const Feature = classWithThoth(_Feature);
 
 export * from "./types";
 export default Feature;

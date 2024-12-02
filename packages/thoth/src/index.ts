@@ -1,4 +1,5 @@
 import "@iliad.dev/ts-utils/@types";
 
-export * from "./classes/Thoth/index.ts";
-export * from "./utils/public-utils.ts";
+export * as utils from "./utils/public-utils.ts";
+import { Thoth } from "./classes/Thoth/index.ts";
+export { Thoth };

@@ -7,6 +7,16 @@ import { Text, Box } from "ink";
 type SpinnerComponentProps = {
   state?: "success" | "error" | "warning" | "info" | "pending";
 };
+type SpinnerProps = {
+  color: string;
+};
+const Spinner = ({ color }: SpinnerProps) => {
+  return (
+    <Text color={color}>
+      <InkSpinner />
+    </Text>
+  );
+};
 
 export const SpinnerComponent = ({
   state = "pending",
@@ -27,10 +37,10 @@ export const SpinnerComponent = ({
       stateComponent = <Text color="blue">i</Text>;
       break;
     case "pending":
-      stateComponent = <InkSpinner />;
+      stateComponent = <Spinner color={"#00ace0"} />;
       break;
     default:
-      stateComponent = <InkSpinner />;
+      stateComponent = <Spinner color={"#00ace0"} />;
   }
 
   return (

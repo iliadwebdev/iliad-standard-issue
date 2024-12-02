@@ -6,6 +6,7 @@ import type { Instance } from "ink";
 
 // Utils
 import patchConsole from "patch-console";
+// import patchConsole from "@utils/patch-console.ts";
 import isInCi from "is-in-ci";
 import { uid } from "uid";
 import util from "util";
@@ -18,14 +19,15 @@ import thoth from "@classes/Thoth/index.ts";
 
 // State
 import { useSignalEffect } from "@preact/signals-react";
-import type { LogSignal } from "./types.ts";
 import { logs, clearLogs, addToLogs } from "@state";
+import type { LogSignal } from "./types.ts";
 
+type Restore = () => void;
 export class ThothDOM {
   // Must be asserted to allow singleton pattern
-  private restore!: () => void;
   static domInstance: ThothDOM;
   private instance!: Instance;
+  private restore!: Restore;
   private thoth!: Thoth;
 
   constructor(thoth: Thoth) {
@@ -36,13 +38,27 @@ export class ThothDOM {
     }
 
     this.thoth = thoth;
-    this.instance = render(<App config={thoth?.config} />);
-
-    this.patchConsole();
+    [this.instance, this.restore] = this.mount();
   }
 
+  // I'm writing this drunk, no idea what is going on here.
   public unmount(): void {
     this.instance.unmount();
+    this.restore();
+
+    // Restore doesn't seem to actually restore the console, so we'll do it manually
+    const _console = new console.Console(process.stdout, process.stderr);
+    for (const method in _console) {
+      // @ts-ignore
+      console[method] = _console[method];
+    }
+  }
+
+  public mount(): [Instance, Restore] {
+    const instance = render(<App config={thoth?.config} />);
+    const restore = this.patchConsole();
+
+    return [instance, restore];
   }
 
   private writeToStdout(data: string): void {
@@ -75,8 +91,8 @@ export class ThothDOM {
   }
 
   private patchConsole() {
-    this.restore = patchConsole((stream, data) => {
-      data = `${data}`.replaceAll("\n", "");
+    return patchConsole((stream, data) => {
+      data = `${data}`.replaceAll("\n", "").trim();
       if (stream === "stdout") {
         this.writeToStdout(data);
       }
@@ -96,6 +112,8 @@ const LogComponent = ({ uid, prefix, spinner, message }: LogSignal) => {
   const { timestamp, namespace, mfgStamp, module, type, depth } = prefix || {};
   const m = [message].flat();
 
+  const space = prefix ? <Text>{"  "}</Text> : undefined;
+
   return (
     <Box gap={2}>
       <Box flexShrink={0} gap={1}>
@@ -107,7 +125,7 @@ const LogComponent = ({ uid, prefix, spinner, message }: LogSignal) => {
       </Box>
       <Box>
         <Text>{depth}</Text>
-        {spinner}
+        {spinner ?? space}
         {m.map((msg, idx) => {
           return <Text key={`${uid}-${idx}`}>{util.format(msg)}</Text>;
         })}

@@ -10,26 +10,70 @@ A monorepo containing a suite of tools and packages designed to streamline and s
 
 ## Table of Contents
 
-- [Packages](#packages)
-  - [@iliad.dev/ts-utils](#iliaddevts-utils)
-  - [@iliad.dev/primitive-extensions](#iliaddevprimitive-extensions)
-  - [@iliad.dev/config-eslint](#iliaddevconfig-eslint)
-  - [@iliad.dev/config-typescript](#iliaddevconfig-typescript)
-  - [@iliad.dev/hermes](#iliaddevhermes)
-  - [@iliad.dev/standard-issue](#iliaddevstandard-issue)
-  - [@iliad.dev/strapi-adapter](#iliaddevstrapi-adapter)
-  - [@iliad.dev/vulcan](#iliaddevvulcan)
-  - [@iliad.dev/build-scripts](#iliaddevbuild-scripts)
-  - [@iliad.dev/thoth](#iliaddevthoth)
-- [Apps](#apps)
-  - [iliad-component-showcase](#iliad-component-showcase)
-  - [iliad-server-showcase](#iliad-server-showcase)
-- [Setup and Installation](#setup-and-installation)
-- [Contributing](#contributing)
-- [License](#license)
-- [Links](#links)
+- [Iliad Standard Issue](#iliad-standard-issue)
+  - [Table of Contents](#table-of-contents)
+  - [Paradigm](#paradigm)
+    - [Structure \> syntax](#structure--syntax)
+    - [Transgression](#transgression)
+    - [Adherence](#adherence)
+    - [Recap](#recap)
+    - [Good code is beautiful, beautiful code is good](#good-code-is-beautiful-beautiful-code-is-good)
+      - [Transgression + Adherence](#transgression--adherence)
+  - [Packages](#packages)
+    - [@iliad.dev/ts-utils](#iliaddevts-utils)
+    - [@iliad.dev/primitive-extensions](#iliaddevprimitive-extensions)
+    - [@iliad.dev/config-eslint](#iliaddevconfig-eslint)
+    - [@iliad.dev/config-typescript](#iliaddevconfig-typescript)
+    - [@iliad.dev/hermes](#iliaddevhermes)
 
 ---
+
+## Paradigm
+
+With every project I work on, the more my appreciation grows for predictability, robustness, and agility. To maximize the product of my time, and minimize confusion when implementing these tools in different contexts, the following principles should be followed when possible. This list is neither exhaustive nor strict, but hopefully it informs some of the decisions I make when developing tooling for [Iliad](https://iliad.dev).
+
+### Structure > syntax
+
+It can be tempting to abstract every feature away into robust, semantic APIs. This is sometimes appropriate (particurly when constructing the final, public-facing API for a package), but can leading to major headaches when configuring tooling and, frankly, doesn't often save as much time as initially anticipated.
+
+### Transgression
+
+I spent a great deal of time building post-installation scripts for [@iliad.dev/standard-issue](https://github.com/iliadwebdev/iliad-standard-issue/tree/main/packages/standard-issue) that would collected components for different environments (e.g. React / Next / Node) into one export under a namespace I don't actually own. What I was hoping to achieve:
+
+```tsx
+// Hoping to achieve this
+import { ExtLink, Clamp, Typography } from "@iliad/components";
+
+// Instead of this
+import { Clamp, Typography } from "@iliad.dev/standard-issue/react";
+import { ExtLink } from "@iliad.dev/standard-issue/next";
+```
+
+This functionality is, of course, possible with enough finangling. But the hours I spent on this feature (that no client will ever see) will take years to pay back through the seconds on the hour I save over the course of the next several years (by which point this code will be outdated and I will probably be an auto mechanic or mossad agent or something).
+
+### Adherence
+
+When developing [@iliad.dev/thoth](https://github.com/iliadwebdev/iliad-standard-issue/tree/main/packages/thoth) I was very tempted to try to side-step the necessity for `Node16` module imports imposed by [Ink](https://github.com/vadimdemedes/ink) (brilliant project, btw. utterly unhinged) to preserve my pretty `NodeNext` imports.
+
+While this is - again - possible, I had learned my lesson and simply re-organized my code, so that each module that was required by a file sat at the highest-level of mutual requirement (that is to say, if a **utility** is required by six **classes**, it will sit under the `src/classes/utils` folder. If it is required by six **classes** and a **script**, it may sit under the `src/utils` folder).
+
+### Recap
+
+When possible, prefer solid, predictable structure over arcane syntax that makes your code look pretty at the expense of a ridiculous number of hours.
+
+### Good code is beautiful, beautiful code is good
+
+Spend the time to organize code beyond simply the logical flow of the package. Within the parameters of your linting tool, you have a lot of leeway for how your code is structured. Where possible, structure your functions in a way that is clear, self-documenting, and readable. Avoid deeply-nested expressions and name variables and functions in a way that is clear, but concise.
+
+Beyond this, organize your code aesthetically. Every extra second you invest in the early morning when you are sharp and caffeinated turns into another minute of productivity at the end of the day when your brain is trying to escape through your nose. Aesthetically pleasing code is easer for the overwhelmed brain to parse, leaving a greater cognitive-margin-of-error so you can stay productive even when you're not at your best.
+
+This is the perfect opportunity to employ these Syntactic Abstractions from pt one. It hides away code, but if these abstractions are documented and semantic (and their implementation is used frequently), it will make your code pretty and - more importantly - infinitely easier to understand.
+
+> Remember: 99% of the code you read through when fixing a problem doesn't need to be _specifically_ understood. With the exception of the specific bit of code that is causing the problem, understanding the _purpose_ of that code is sufficient.
+
+#### Transgression + Adherence
+
+!(GoodVsBadCode1)[./md-assets/good-vs-bad-1.png]
 
 ## Packages
 
@@ -84,6 +128,8 @@ Standardizes APIs and responses between `fetch` and `axios` for projects where b
     // Use data
   }
   ```
+
+````
 
 ### @iliad.dev/standard-issue
 
@@ -258,3 +304,4 @@ _Part of the **Iliad Standard Toolkit**, a collection of tools used internally b
 ---
 
 **Note:** Some packages are still in development (marked as WIP). Features and APIs are subject to change. This monorepo is not, as a whole, particularly useful. Several of the packages within may be, however. See their readme.mds for more details
+````

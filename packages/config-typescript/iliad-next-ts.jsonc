@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      // Components
+      "@components*": ["./components*"],
+      "@components": ["./components"],
+
+      // Components - Forms
+      "@forms/*": ["./components/forms/*"],
+      "@forms": ["./components/forms"],
+
+      // Components - Modals
+      "@modals/*": ["./components/modals/*"],
+      "@modals": ["./components/modals"],
+
+      // Components - Layouts
+      "@layouts/*": ["./components/layouts/*"],
+      "@layouts": ["./components/layouts"],
+
+      // Components - Containers - Not really sure what this is, or - frankly - why it is here.
+      "@containers/*": ["./components/containers/*"],
+      "@containers": ["./components/containers"],
+
+      // Utilities
+      "@utils/*": ["./utils/*"],
+      "@utils": ["./utils"],
+
+      // Utils - Instances
+      "@strapi/server": ["./utils/instances/strapi/server.ts"],
+      "@strapi/client": ["./utils/instances/strapi/client.ts"],
+
+      // Utils - Scripts
+      "@scripts/*": ["./utils/scripts*"],
+      "@scripts": ["./utils/scripts"],
+
+      // Utils - Hooks
+      "@hooks/*": ["./utils/hooks/*"],
+      "@hooks": ["./utils/hooks"],
+
+      // Utils - Functions
+      "@functions/*": ["./utils/functions/*"],
+      "@functions": ["./utils/functions"],
+
+      // Utils - Classes
+      "@classes/*": ["./utils/classes/*"],
+      "@classes": ["./utils/classes"],
+
+      "hermes": ["./utils/functions/hermes/hermes.ts"],
+
+      // Data
+      "@data/*": ["./data/*"],
+      "@data": ["./data"],
+
+      // Data - Cache
+      "@cache/*": ["./data/cache/*"],
+      "@cache": ["./data/cache"],
+
+      // Data - Config
+      "@config/*": ["./data/config/*"],
+      "@config": ["./data/config"],
+
+      // Data - Site (This should be deprecated)
+      "@siteConfig": ["./data/siteData.json"],
+
+      // Styles
+      "@styles/*": ["./styles/*"],
+      "@styles": ["./styles"],
+
+      // Server
+      "@middleware/*": ["./middleware/*"],
+      "@middleware": ["./middleware"],
+
+      // Context
+      "@context/*": ["./context/*"],
+      "@context": ["./context"],
+
+      // Types
+      "@types/*": ["./@types/*"],
+      "@types": ["./@types"],
+
+      // Iliad nonsense
+      // "@iliad/*": ["../node_modules/@iliad/dev/*"], // To be re-enabled when old @iliad imports are removed
+      "^": ["../node_modules/@iliad.dev/primitive-extensions"],
+    },
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next",
+      },
+    ],
+    "strictNullChecks": true,
+    "target": "ES2017",
+  },
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/@types/**/*",
+    "node_modules/@iliad.dev/ts-utils/@types",
+    "node_modules/@iliad.dev/primitive-extensions",
+  ],
+  "exclude": ["node_modules"],
+}

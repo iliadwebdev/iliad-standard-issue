@@ -3,6 +3,27 @@ import { config } from 'dotenv';
 import path from 'path';
 config();
 
+import { Thoth } from '@iliad.dev/thoth';
+const thoth = new Thoth({
+  config: {
+    prefix: {
+      namespace: {
+        name: '[II-SA]',
+        color: '#4945FF',
+        enabled: true,
+      },
+      newLine: false,
+      timestamp: {
+        components: ['time'],
+        enabled: true,
+      },
+      module: {
+        enabled: false,
+      },
+    },
+  },
+});
+
 // This is where types will be stored. Is there a way I can move this cache
 // to the node_module itself? Is that even desirable?
 const typesDir = path.resolve(process.cwd(), './src/@types');
@@ -21,6 +42,8 @@ const strapi = new StrapiInstance({
   },
 });
 
+thoth.log('Syncing Content Types');
+
 await strapi.syncContentTypes();
 
 export const mainStrapiAdapterTest = async () => {
@@ -30,5 +53,5 @@ export const mainStrapiAdapterTest = async () => {
     },
   });
 
-  console.log({ event, error });
+  thoth.error({ event, error });
 };

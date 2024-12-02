@@ -15,7 +15,6 @@ import { defaultLoggerConfig } from "./data.ts";
 import deepmerge from "deepmerge";
 import { uid } from "uid";
 import chalk from "chalk";
-import util from "util";
 
 // Components
 import { SpinnerComponent } from "./components/index.ts";
@@ -87,6 +86,16 @@ export class ThothLog {
     this._component = component;
   }
 
+  protected getTypePrefix(type: FinalLogConfig["type"]): string {
+    const { prefix: prefixConfig, typeColors } = this.config;
+
+    const colorFn = u.resolvePolymorphicColor(typeColors[type]);
+    const padFn = u.resolvePadType(prefixConfig.padType);
+
+    const stStr = padFn(`[${type}]`, 7).toUpperCase();
+    return colorFn(stStr);
+  }
+
   protected getInkPrefix(config: FinalLogConfig): LogSignal["prefix"] {
     const { prefix: prefixConfig, typeColors } = this.config;
     const prefix: LogSignal["prefix"] = {};
@@ -125,11 +134,7 @@ export class ThothLog {
     }
 
     if (prefixConfig.showTypes) {
-      const colorFn = u.resolvePolymorphicColor(typeColors[config.type]);
-      const padFn = u.resolvePadType(prefixConfig.padType);
-      const stStr = padFn(`[${config.type}]`, 6).toUpperCase();
-
-      prefix.type = colorFn(stStr);
+      prefix.type = this.getTypePrefix(config.type);
     }
 
     if (this.depth) {
@@ -177,11 +182,7 @@ export class ThothLog {
     }
 
     if (prefixConfig.showTypes) {
-      const colorFn = u.resolvePolymorphicColor(typeColors[config.type]);
-      const padFn = u.resolvePadType(prefixConfig.padType);
-      const stStr = padFn(`[${config.type}]`, 6).toUpperCase();
-
-      prefixes.push(colorFn(stStr));
+      prefixes.push(this.getTypePrefix(config.type));
     }
 
     let joinedPrefixes = prefixes.join(prefixConfig.joinString);
@@ -225,6 +226,7 @@ export class ThothLog {
     const logger = this.getRecursiveLogger(config);
     return logger.finalLog({ ...config }, ...args);
   }
+
   protected i_debug(...args: any[]): ThothLog | PowerLog | SubLog {
     u.log(...args);
     return this;
@@ -285,6 +287,27 @@ export class ThothLog {
     return this.i_log({ type: "debug" }, ...args);
   }
 
+  // Proxy methods - Sub
+  public _log(...args: any[]): SubLog {
+    return this.i_log({ type: "log", ext: "subLogger" }, ...args) as SubLog;
+  }
+
+  public _info(...args: any[]): SubLog {
+    return this.i_log({ type: "info", ext: "subLogger" }, ...args) as SubLog;
+  }
+
+  public _warn(...args: any[]): SubLog {
+    return this.i_log({ type: "warn", ext: "subLogger" }, ...args) as SubLog;
+  }
+
+  public _error(...args: any[]): SubLog {
+    return this.i_log({ type: "error", ext: "subLogger" }, ...args) as SubLog;
+  }
+
+  public _debug(...args: any[]): SubLog {
+    return this.i_log({ type: "debug", ext: "subLogger" }, ...args) as SubLog;
+  }
+
   // Proxy methods - Power
   public $log(...args: any[]): PowerLog {
     const logger = this.i_log({ type: "log", ext: "powerLogger" }, ...args);
@@ -312,7 +335,7 @@ export class ThothLog {
   }
 }
 
-class SubLog extends ThothLog {
+export class SubLog extends ThothLog {
   private parent: ThothLog;
 
   constructor(parent: ThothLog, params: LoggerParams) {
@@ -421,8 +444,11 @@ export class PowerLog extends SubLog {
   }
 
   public fail(text: string): PowerLog {
-    const props: any = {
+    const props: Partial<LogSignal> = {
       spinner: <SpinnerComponent state="error" />,
+      prefix: {
+        type: this.getTypePrefix("error"),
+      },
     };
 
     if (text) props.message = text;

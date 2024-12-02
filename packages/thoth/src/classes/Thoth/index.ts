@@ -9,7 +9,7 @@ import {
 } from "@classes/ThothLog/data.ts";
 
 // Classes
-import { ThothLog, PowerLog } from "@classes/ThothLog/index.tsx";
+import { ThothLog, PowerLog, SubLog } from "@classes/ThothLog/index.tsx";
 import { ThothDOM } from "@classes/ThothDOM/index.tsx";
 import { TimeStamp } from "@classes/TimeStamp.ts";
 
@@ -62,6 +62,10 @@ export class Thoth {
     this.DOM.unmount();
   }
 
+  public remount() {
+    this.DOM.mount();
+  }
+
   // Proxy methods
   public clear() {
     this.DOM.clearLogs();
@@ -96,6 +100,32 @@ export class Thoth {
     return this;
   }
 
+  // Proxy methods - Sub
+  public _log(...args: any[]): SubLog {
+    const logger = this.i_log({ type: "log", ext: "subLogger" }, ...args);
+    return logger as SubLog;
+  }
+
+  public _info(...args: any[]): SubLog {
+    const logger = this.i_log({ type: "info", ext: "subLogger" }, ...args);
+    return logger as SubLog;
+  }
+
+  public _warn(...args: any[]): SubLog {
+    const logger = this.i_log({ type: "warn", ext: "subLogger" }, ...args);
+    return logger as SubLog;
+  }
+
+  public _error(...args: any[]): SubLog {
+    const logger = this.i_log({ type: "error", ext: "subLogger" }, ...args);
+    return logger as SubLog;
+  }
+
+  public _debug(...args: any[]): SubLog {
+    const logger = this.i_log({ type: "debug", ext: "subLogger" }, ...args);
+    return logger as SubLog;
+  }
+
   // Proxy methods - Power
   public $log(...args: any[]): PowerLog {
     const logger = this.i_log({ type: "log", ext: "powerLogger" }, ...args);
@@ -124,7 +154,3 @@ export class Thoth {
 }
 
 export default new Thoth(defaultThothParams);
-
-export function overrideConsole(instance: Thoth = new Thoth()): Thoth {
-  return instance;
-}

@@ -8,7 +8,7 @@ export const tsup: Options = {
   dts: true, // generate dts file for main module
   format: ["cjs", "esm"], // generate cjs and esm files
   minify: env === "production",
-  bundle: true || env === "production", // This must be true, or path aliases break
+  bundle: true, // This must be true, or path aliases break
   skipNodeModulesBundle: true,
   entryPoints: ["src/index.ts"],
   watch: env === "development",

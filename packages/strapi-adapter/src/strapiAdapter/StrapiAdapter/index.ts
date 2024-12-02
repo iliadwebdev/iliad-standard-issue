@@ -1,3 +1,5 @@
+import thoth from "@thoth";
+
 // Types
 import { FetchOptions, InitParam } from "openapi-fetch";
 import {
@@ -181,20 +183,27 @@ class StrapiAdapter extends Feature {
   // ========================================================================
   // Find entries in a collection. Not applicable to single types.
   public async find<
-    API extends Names<"plural", "collection">,
+    API extends keyof Schema.,
     UID extends CTUID = UIDFromName<API>,
   >(
     collection: API,
-    query?: CrudQueryFull<UID>,
+    query?:
+      | Params.Pick<
+          UID,
+          | "publicationState"
+          | "pagination"
+        >
+      | string
+      | "*",
     options?: RequestInit
-  ): CRUD.FN<APIResponseCollection<UID>> {
-    const url = u.createUrl({
-      endpoint: super.apiEndpoint(collection),
-      query,
-    });
-
+  ): Promise<StandardResponse<APIResponseCollection<UID>>> {
     return await this.normalizedFetch<APIResponseCollection<UID>>(
-      u.normalizeUrl(url),
+      u.normalizeUrl(
+        u.createUrl({
+          endpoint: super.apiEndpoint(collection),
+          query,
+        })
+      ),
       u.wm("get", options)
     );
   }
@@ -470,7 +479,7 @@ class StrapiAdapter extends Feature {
       );
 
       if (error || !firstPage) {
-        console.error(`Error fetching collection ${collection}:`, error, {
+        thoth.error(`Error fetching collection ${collection}:`, error, {
           query,
         });
         return { data: undefined, error } as ErrorResponse;
@@ -498,7 +507,7 @@ class StrapiAdapter extends Feature {
       );
 
       if (error || !page) {
-        console.error(`Error fetching collection ${collection}:`, error);
+        thoth.error(`Error fetching collection ${collection}:`, error);
         console.debug({ query });
 
         return { error };
