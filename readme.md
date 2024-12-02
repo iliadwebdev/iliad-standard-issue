@@ -28,6 +28,20 @@ A monorepo containing a suite of tools and packages designed to streamline and s
     - [@iliad.dev/config-eslint](#iliaddevconfig-eslint)
     - [@iliad.dev/config-typescript](#iliaddevconfig-typescript)
     - [@iliad.dev/hermes](#iliaddevhermes)
+    - [@iliad.dev/standard-issue](#iliaddevstandard-issue)
+    - [@iliad.dev/strapi-adapter](#iliaddevstrapi-adapter)
+    - [@iliad.dev/vulcan](#iliaddevvulcan)
+    - [@iliad.dev/build-scripts](#iliaddevbuild-scripts)
+    - [@iliad.dev/thoth](#iliaddevthoth)
+      - [Features](#features)
+      - [API Example](#api-example)
+      - [Open Questions](#open-questions)
+  - [Apps](#apps)
+    - [iliad-component-showcase](#iliad-component-showcase)
+    - [iliad-server-showcase](#iliad-server-showcase)
+  - [Setup and Installation](#setup-and-installation)
+    - [Prerequisites](#prerequisites)
+    - [License](#license)
 
 ---
 
@@ -41,7 +55,7 @@ It can be tempting to abstract every feature away into robust, semantic APIs. Th
 
 #### Transgression
 
-I spent a great deal of time building post-installation scripts for [@iliad.dev/standard-issue](https://github.com/iliadwebdev/iliad-standard-issue/tree/main/packages/standard-issue) that would collected components for different environments (e.g. React / Next / Node) into one export under a namespace I don't actually own. What I was hoping to achieve:
+I spent a great deal of time building post-installation scripts for [@iliad.dev/standard-issue](https://github.com/iliadwebdev/iliad-standard-issue/tree/main/packages/standard-issue) that would collect components for different environments (e.g. React / Next / Node) into one export under a namespace I don't actually own. What I was hoping to achieve:
 
 ```tsx
 // Hoping to achieve this
@@ -52,7 +66,7 @@ import { Clamp, Typography } from "@iliad.dev/standard-issue/react";
 import { ExtLink } from "@iliad.dev/standard-issue/next";
 ```
 
-This functionality is, of course, possible with enough finangling. But the hours I spent on this feature (that no client will ever see) will take years to pay back through the seconds on the hour I save over the course of the next several years (by which point this code will be outdated and I will probably be an auto mechanic or mossad agent or something).
+This functionality is - of course - possible with enough finangling. But the hours I spent on this feature (that no client will ever see) will take years to pay back through the seconds on the hour I save over the course of the next several years (by which point this code will be outdated and I will probably be an auto mechanic or mossad agent or something).
 
 #### Adherence
 
@@ -152,7 +166,6 @@ Standardizes APIs and responses between `fetch` and `axios` for projects where b
   }
   ```
 
-````
 
 ### @iliad.dev/standard-issue
 
@@ -327,4 +340,3 @@ _Part of the **Iliad Standard Toolkit**, a collection of tools used internally b
 ---
 
 **Note:** Some packages are still in development (marked as WIP). Features and APIs are subject to change. This monorepo is not, as a whole, particularly useful. Several of the packages within may be, however. See their readme.mds for more details
-````
