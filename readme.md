@@ -76,7 +76,7 @@ This is the perfect opportunity to employ these Syntactic Abstractions from pt o
 
 #### Transgression + Adherence
 
-!(GoodVsBadCode1)[[./md-assets/good-vs-bad-1.png](https://github.com/iliadwebdev/iliad-standard-issue/blob/main/md-assets/good-vs-bad-1.png)]
+![GoodVsBadCode1](https://github.com/iliadwebdev/iliad-standard-issue/blob/main/md-assets/good-vs-bad-1.png)
 
 #### Recap
 
