@@ -4,6 +4,8 @@ import { LoggerConfig } from "@classes/ThothLog/types.ts";
 
 // Utils
 import chalk, { ForegroundColorName, BackgroundColorName } from "chalk";
+import * as u from "@utils";
+import util from "util";
 
 export function formatToBuffer(args: unknown[]): Buffer {
   // Convert arguments to a string, separating by spaces, and add a newline
@@ -76,10 +78,10 @@ function ensureMsLength(ms: number): string {
 }
 
 type TimestampComponents = LoggerConfig["prefix"]["timestamp"]["components"];
-export function getTimestamp(components: TimestampComponents): string {
+export function getTimestamp(tsComponents: TimestampComponents): string {
   let finalComponents: string[] = [];
 
-  components = [components].flat();
+  let components = [tsComponents].flat();
 
   const now = new Date();
   const date = now.toLocaleDateString();
@@ -117,3 +119,22 @@ export function resolvePadType(padType: PadType): PadFn {
       return (str) => str;
   }
 }
+
+export function formatMs(ms: number): string {
+  const seconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+
+  let final = "";
+
+  if (hours) final += `${hours}h `;
+  if (minutes) final += `${minutes % 60}m `;
+  if (seconds) final += `${seconds % 60}s `;
+  final += `${ms % 1000}ms`;
+
+  return final;
+}
+
+export const dmo = {
+  arrayMerge: overwriteMerge,
+};

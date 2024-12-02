@@ -5,8 +5,11 @@ const thoth = new Thoth({
     prefix: {
       newLine: false,
       timestamp: {
-        components: ['milliseconds', 'time'],
+        components: ['time'],
         enabled: true,
+      },
+      module: {
+        enabled: false,
       },
     },
   },
@@ -40,34 +43,48 @@ const complexObject = {
   ],
 };
 
+// throw new Error('break');
+
 export async function mainThothTest() {
+  const a = performance.now();
+
   // overrideConsole();
-
   console.log('test1');
-
+  thoth.log('test1t');
+  thoth.log('test2t');
+  thoth.log('test3t');
   thoth.log('=============================================');
+  const start = thoth.timestamp();
   const lrLog = thoth.$log('Beginning long-running process');
   await sleep(2000);
   subProcess: {
     let _lrLog = lrLog.$log('Subprocess Beginning');
     await sleep(2000);
     let subProcessStepA = _lrLog.$log('Subprocess Step 1A');
-    console.log('test2');
-    thoth.log('thothtest2');
     let subProcessStepB = _lrLog.$log('Subprocess Step 1B');
     await sleep(500);
-    let subProcessStep2 = _lrLog.$log('Subprocess Step 2');
+    _lrLog.$log('Subprocess Step 2');
+    let subProcessStep2 = _lrLog.$log('Subprocess Step 3');
+    _lrLog.$log('Subprocess Step 4');
+    _lrLog.$log('Subprocess Step 5');
+    _lrLog.$log('Subprocess Step 6');
     await sleep(2000);
     subProcessStep2.fail('Subprocess 2 rejected');
     subProcessStepA.succeed('Subprocess 1 resolved');
     subProcessStepB.succeed('Subprocess 1 resolved');
     await sleep(2000);
+    _lrLog.succeedAll('Subprocess resolved', true);
+    await sleep(2000);
   }
-  lrLog.info('Status update without timer');
+  const elapsed = thoth.timestamp(start).timeElapsedFormatted;
+  lrLog.info(
+    `Long running process has been running for ${thoth.chalk.bold(elapsed)}`,
+  );
   await sleep(2000);
-
   lrLog.warn('Subprocess step failed');
   lrLog.succeed('Long running process resolved');
-
-  thoth.log(complexObject);
+  await sleep(500);
+  lrLog.warn(
+    `Long running process has been running for ${thoth.chalk.bold(thoth.timestamp(start).timeElapsedFormatted)}`,
+  );
 }

@@ -1,68 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 
 // Ink
-import { Instance, Text, Box, render } from "ink";
-
-// Classes / Components
-import { BasicLog } from "@classes/ThothLog/components/BasicLog.tsx";
-import { ThothLog } from "@classes/ThothLog/index.tsx";
-import { Thoth } from "@classes/Thoth/index.ts";
+import { render, Box, Text } from "ink";
+import type { Instance } from "ink";
 
 // Utils
 import patchConsole from "patch-console";
 import isInCi from "is-in-ci";
+import { uid } from "uid";
+import util from "util";
 
-type Restore = () => void;
+import * as u from "@utils";
+
+// Classes
+import { Thoth } from "@classes/Thoth/index.ts";
+import thoth from "@classes/Thoth/index.ts";
+
+// State
+import { useSignalEffect } from "@preact/signals-react";
+import type { LogSignal } from "./types.ts";
+import { logs, clearLogs, addToLogs } from "@state";
+
 export class ThothDOM {
+  // Must be asserted to allow singleton pattern
+  private restore!: () => void;
   static domInstance: ThothDOM;
-
-  private loggerMap: Map<string, ThothLog> = new Map();
   private instance!: Instance;
-  private restore!: Restore;
   private thoth!: Thoth;
 
   constructor(thoth: Thoth) {
     if (ThothDOM.domInstance) {
       return ThothDOM.domInstance;
+    } else {
+      ThothDOM.domInstance = this;
     }
-    ThothDOM.domInstance = this;
 
     this.thoth = thoth;
-    this.instance = this.render();
+    this.instance = render(<App config={thoth?.config} />);
 
     this.patchConsole();
   }
 
-  render() {
-    // console.log("rendering");
-    const components = Array.from(this.loggerMap.values())
-      .map(({ component }) => component)
-      .filter(Boolean);
-
-    if (this.instance) {
-      this.instance.rerender(<Box flexDirection="column">{components}</Box>);
-      return this.instance;
-    }
-
-    return render(<Box>{components}</Box>, {
-      patchConsole: true,
-    });
-  }
-
-  registerLogger(logger: ThothLog) {
-    this.loggerMap.set(logger.uid, logger);
-    this.refresh();
-  }
-
-  private writeToStderr(data: string): void {
-    if (isInCi) {
-      process.stderr.write(data);
-      return;
-    }
-
-    this.instance.clear();
-    this.thoth.error(data);
-    // this.refresh();
+  public unmount(): void {
+    this.instance.unmount();
   }
 
   private writeToStdout(data: string): void {
@@ -71,14 +51,32 @@ export class ThothDOM {
       return;
     }
 
-    this.instance.clear();
-    this.thoth.debug(data);
-    // this.refresh();
+    this.rawLog(data);
+  }
+
+  private rawLog(data: string) {
+    addToLogs({
+      message: data,
+      uid: uid(),
+    });
+  }
+
+  private writeToStderr(data: string): void {
+    if (isInCi) {
+      process.stderr.write(data);
+      return;
+    }
+
+    this.rawLog(data);
+  }
+
+  public clearLogs() {
+    clearLogs();
   }
 
   private patchConsole() {
     this.restore = patchConsole((stream, data) => {
-      data = ` ${data}`;
+      data = `${data}`.replaceAll("\n", "");
       if (stream === "stdout") {
         this.writeToStdout(data);
       }
@@ -92,15 +90,49 @@ export class ThothDOM {
       }
     });
   }
-
-  updateLogger(logger: ThothLog) {
-    if (this.loggerMap.has(logger.uid)) {
-      this.loggerMap.set(logger.uid, logger);
-      this.refresh();
-    }
-  }
-
-  refresh() {
-    this.render();
-  }
 }
+
+const LogComponent = ({ uid, prefix, spinner, message }: LogSignal) => {
+  const { timestamp, namespace, mfgStamp, module, type, depth } = prefix || {};
+  const m = [message].flat();
+
+  return (
+    <Box gap={2}>
+      <Box flexShrink={0} gap={1}>
+        <Text>{mfgStamp}</Text>
+        <Text>{timestamp}</Text>
+        <Text>{namespace}</Text>
+        <Text>{module}</Text>
+        <Text>{type}</Text>
+      </Box>
+      <Box>
+        <Text>{depth}</Text>
+        {spinner}
+        {m.map((msg, idx) => {
+          return <Text key={`${uid}-${idx}`}>{util.format(msg)}</Text>;
+        })}
+      </Box>
+    </Box>
+  );
+};
+
+type AppProps = {
+  config: Thoth["config"];
+};
+const App = ({ config }: AppProps) => {
+  const [reactLogs, setReactLogs] = useState<LogSignal[]>([]);
+
+  useSignalEffect(() => {
+    setReactLogs(logs.value);
+  });
+
+  return (
+    <Box flexDirection="column">
+      {reactLogs.map((log) => {
+        return <LogComponent key={log.uid} {...log} />;
+      })}
+    </Box>
+  );
+};
+
+export default new ThothDOM(thoth);

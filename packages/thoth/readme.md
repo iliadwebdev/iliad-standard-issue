@@ -24,17 +24,17 @@ thoth.log(...args);
 // Power API: $log, $warn, $error
 
 // Hanging log API?
-const _log = thoth.$log("Waiting for thing").stamp(); // Outputs loading spinner, creates timestamp.
+const i_log = thoth.$log("Waiting for thing").stamp(); // Outputs loading spinner, creates timestamp.
 
-const {data, error} = await thing();
-if(error !== undefined) _log.fail("Thing failed!") // Fail emoji...
+// const {data, error} = await thing();
+if(error !== undefined) i_log.fail("Thing failed!") // Fail emoji...
 
 if(true) {
-    _log.$succeed((details: DetailsAboutEvent)=> {
+    i_log.$succeed((details: DetailsAboutEvent)=> {
         return `Event concluded in ${details.totalTime}`
     })
 } else {
-    _log.resolve("Event concluded, but we don't know how long it took :/")
+    i_log.resolve("Event concluded, but we don't know how long it took :/")
 }
 
 

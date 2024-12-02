@@ -1,13 +1,12 @@
 import React from "react";
+
 // Types
-import type {
-  LoggerParams,
-  LoggerConfig,
-  FinalLogConfig,
-  LogType,
-  LogTypes,
-} from "./types.ts";
-import type { Ora } from "ora";
+import type { LoggerParams, LoggerConfig, FinalLogConfig } from "./types.ts";
+import type { LogSignal } from "@classes/ThothDOM/types.ts";
+
+// Classes
+import { ThothDOM } from "@classes/ThothDOM/index.tsx";
+import { TimeStamp } from "@classes/TimeStamp.ts";
 
 // Data
 import { defaultLoggerConfig } from "./data.ts";
@@ -17,28 +16,20 @@ import deepmerge from "deepmerge";
 import { uid } from "uid";
 import chalk from "chalk";
 import util from "util";
-import ora from "ora";
 
 // Components
-import {
-  createSpinner,
-  SpinnerComponent,
-  BasicLog,
-} from "./components/index.ts";
+import { SpinnerComponent } from "./components/index.ts";
+
+// State
+import { addToLogs, updateLog } from "@state";
 
 // Thoth Utils
 import * as u0 from "@utils";
 import * as u1 from "./utils.ts";
-import { Thoth } from "@classes/Thoth/index.ts";
-import { ThothDOM } from "@classes/ThothDOM/index.tsx";
 const u = { ...u0, ...u1 };
 
 const defaultLoggerParams: LoggerParams = {
   config: defaultLoggerConfig,
-};
-
-const dmo = {
-  arrayMerge: u.overwriteMerge,
 };
 
 // Depth Indicators
@@ -48,14 +39,16 @@ const DEPTH_DEEPER = "∟";
 export class ThothLog {
   public static class = "ThothLog";
   public static chalk = chalk; // Re-export chalk for convenience
-  public static ora = ora; // Re-export ora for convenience
+
+  public class = "ThothLog";
+  public chalk = chalk;
 
   protected _component: React.ReactNode | null = null;
   public DOM: ThothDOM;
   public uid: string;
 
   // Recursion
-  public children: ThothLog[] = [];
+  public children: (ThothLog | PowerLog | SubLog)[] = [];
   public lastLevel: number = 0;
   public root: ThothLog = this;
 
@@ -72,20 +65,18 @@ export class ThothLog {
     const { config = {} }: LoggerParams = deepmerge(
       defaultLoggerParams,
       params,
-      dmo
+      u.dmo
     );
 
-    this.config = deepmerge(defaultLoggerConfig, config, dmo) as LoggerConfig;
-
-    this.registerSelfToDOM();
+    this.config = deepmerge(defaultLoggerConfig, config, u.dmo) as LoggerConfig;
   }
 
-  private registerSelfToDOM() {
-    this.DOM.registerLogger(this);
+  public clear(): void {
+    this.DOM.clearLogs();
   }
 
-  protected updateDOMState() {
-    this.DOM.updateLogger(this);
+  public timestamp(timestamp?: TimeStamp) {
+    return new TimeStamp({ parent: timestamp, log: this });
   }
 
   public get component(): React.ReactNode | null {
@@ -94,7 +85,58 @@ export class ThothLog {
 
   public set component(component: React.ReactNode | null) {
     this._component = component;
-    this.updateDOMState();
+  }
+
+  protected getInkPrefix(config: FinalLogConfig): LogSignal["prefix"] {
+    const { prefix: prefixConfig, typeColors } = this.config;
+    const prefix: LogSignal["prefix"] = {};
+
+    if (prefixConfig.mfgStamp.enabled) {
+      prefix.mfgStamp = chalk.hex("#00ace0")("◭");
+    }
+
+    if (prefixConfig.timestamp.enabled) {
+      const { components, fn, color } = prefixConfig.timestamp;
+
+      const colorfn = u.resolvePolymorphicColor(color);
+      const timestamp = u.getTimestamp(components);
+
+      const timestampString = fn ? fn(timestamp) : timestamp;
+
+      prefix.timestamp = colorfn(timestampString);
+    }
+
+    if (prefixConfig.namespace.enabled) {
+      const { name, fn, color } = prefixConfig.namespace;
+
+      const colorfn = u.resolvePolymorphicColor(color);
+      const namespaceString = fn ? fn(name) : name;
+
+      prefix.namespace = colorfn(namespaceString);
+    }
+
+    if (prefixConfig.module.enabled) {
+      const { name, fn, color } = prefixConfig.module;
+
+      const colorfn = u.resolvePolymorphicColor(color);
+      const moduleString = fn ? fn(name) : name;
+
+      prefix.module = colorfn(moduleString);
+    }
+
+    if (prefixConfig.showTypes) {
+      const colorFn = u.resolvePolymorphicColor(typeColors[config.type]);
+      const padFn = u.resolvePadType(prefixConfig.padType);
+      const stStr = padFn(`[${config.type}]`, 6).toUpperCase();
+
+      prefix.type = colorFn(stStr);
+    }
+
+    if (this.depth) {
+      prefix.depth = `${this.getDepthPrefix(true)}`;
+    }
+
+    return prefix;
   }
 
   protected getPrefix(config: FinalLogConfig): string {
@@ -137,9 +179,9 @@ export class ThothLog {
     if (prefixConfig.showTypes) {
       const colorFn = u.resolvePolymorphicColor(typeColors[config.type]);
       const padFn = u.resolvePadType(prefixConfig.padType);
-      const stStr = padFn(config.type, 5).toUpperCase();
+      const stStr = padFn(`[${config.type}]`, 6).toUpperCase();
 
-      prefixes.push(colorFn(`[${stStr}]`));
+      prefixes.push(colorFn(stStr));
     }
 
     let joinedPrefixes = prefixes.join(prefixConfig.joinString);
@@ -170,14 +212,22 @@ export class ThothLog {
     } else if (config.ext === "subLogger") {
       return new SubLog(this, this.initParams);
     } else {
+      // return new ThothLog(this.initParams, this.DOM);
       return this;
     }
+    // }
+
+    // return new SubLog(this, this.initParams);
   }
 
   // LOGGING METHODS
-  protected _log<T extends FinalLogConfig>(config: T, ...args: any[]) {
+  public i_log<T extends FinalLogConfig>(config: T, ...args: any[]) {
     const logger = this.getRecursiveLogger(config);
-    return logger.finalLog(config, ...args);
+    return logger.finalLog({ ...config }, ...args);
+  }
+  protected i_debug(...args: any[]): ThothLog | PowerLog | SubLog {
+    u.log(...args);
+    return this;
   }
 
   protected toUint8(...components: string[]): Uint8Array {
@@ -185,19 +235,13 @@ export class ThothLog {
   }
 
   public finalLog(config: FinalLogConfig, ...args: any[]): ThothLog {
-    this.component = (
-      <BasicLog
-        key={this.uid}
-        components={[this.getPrefix(config), util.format(...args)]}
-      />
-    );
-    this.lastLevel++;
+    addToLogs({
+      prefix: this.getInkPrefix(config),
+      message: args,
+      uid: uid(16),
+    });
 
-    this.DOM.refresh();
-    // const buffer = this.toUint8(this.getPrefix(config), ...args);
-    // process.stdout.write(buffer);
     this.lastLevel++;
-
     return this;
   }
 
@@ -221,49 +265,49 @@ export class ThothLog {
   }
 
   // Proxy methods - Standard
-  public log(...args: any[]): void {
-    this._log({ type: "log" }, ...args);
+  public log(...args: any[]): ThothLog | PowerLog | SubLog {
+    return this.i_log({ type: "log" }, ...args);
   }
 
-  public info(...args: any[]): void {
-    this._log({ type: "info" }, ...args);
+  public info(...args: any[]): ThothLog | PowerLog | SubLog {
+    return this.i_log({ type: "info" }, ...args);
   }
 
-  public warn(...args: any[]): void {
-    this._log({ type: "warn" }, ...args);
+  public warn(...args: any[]): ThothLog | PowerLog | SubLog {
+    return this.i_log({ type: "warn" }, ...args);
   }
 
-  public error(...args: any[]): void {
-    this._log({ type: "error" }, ...args);
+  public error(...args: any[]): ThothLog | PowerLog | SubLog {
+    return this.i_log({ type: "error" }, ...args);
   }
 
-  public debug(...args: any[]): void {
-    this._log({ type: "debug" }, ...args);
+  public debug(...args: any[]): ThothLog | PowerLog | SubLog {
+    return this.i_log({ type: "debug" }, ...args);
   }
 
   // Proxy methods - Power
   public $log(...args: any[]): PowerLog {
-    const logger = this._log({ type: "log", ext: "powerLogger" }, ...args);
+    const logger = this.i_log({ type: "log", ext: "powerLogger" }, ...args);
     return logger as PowerLog;
   }
 
   public $info(...args: any[]): PowerLog {
-    const logger = this._log({ type: "info", ext: "powerLogger" }, ...args);
+    const logger = this.i_log({ type: "info", ext: "powerLogger" }, ...args);
     return logger as PowerLog;
   }
 
   public $warn(...args: any[]): PowerLog {
-    const logger = this._log({ type: "warn", ext: "powerLogger" }, ...args);
+    const logger = this.i_log({ type: "warn", ext: "powerLogger" }, ...args);
     return logger as PowerLog;
   }
 
   public $error(...args: any[]): PowerLog {
-    const logger = this._log({ type: "error", ext: "powerLogger" }, ...args);
+    const logger = this.i_log({ type: "error", ext: "powerLogger" }, ...args);
     return logger as PowerLog;
   }
 
   public $debug(...args: any[]): PowerLog {
-    const logger = this._log({ type: "debug", ext: "powerLogger" }, ...args);
+    const logger = this.i_log({ type: "debug", ext: "powerLogger" }, ...args);
     return logger as PowerLog;
   }
 }
@@ -273,10 +317,11 @@ class SubLog extends ThothLog {
 
   constructor(parent: ThothLog, params: LoggerParams) {
     super(params, parent.DOM);
-    super.registerChild(this);
 
     this.parent = parent;
     this.root = parent.root; // Get the top-level parent;
+
+    this.parent.registerChild(this);
   }
 
   get depth(): number {
@@ -304,7 +349,10 @@ class SubLog extends ThothLog {
 
 // POWER LOGGER
 export class PowerLog extends SubLog {
+  private initialConfig?: FinalLogConfig;
   public resolved: boolean = false;
+  public logUid: string = uid(16);
+
   constructor(parent: ThothLog, params: LoggerParams) {
     super(parent, params);
   }
@@ -317,45 +365,77 @@ export class PowerLog extends SubLog {
     this.component = spinner;
   }
 
-  public finalLog(config: FinalLogConfig, ...args: any[]): PowerLog {
-    const prefixText = this.getPrefix({ ...config, spinner: true });
-    const text = util.format(...args);
+  public finalLog(config: FinalLogConfig, ...args: any[]): PowerLog | ThothLog {
+    if (config.ext === "powerLogger") {
+      // This is the initial spinner message
+      this.logUid = this.uid; // Use this.uid to update the spinner later
+      addToLogs({
+        prefix: this.getInkPrefix({ ...config, spinner: true }),
+        spinner: <SpinnerComponent />,
+        message: args,
+        uid: this.logUid,
+      });
+      this.lastLevel++;
+      return this;
+    } else {
+      // Delegate other log types to ThothLog
+      return super.finalLog(config, ...args);
+    }
+  }
 
-    this.spinner = (
-      <SpinnerComponent
-        prefixText={prefixText}
-        key={this.uid}
-        uid={this.uid}
-        text={text}
-      />
-    );
+  public succeedAll(text: string, recursive: boolean = true): PowerLog {
+    // this.log(this.children);
 
-    this.lastLevel++;
-    return this;
+    if (this.children.length <= 0) {
+      return this.succeed(text);
+    }
+
+    for (let child of this.children) {
+      if (!(child instanceof PowerLog)) continue;
+      if (child.resolved) continue;
+
+      if (recursive) {
+        child.succeedAll(text, true);
+      } else {
+        child.succeed(text);
+      }
+    }
+
+    return this.succeed(text);
   }
 
   public succeed(text: string): PowerLog {
-    // this.spinner?.succeed(text);
+    const props: any = {
+      spinner: <SpinnerComponent state="success" />,
+    };
+
+    if (text) props.message = text;
+    updateLog(this.logUid, props);
+
+    return this.resolve();
+  }
+
+  private resolve(): PowerLog {
+    this.resolved = true;
     return this;
   }
 
   public fail(text: string): PowerLog {
-    // this.spinner?.fail(text);
-    return this;
+    const props: any = {
+      spinner: <SpinnerComponent state="error" />,
+    };
+
+    if (text) props.message = text;
+    updateLog(this.logUid, props);
+
+    return this.resolve();
   }
 
   public update(text: string): PowerLog {
-    if (!this.spinner) return this;
-    // this.spinner.text = text;
-    return this;
-  }
+    updateLog(this.logUid, {
+      message: text,
+    });
 
-  private resolve(type: keyof LogTypes = "log") {
-    this.component = this.resolved = true;
-    this.spinner = null;
-  }
-
-  public get class() {
-    return PowerLog.class;
+    return this.resolve();
   }
 }
