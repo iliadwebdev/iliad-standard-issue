@@ -1,6 +1,9 @@
 import type { Options } from "tsup";
 const env = process.env.NODE_ENV;
 
+// @ts-ignore
+// import babel from "esbuild-plugin-babel";
+
 export const tsup: Options = {
   splitting: true,
   sourcemap: env === "prod", // source map is only available in prod
@@ -8,6 +11,8 @@ export const tsup: Options = {
   dts: true, // generate dts file for main module
   format: ["cjs", "esm"], // generate cjs and esm files
   minify: env === "production",
+  // shims: true,
+  // esbuildPlugins: [babel()], // This is not working
   bundle: true,
   skipNodeModulesBundle: true,
   entryPoints: ["src/index.ts"],
@@ -16,4 +21,5 @@ export const tsup: Options = {
   outDir: env === "production" ? "dist" : "lib",
   entry: ["src/**/*.ts"],
   tsconfig: "tsconfig.json",
+  // external: ["react-devtools-core", "yoga-wasm-web"],
 };

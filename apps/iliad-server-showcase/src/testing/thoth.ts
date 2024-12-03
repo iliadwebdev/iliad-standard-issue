@@ -1,6 +1,6 @@
-import util from 'util';
+// import util from 'util';
 
-// throw Error('Do not import `thoth.ts` directly. Use `thoth.test.ts` instead.');
+// // throw Error('Do not import `thoth.ts` directly. Use `thoth.test.ts` instead.');
 import { Thoth } from '@iliad.dev/thoth';
 const thoth = new Thoth({
   config: {
@@ -21,49 +21,44 @@ async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const complexObject = {
-  a: 1,
-  b: '2',
-  c: {
-    d: 3,
-    e: '4',
-    f: {
-      g: 5,
-      h: '6',
-    },
-  },
-  arr: [
-    1,
-    '2',
-    {
-      a: 3,
-      b: '4',
-    },
-    '5',
-    thoth,
-    Thoth,
-  ],
-};
+// const complexObject = {
+//   a: 1,
+//   b: '2',
+//   c: {
+//     d: 3,
+//     e: '4',
+//     f: {
+//       g: 5,
+//       h: '6',
+//     },
+//   },
+//   arr: [
+//     1,
+//     '2',
+//     {
+//       a: 3,
+//       b: '4',
+//     },
+//     '5',
+//     thoth,
+//     Thoth,
+//   ],
+// };
 
-// throw new Error('break');
+// // throw new Error('break');
 
 export async function mainThothTest() {
-  const a = performance.now();
-
-  // overrideConsole();
-
-  thoth.log('test1t');
-  thoth.log('test2t');
-  thoth.log('test3t');
-  thoth.log('=============================================');
-
+  //   const a = performance.now();
+  //   // overrideConsole();
+  // thoth.log('test1t');
+  // thoth.log('test2t');
+  // thoth.log('test3t');
+  // thoth.log('=============================================');
   const wait = thoth.$log('Waiting for 2 seconds');
   const aa = thoth.log('top level');
   aa.log('nested');
-
   wait.succeed('Success ');
   wait._log('This should be nested ');
-
   subProcess: {
     // break subProcess;
     const start = thoth.timestamp();
@@ -84,15 +79,12 @@ export async function mainThothTest() {
     await sleep(2000);
     subProcessStep2.fail('Subprocess 2 rejected');
     await sleep(120);
-
     subProcessStepA.succeed('Subprocess 1 resolved');
     await sleep(333);
-
     subProcessStepB.succeed('Subprocess 1 resolved');
     await sleep(2000);
     _lrLog.succeedAll('Subprocess resolved', true);
     await sleep(2000);
-
     const elapsed = thoth.timestamp(start).timeElapsedFormatted;
     lrLog.info(
       `Long running process has been running for ${thoth.chalk.bold(elapsed)}`,
@@ -106,7 +98,6 @@ export async function mainThothTest() {
     );
     sleep(2000);
   }
-
   // thoth.unmount();
   // console.log('final test after unmounting');
   thoth.log('testing after unmounting (should not print)');

@@ -1,6 +1,5 @@
 {
   "name": "node-typescript-boilerplate",
-  "version": "0.0.0",
   "description": "Minimalistic boilerplate to quick-start Node.js development in TypeScript.",
   "type": "module",
   "engines": {
@@ -28,7 +27,7 @@
   },
   "scripts": {
     "start": "node dist/main.js",
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src"
   },
   "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
   "license": "Apache-2.0",
@@ -37,6 +36,7 @@
     "@iliad.dev/strapi-adapter": "*",
     "@iliad.dev/thoth": "*",
     "@iliad.dev/typescript-config": "*",
+    "clui": "^0.3.6",
     "dotenv": "^16.4.5",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",

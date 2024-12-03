@@ -1,6 +1,4 @@
 // UTILS
-import { createHermesInstance, parseStrapiInstanceParams } from "./utils";
-import classes from "multiple-extend";
 
 // TYPES
 import type { ContentTypesSyncOptions } from "../ContentTypeSync/types";
@@ -10,18 +8,29 @@ import type { StrapiInstanceParams } from "./types";
 import ContentTypeSync from "../ContentTypeSync";
 import Authentication from "../Authentication";
 import StrapiAdapter from "../StrapiAdapter";
+import { NextUtils } from "../Utilities";
 import Options from "@classes/Options";
+
+import { Mixin } from "ts-mixer";
 
 // https://strapi-sdk-js.netlify.app/api/
 export interface StrapiInstance extends StrapiAdapter, ContentTypeSync {} // Tricking intellisense
-export class StrapiInstance extends classes(
+export class StrapiInstance extends Mixin(
   ContentTypeSync,
   Authentication,
   StrapiAdapter
 ) {
+  public utils: {
+    next: NextUtils;
+  };
+
   constructor(params: StrapiInstanceParams) {
     const options = new Options(params);
     super(options);
+
+    this.utils = {
+      next: new NextUtils(this),
+    };
   }
 
   // STATIC CONSTRUCTOR

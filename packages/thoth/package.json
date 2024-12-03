@@ -1,6 +1,6 @@
 {
   "name": "@iliad.dev/thoth",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Logging, pretty 😄",
   "repository": {
     "type": "git",
@@ -17,9 +17,10 @@
     "lib"
   ],
   "scripts": {
-    "build": "env NODE_ENV=production tsup && tsup",
-    "build:dev": "tsup --watch",
-    "dev": "tsx watch src/index.ts",
+    "build:prod": "env NODE_ENV=production tsup && tsup",
+    "build:dev": "tsup",
+    "build": "tsup && env NODE_ENV=production tsup && tsup",
+    "dev": "tsup --watch",
     "lint": "tsc",
     "test": "rollup -c && node test/index.ts",
     "test-": "node test/index.ts"
@@ -45,6 +46,7 @@
     "patch-console": "^2.0.0",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
+    "react-devtools-core": "^4.28.5",
     "term-img": "^7.0.0",
     "terminal-image": "^3.0.0",
     "uid": "^2.0.2"

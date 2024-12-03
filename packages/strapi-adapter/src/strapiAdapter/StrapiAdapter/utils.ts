@@ -23,6 +23,7 @@ export function normalizeUrl(url: string | number, api: boolean = true) {
   let str = url.toString();
 
   if (!api || str.startsWith("/api")) return str;
+  if (str.startsWith("api/")) return `/${str}`; // idk why this is necessary
   return str.startsWith("/") ? `/api${str}` : `/api/${str}`;
 }
 

@@ -1,6 +1,5 @@
 {
   "name": "iliad-component-showcase",
-  "version": "0.1.0",
   "private": true,
   "scripts": {
     "disabled-dev": "next dev --turbo",
@@ -10,8 +9,9 @@
   },
   "dependencies": {
     "@iliad.dev/next-standard-issue": "*",
-    "@iliad.dev/standard-issue": "*",
     "@iliad.dev/react-standard-issue": "*",
+    "@iliad.dev/thoth": "*",
+    "@iliad.dev/standard-issue": "*",
     "@mantine/carousel": "^7.14.1",
     "@mantine/charts": "^7.14.1",
     "@mantine/code-highlight": "^7.14.1",
@@ -36,7 +36,8 @@
     "next": "15.0.0-rc.1",
     "react": "19.0.0-rc-cd22717c-20241013",
     "react-dom": "19.0.0-rc-cd22717c-20241013",
-    "recharts": "^2.13.3"
+    "recharts": "^2.13.3",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",

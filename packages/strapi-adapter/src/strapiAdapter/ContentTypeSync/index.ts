@@ -1,4 +1,4 @@
-import thoth from "@thoth";
+// import thoth from "@thoth";
 import {
   normalizeContentTypesOptions,
   requestNewContentTypes,
@@ -25,7 +25,7 @@ class ContentTypeSync extends Feature {
 
   async syncContentTypes(): Promise<StandardResponse<null>> {
     if (this.options.contentTypesSyncOptions === undefined) {
-      thoth.error("No content types sync options set.");
+      // thoth.error("No content types sync options set.");
       return {
         data: undefined,
         error: { message: "No content types sync options set.", code: 500 },
@@ -54,17 +54,11 @@ class ContentTypeSync extends Feature {
     return doContentTypesExist(this.contentTypesSyncOptions);
   }
 
-  private setContentTypesSyncOptions(
-    options: ContentTypesSyncOptions
-  ): StrictContentTypesSyncOptions {
-    return normalizeContentTypesOptions(options);
-  }
-
   private get contentTypeEndpoint(): string {
     const endpoint = super.apiEndpoint(
       this.options.contentTypesSyncOptions.contentTypesEndpoint
     );
-    thoth.debug("endpoint", endpoint);
+    // thoth.debug("endpoint", endpoint);
     return endpoint;
   }
 

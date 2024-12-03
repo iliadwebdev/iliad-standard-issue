@@ -1,9 +1,9 @@
 import { StrapiInstance } from '@iliad.dev/strapi-adapter';
+import { Thoth } from '@iliad.dev/thoth';
 import { config } from 'dotenv';
 import path from 'path';
 config();
 
-import { Thoth } from '@iliad.dev/thoth';
 const thoth = new Thoth({
   config: {
     prefix: {
@@ -42,8 +42,6 @@ const strapi = new StrapiInstance({
   },
 });
 
-thoth.log('Syncing Content Types');
-
 await strapi.syncContentTypes();
 
 export const mainStrapiAdapterTest = async () => {
@@ -53,5 +51,5 @@ export const mainStrapiAdapterTest = async () => {
     },
   });
 
-  thoth.error({ event, error });
+  console.error({ event, error });
 };

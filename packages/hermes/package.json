@@ -1,6 +1,6 @@
 {
   "name": "@iliad.dev/hermes",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Normalizes responses from Axios and Fetch for use in Next.js projects.",
   "main": "lib/index.cjs",
   "module": "lib/index.js",

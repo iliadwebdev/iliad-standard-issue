@@ -16,4 +16,8 @@ export const tsup: Options = {
   outDir: env === "production" ? "dist" : "lib",
   entry: ["src/**/*.ts"],
   tsconfig: "tsconfig.json",
+  external: ["react-devtools-core", "yoga-wasm-web"],
+  esbuildOptions: (options) => {
+    options.external = ["react-devtools-core", "yoga-wasm-web"];
+  },
 };
