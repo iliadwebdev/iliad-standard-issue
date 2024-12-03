@@ -1,5 +1,4 @@
-import thoth from "@thoth";
-
+// import thoth from "@thoth";
 // Types
 import { FetchOptions, InitParam } from "openapi-fetch";
 import {
@@ -183,27 +182,20 @@ class StrapiAdapter extends Feature {
   // ========================================================================
   // Find entries in a collection. Not applicable to single types.
   public async find<
-    API extends keyof Schema.,
+    API extends Names<"plural", "collection">,
     UID extends CTUID = UIDFromName<API>,
   >(
     collection: API,
-    query?:
-      | Params.Pick<
-          UID,
-          | "publicationState"
-          | "pagination"
-        >
-      | string
-      | "*",
+    query?: CrudQueryFull<UID>,
     options?: RequestInit
-  ): Promise<StandardResponse<APIResponseCollection<UID>>> {
+  ): CRUD.FN<APIResponseCollection<UID>> {
+    const url = u.createUrl({
+      endpoint: super.apiEndpoint(collection),
+      query,
+    });
+
     return await this.normalizedFetch<APIResponseCollection<UID>>(
-      u.normalizeUrl(
-        u.createUrl({
-          endpoint: super.apiEndpoint(collection),
-          query,
-        })
-      ),
+      u.normalizeUrl(url),
       u.wm("get", options)
     );
   }
@@ -478,10 +470,10 @@ class StrapiAdapter extends Feature {
         options
       );
 
-      if (error || !firstPage) {
-        thoth.error(`Error fetching collection ${collection}:`, error, {
-          query,
-        });
+      if (error || !firstPage?.data) {
+        // thoth.error(`Error fetching collection ${collection}:`, error, {
+        //   query,
+        // });
         return { data: undefined, error } as ErrorResponse;
       }
 
@@ -506,8 +498,8 @@ class StrapiAdapter extends Feature {
         options
       );
 
-      if (error || !page) {
-        thoth.error(`Error fetching collection ${collection}:`, error);
+      if (error || !page.data) {
+        // thoth.error(`Error fetching collection ${collection}:`, error);
         console.debug({ query });
 
         return { error };
