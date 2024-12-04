@@ -1,8 +1,9 @@
 // import util from 'util';
 
 // // throw Error('Do not import `thoth.ts` directly. Use `thoth.test.ts` instead.');
-import { Thoth } from '@iliad.dev/thoth';
-const thoth = new Thoth({
+import { Thoth_Server } from '@iliad.dev/thoth';
+
+const thoth = new Thoth_Server({
   config: {
     prefix: {
       newLine: false,

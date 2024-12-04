@@ -1,3 +1,5 @@
+import "@iliad.dev/primitive-extensions";
+
 import {
   DefaultMantineColor,
   getThemeColor,

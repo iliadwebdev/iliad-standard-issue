@@ -1,23 +1,49 @@
 {
   "name": "@iliad.dev/build-scripts",
-  "description": "A collection of scripts to do naughty and ill-advised things to package in the @iliad.dev namespace.",
-  "version": "0.0.4",
+  "description": "A collection of scripts to do naughty and ill-advised things to packages in the @iliad.dev namespace.",
+  "version": "0.1.0",
   "private": false,
-  "files": [
-    "simple-build.js",
-    "post-install.js",
-    "start-at-root.js"
-  ],
-  "devDependencies": {
-    "@vercel/style-guide": "^5.2.0",
-    "eslint-config-turbo": "^2.0.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-only-warn": "^1.1.0",
-    "@typescript-eslint/parser": "^7.1.0",
-    "@typescript-eslint/eslint-plugin": "^7.1.0",
-    "typescript": "5.5.4"
+  "type": "module",
+  "main": "src/cli.ts",
+  "bin": {
+    "build-scripts": "./src/cli.ts"
   },
+  "files": [
+    "src"
+  ],
   "scripts": {
-    "build": "node ./simple-build.js"
+    "build:cjs": "env NODE_ENV=production tsup && tsup",
+    "build:esm": "tsup",
+    "build": "tsup && env NODE_ENV=production tsup && tsup",
+    "predev": "npm link",
+    "dev": "nodemon --watch src --ext ts --exec \"npx build-scripts prebuild\"",
+    "lint": "tsc",
+    "test": "rollup -c && node test/index.ts",
+    "test-": "node test/index.ts"
+  },
+  "dependencies": {
+    "@iliad.dev/strapi-adapter": "*",
+    "@iliad.dev/thoth": "*"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@types/deasync": "^0.1.5",
+    "@types/node": "^22.10.1",
+    "@types/qs": "^6.9.15",
+    "@typescript-eslint/eslint-plugin": "^6.7.0",
+    "@typescript-eslint/parser": "^6.7.0",
+    "@vercel/style-guide": "^5.2.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-turbo": "^2.0.0",
+    "eslint-plugin-only-warn": "^1.1.0",
+    "nodemon": "^3.1.7",
+    "rollup": "^4.17.2",
+    "rollup-plugin-dts": "^6.1.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "tiny-glob": "^0.2.9",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.0.2",
+    "typescript": "5.5.4"
   }
 }

@@ -2,6 +2,17 @@
 
 Logging library. Makes logs pretty, standard, project-agnostic. Provides utilities for logging locally, externall, via webhooks, etc.
 
+## V2 Notes
+
+This current approach is not maintainable, so a rewrite will be necessary. Basic features:
+`Logger` class. Just means that it has the ability to make new `Log`s with the `console.log` API + has power loggers.
+`Basic Log` class. Holds the recursion logic, but isn't stored in virtual dom, probably?
+`Log` extends `BasicLog` class. Can be a power logger. Has an optional `parent` field and `children` field. Every log has a uid, stores itself in virtual dom as side effect.
+    - get siblings() returns parent.children.
+    - isSibling(): boolean returns parent.children.length.
+`LogRenderer` React component. Recursive component that renders out `Log`.
+`Virtual DOM` Basically just a big object stored in `@preact/signal` state probably. Unsure how rendering will work in the non-ink environment. I'll probably just do away with PowerLog features and just create siblings / children.
+
 ## Features
 
 - Utility function that can be called to override console.log + provide typing

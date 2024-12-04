@@ -22,14 +22,14 @@
     "strict": true /* Enable all strict type-checking options. */,
     "baseUrl": ".",
     "paths": {
-      "@state": ["./src/classes/ThothDOM/state.ts"],
-      "@features": ["./src/strapiAdapter"],
-      "@classes/*": ["./src/classes/*"],
-      "@classes": ["./src/classes/index.ts"],
-      "@types": ["./src/@types/index.ts"],
-      "@types*": ["./src/@types*"],
-      "@utils": ["./src/utils/index.ts"],
-      "@utils*": ["./src/utils*"]
+      // "@state": ["./src/classes/ThothDOM/state.ts"],
+      // "@features": ["./src/strapiAdapter"],
+      // "@classes/*": ["./src/classes/*"],
+      // "@classes": ["./src/classes/index.ts"],
+      // "@types": ["./src/@types/index.ts"],
+      // "@types*": ["./src/@types*"],
+      // "@utils": ["./src/utils/index.ts"],
+      // "@utils*": ["./src/utils*"]
     }
   },
   "exclude": ["rollup.config.js", "node_modules/*", "cjs", "esm"],

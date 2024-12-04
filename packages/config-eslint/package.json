@@ -17,7 +17,7 @@
     "typescript": "5.5.4"
   },
   "scripts": {
-    "build": "node ../build-scripts/simple-build.js"
+    "build": "node ../../simple-build.js"
   },
   "dependencies": {}
 }

@@ -13,14 +13,15 @@ export async function fetchRedirects(
 
   const { data, error } = await strapiInstance.GET("/redirects");
   // @ts-ignore
-  const response = data.redirects as Redirect[] | undefined;
 
-  if (error || !response) {
+  if (error || !data?.redirects) {
     // Handle the error as needed, here we return an empty array
     // log.fail("Error fetching redirects:").error(error);
     return [];
   }
 
+  // @ts-ignore
+  const response = data?.redirects as Redirect[];
   //   const end = start.timeElapsedFormatted;
   //   log.succeed(`Fetched redirects in ${end}`).debug(data);
 

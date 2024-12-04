@@ -9,9 +9,12 @@ import {
 } from "@classes/ThothLog/data.ts";
 
 // Classes
-import { ThothLog, PowerLog, SubLog } from "@classes/ThothLog/index.tsx";
-import { ThothDOM } from "@classes/ThothDOM/index.tsx";
-import { TimeStamp } from "@classes/TimeStamp.ts";
+import {
+  ThothLogClient,
+  PowerLogClient,
+  SubLogClient,
+} from "@classes/ThothLog/client.ts";
+import { TimeStampClient } from "@classes/TimeStamp/client.ts";
 
 // Utils
 import { mergeDefaults } from "@iliad.dev/ts-utils";
@@ -28,28 +31,25 @@ const defaultThothParams: ThothParams = {
   customTypes: [],
 };
 
-export class Thoth {
+export class ClientThoth {
   // Expose chalk for easy access
   public static chalk = chalk;
   public chalk = chalk;
 
   config: LoggerConfig = defaultLoggerConfig;
-  private DOM: ThothDOM;
 
   constructor(params: ThothParams = defaultThothParams) {
     const { config } = params;
 
     config &&
       (this.config = deepmerge(defaultLoggerConfig, config, u.dmo) as any);
-
-    this.DOM = new ThothDOM(this);
   }
 
-  get logger(): ThothLog {
-    return new ThothLog({ config: this.config }, this.DOM);
+  get logger(): ThothLogClient {
+    return new ThothLogClient({ config: this.config });
   }
 
-  protected i_log(config: FinalLogConfig, ...args: any[]): ThothLog {
+  protected i_log(config: FinalLogConfig, ...args: any[]): ThothLogClient {
     const mergedConfig: FinalLogConfig = mergeDefaults(
       defaultFinalLogConfig,
       config
@@ -58,99 +58,89 @@ export class Thoth {
     return this.logger.i_log(mergedConfig, ...args);
   }
 
-  public unmount() {
-    this.DOM.unmount();
-  }
-
-  public remount() {
-    this.DOM.mount();
-  }
-
   // Proxy methods
   public clear() {
-    this.DOM.clearLogs();
+    console.clear();
   }
 
-  public timestamp(timestamp?: TimeStamp) {
+  public timestamp(timestamp?: TimeStampClient) {
     return this.logger.timestamp(timestamp);
   }
 
-  public log(...args: any[]): Thoth {
+  public log(...args: any[]): ClientThoth {
     const logger = this.i_log({ type: "log" }, ...args);
     return this;
   }
 
-  public info(...args: any[]): Thoth {
+  public info(...args: any[]): ClientThoth {
     const logger = this.i_log({ type: "info" }, ...args);
     return this;
   }
 
-  public warn(...args: any[]): Thoth {
+  public warn(...args: any[]): ClientThoth {
     const logger = this.i_log({ type: "warn" }, ...args);
     return this;
   }
 
-  public error(...args: any[]): Thoth {
+  public error(...args: any[]): ClientThoth {
     const logger = this.i_log({ type: "error" }, ...args);
     return this;
   }
 
-  public debug(...args: any[]): Thoth {
+  public debug(...args: any[]): ClientThoth {
     const logger = this.i_log({ type: "debug" }, ...args);
     return this;
   }
 
   // Proxy methods - Sub
-  public _log(...args: any[]): SubLog {
+  public _log(...args: any[]): SubLogClient {
     const logger = this.i_log({ type: "log", ext: "subLogger" }, ...args);
-    return logger as SubLog;
+    return logger as SubLogClient;
   }
 
-  public _info(...args: any[]): SubLog {
+  public _info(...args: any[]): SubLogClient {
     const logger = this.i_log({ type: "info", ext: "subLogger" }, ...args);
-    return logger as SubLog;
+    return logger as SubLogClient;
   }
 
-  public _warn(...args: any[]): SubLog {
+  public _warn(...args: any[]): SubLogClient {
     const logger = this.i_log({ type: "warn", ext: "subLogger" }, ...args);
-    return logger as SubLog;
+    return logger as SubLogClient;
   }
 
-  public _error(...args: any[]): SubLog {
+  public _error(...args: any[]): SubLogClient {
     const logger = this.i_log({ type: "error", ext: "subLogger" }, ...args);
-    return logger as SubLog;
+    return logger as SubLogClient;
   }
 
-  public _debug(...args: any[]): SubLog {
+  public _debug(...args: any[]): SubLogClient {
     const logger = this.i_log({ type: "debug", ext: "subLogger" }, ...args);
-    return logger as SubLog;
+    return logger as SubLogClient;
   }
 
   // Proxy methods - Power
-  public $log(...args: any[]): PowerLog {
+  public $log(...args: any[]): PowerLogClient {
     const logger = this.i_log({ type: "log", ext: "powerLogger" }, ...args);
-    return logger as PowerLog;
+    return logger as PowerLogClient;
   }
 
-  public $info(...args: any[]): PowerLog {
+  public $info(...args: any[]): PowerLogClient {
     const logger = this.i_log({ type: "info", ext: "powerLogger" }, ...args);
-    return logger as PowerLog;
+    return logger as PowerLogClient;
   }
 
-  public $warn(...args: any[]): PowerLog {
+  public $warn(...args: any[]): PowerLogClient {
     const logger = this.i_log({ type: "warn", ext: "powerLogger" }, ...args);
-    return logger as PowerLog;
+    return logger as PowerLogClient;
   }
 
-  public $error(...args: any[]): PowerLog {
+  public $error(...args: any[]): PowerLogClient {
     const logger = this.i_log({ type: "error", ext: "powerLogger" }, ...args);
-    return logger as PowerLog;
+    return logger as PowerLogClient;
   }
 
-  public $debug(...args: any[]): PowerLog {
+  public $debug(...args: any[]): PowerLogClient {
     const logger = this.i_log({ type: "debug", ext: "powerLogger" }, ...args);
-    return logger as PowerLog;
+    return logger as PowerLogClient;
   }
 }
-
-export default new Thoth(defaultThothParams);

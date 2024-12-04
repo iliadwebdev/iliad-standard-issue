@@ -42,3 +42,18 @@ export type LoggerParamsConfig = {
     };
   };
 };
+
+export type ModuleParam =
+  | string
+  | {
+      fn?: (s: string) => string; // The last function in the chain should return a string.
+      color?: PolymorphicColor;
+      name?: string;
+    };
+
+export type StrictModuleParam = {
+  fn: undefined | ((s: string) => string); // The last function in the chain should return a string.
+  color: PolymorphicColor;
+  enabled: boolean;
+  name: string;
+};

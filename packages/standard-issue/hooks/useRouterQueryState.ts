@@ -1,6 +1,8 @@
-import { useWatch } from "@iliad.dev/react-standard-issue/hooks";
+import { XOR } from "@iliad.dev/ts-utils/@types";
+
 import { Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/router";
+import { useWatch } from "./useWatch";
 
 type SerializerFunction = (value: any) => string | undefined;
 type DeserializerFunction = (value: string) => any;

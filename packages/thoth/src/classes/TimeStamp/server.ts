@@ -1,5 +1,5 @@
+import { ThothLog } from "../ThothLog/server.tsx";
 import { ChalkInstance } from "chalk";
-import { ThothLog } from "./ThothLog/index.tsx";
 
 import * as u from "@utils";
 
@@ -8,9 +8,6 @@ type TimeStampParams = {
   name?: string;
   log: ThothLog;
 };
-
-const dFn = (time: number, chalk: ChalkInstance) =>
-  `Time elapsed: ${chalk.bold(time)}`;
 
 export class TimeStamp {
   private constructTime: number;

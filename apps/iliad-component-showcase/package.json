@@ -2,16 +2,18 @@
   "name": "iliad-component-showcase",
   "private": true,
   "scripts": {
-    "disabled-dev": "next dev --turbo",
+    "predev": "prebuild",
+    "dev": "next dev --turbo",
     "disabled-build": "next build",
     "disabled-start": "next start",
     "disabled-lint": "next lint"
   },
   "dependencies": {
     "@iliad.dev/next-standard-issue": "*",
+    "@iliad.dev/build-scripts": "*",
     "@iliad.dev/react-standard-issue": "*",
-    "@iliad.dev/thoth": "*",
     "@iliad.dev/standard-issue": "*",
+    "@iliad.dev/thoth": "*",
     "@mantine/carousel": "^7.14.1",
     "@mantine/charts": "^7.14.1",
     "@mantine/code-highlight": "^7.14.1",
@@ -48,6 +50,7 @@
     "postcss": "^8.4.31",
     "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",
+    "tiny-glob": "^0.2.9",
     "typescript": "^5"
   }
 }

@@ -11,11 +11,8 @@ import isInCi from "is-in-ci";
 import { uid } from "uid";
 import util from "util";
 
-import * as u from "@utils";
-
 // Classes
-import { Thoth } from "@classes/Thoth/index.ts";
-import thoth from "@classes/Thoth/index.ts";
+import { Thoth } from "@classes/Thoth/server.ts";
 
 // State
 import { useSignalEffect } from "@preact/signals-react";
@@ -55,7 +52,7 @@ export class ThothDOM {
   }
 
   public mount(): [Instance, Restore] {
-    const instance = render(<App config={thoth?.config} />);
+    const instance = render(<App config={this.thoth?.config} />);
     const restore = this.patchConsole();
 
     return [instance, restore];
@@ -134,9 +131,54 @@ const LogComponent = ({ uid, prefix, spinner, message }: LogSignal) => {
   );
 };
 
+const ConciseLogComponent = ({ uid, prefix, spinner, message }: LogSignal) => {
+  const { timestamp, namespace, mfgStamp, module, type, depth } = prefix || {};
+  const m = [message].flat();
+
+  const space = prefix ? <Text> </Text> : undefined;
+
+  return (
+    <Box>
+      <Box flexShrink={0}>
+        <Text>{mfgStamp}</Text>
+        <Text>{timestamp}</Text>
+        <Text>{namespace}</Text>
+        <Text>{module}</Text>
+        <Text>{type}</Text>
+      </Box>
+      <Box>
+        <Text>{depth}</Text>
+        {spinner ?? space}
+        {m.map((msg, idx) => (
+          <Text key={`${uid}-${idx}`}>{util.format(msg)}</Text>
+        ))}
+      </Box>
+    </Box>
+  );
+};
+
+const DeepLogComponent = ({ uid, prefix, spinner, message }: LogSignal) => {
+  const { timestamp, namespace, mfgStamp, module, type, depth } = prefix || {};
+  const m = [message].flat();
+
+  const prefixes = [mfgStamp, timestamp, namespace, module, type, depth]
+    .filter(Boolean)
+    .map((p) => <Text>{p}</Text>);
+
+  return (
+    <Box>
+      {/* {prefixes} {spinner ?  : <Text> </Text>} */}
+      {m.map((msg, idx) => (
+        <Text key={`${uid}-${idx}`}>{util.format(msg)}</Text>
+      ))}
+    </Box>
+  );
+};
+
 type AppProps = {
   config: Thoth["config"];
 };
+
 const App = ({ config }: AppProps) => {
   const [reactLogs, setReactLogs] = useState<LogSignal[]>([]);
 
@@ -147,10 +189,8 @@ const App = ({ config }: AppProps) => {
   return (
     <Box flexDirection="column">
       {reactLogs.map((log) => {
-        return <LogComponent key={log.uid} {...log} />;
+        return <ConciseLogComponent key={log.uid} {...log} />;
       })}
     </Box>
   );
 };
-
-export default new ThothDOM(thoth);

@@ -1,8 +1,8 @@
 import { PolymorphicColor, TimeStampComponents, PadType } from "@types";
 import { LoggerParamsConfig } from "@classes/Thoth/types.ts";
-import { XOR } from "@iliad.dev/ts-utils/@types";
+import { XOR, Optional } from "@iliad.dev/ts-utils/@types";
 import { ChalkInstance } from "chalk";
-import { ThothLog } from "./index.tsx";
+import { ThothLog } from "./server.tsx";
 
 export type LogTypes<CTS extends LogType[] = never> = {
   debug: LogType;
@@ -17,6 +17,7 @@ export type LogTypes<CTS extends LogType[] = never> = {
 export type FinalLogConfig<CTS extends LogType[] = never> = {
   ext?: XOR<"subLogger", "powerLogger">;
   type: keyof LogTypes<CTS>;
+  topLevel?: boolean;
   spinner?: boolean;
   fn?: LogFn;
 };

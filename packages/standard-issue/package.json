@@ -13,7 +13,6 @@
     "index.ts",
     "meta.ts"
   ],
-  "type": "module",
   "author": "",
   "license": "ISC",
   "description": "",

@@ -1,3 +1,5 @@
+import { BinaryPermutations } from "@iliad.dev/ts-utils/@types";
+
 import type { Variants, PowerButtonProps } from "../../index";
 import type {
   DefaultMantineColor,
@@ -67,6 +69,7 @@ export function getColors(
 }
 
 export function getVariantFromProps(text: any, icon: any): Variants {
+  // @ts-ignore
   const p: Record<BinaryPermutations<2>, Variants> = {
     "11": "icon-button",
     "10": "text-button",

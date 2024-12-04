@@ -1,3 +1,5 @@
+import { XOR } from "@iliad.dev/ts-utils/@types";
+
 // Styles
 import styles from "./iliad-image.module.scss";
 import clsx from "clsx";
