@@ -1,28 +1,8 @@
 import { StrapiInstance } from '@iliad.dev/strapi-adapter';
-import { Thoth } from '@iliad.dev/thoth';
+
 import { config } from 'dotenv';
 import path from 'path';
 config();
-
-const thoth = new Thoth({
-  config: {
-    prefix: {
-      namespace: {
-        name: '[II-SA]',
-        color: '#4945FF',
-        enabled: true,
-      },
-      newLine: false,
-      timestamp: {
-        components: ['time'],
-        enabled: true,
-      },
-      module: {
-        enabled: false,
-      },
-    },
-  },
-});
 
 // This is where types will be stored. Is there a way I can move this cache
 // to the node_module itself? Is that even desirable?
@@ -42,14 +22,32 @@ const strapi = new StrapiInstance({
   },
 });
 
-await strapi.syncContentTypes();
+// await strapi.syncContentTypes();
 
 export const mainStrapiAdapterTest = async () => {
-  const { data: event, error } = await strapi.getFullCollection('events', {
+  const { data: articles, error } = await strapi.getCollection('articles', {
+    filters: {
+      createdAt: {
+        $lte: new Date(),
+      },
+    },
     populate: {
-      funders: true,
+      image: {
+        filters: {
+          caption: {
+            $notNull: true,
+          },
+        },
+      },
     },
   });
 
-  console.error({ event, error });
+  // https://localhost:1337/api/articles?filters%5BcreatedAt%5D%5B%24lte%5D=2024-12-05T04%3A23%3A02.083Z&populate%5Bimage%5D%5Bfilters%5D%5Bcaption%5D%5B%24notNull%5D=true&pagination%5BpageSize%5D=25&pagination%5Bpage%5D=1
+
+  // const { data: event, error } = await strapi.getFullCollection('events', {
+  //   populate: {
+  //     funders: true,
+  //   },
+  // });
+  // console.error({ event, error });
 };

@@ -2,6 +2,9 @@
 
 Logging library. Makes logs pretty, standard, project-agnostic. Provides utilities for logging locally, externall, via webhooks, etc.
 
+ty JJ 🥰
+
+
 ## V2 Notes
 
 This current approach is not maintainable, so a rewrite will be necessary. Basic features:

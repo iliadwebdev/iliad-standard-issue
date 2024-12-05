@@ -1,11 +1,11 @@
 // Types
 import { PolymorphicColor, ColorFn, RGBColor, HexColor, PadType } from "@types";
-import { LoggerConfig } from "@classes/ThothLog/types.ts";
 
 // Utils
 import chalk, { ForegroundColorName, BackgroundColorName } from "chalk";
 import * as u from "@utils";
 import util from "util";
+import { ThothConfigStrict } from "@classes/Configuration/types.ts";
 
 export function formatToBuffer(args: unknown[]): Buffer {
   // Convert arguments to a string, separating by spaces, and add a newline
@@ -14,7 +14,7 @@ export function formatToBuffer(args: unknown[]): Buffer {
       .map((arg) =>
         typeof arg === "object" && arg !== null
           ? JSON.stringify(arg)
-          : String(arg)
+          : String(arg),
       )
       .join(" ") + "\n";
 
@@ -24,7 +24,7 @@ export function formatToBuffer(args: unknown[]): Buffer {
 export const overwriteMerge = (
   destinationArray: any,
   sourceArray: any,
-  options: any
+  options: any,
 ) => sourceArray;
 
 export function formatToUint8Array(args: unknown[]): Uint8Array {
@@ -34,7 +34,7 @@ export function formatToUint8Array(args: unknown[]): Uint8Array {
       .map((arg) =>
         typeof arg === "object" && arg !== null
           ? JSON.stringify(arg)
-          : String(arg)
+          : String(arg),
       )
       .join(" ") + "\n";
 
@@ -52,7 +52,7 @@ function isRgb(color: PolymorphicColor): color is RGBColor {
 }
 
 function isChalkColorString(
-  color: PolymorphicColor
+  color: PolymorphicColor,
 ): color is ForegroundColorName | BackgroundColorName {
   if (typeof color !== "string") return false;
   if (isHex(color) || isRgb(color)) return false;
@@ -73,17 +73,24 @@ export function resolvePolymorphicColor(color: PolymorphicColor): ColorFn {
   return chalk.hex(color);
 }
 
+export const normalizePolymorphicColor = resolvePolymorphicColor;
+
 function ensureMsLength(ms: number): string {
   return `${ms}`.padStart(3, "0");
 }
 
-type TimestampComponents = LoggerConfig["prefix"]["timestamp"]["components"];
-export function getTimestamp(tsComponents: TimestampComponents): string {
+type TimestampComponents =
+  ThothConfigStrict["prefix"]["timestamp"]["components"];
+
+export function getTimestamp(
+  tsComponents: TimestampComponents,
+  timestampMs?: number,
+): string {
   let finalComponents: string[] = [];
 
   let components = [tsComponents].flat();
 
-  const now = new Date();
+  const now = timestampMs ? new Date(timestampMs) : new Date();
   const date = now.toLocaleDateString();
   const time = now.toLocaleTimeString(undefined, {
     hour12: false,

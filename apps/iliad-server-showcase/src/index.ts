@@ -1,5 +1,5 @@
-import { mainThothTest } from './testing/thoth';
-// import { mainStrapiAdapterTest } from './testing/strapi-adapter';
+// import { mainThothTest } from './testing/thoth';
+import { mainStrapiAdapterTest } from './testing/strapi-adapter';
 // import './testing/clui';
 
 (async () => {
@@ -7,6 +7,6 @@ import { mainThothTest } from './testing/thoth';
   // console.log(process.env);
   // console.log('running');
   // await mainHermesTest();
-  await mainThothTest();
-  // await mainStrapiAdapterTest();
+  // await mainThothTest();
+  await mainStrapiAdapterTest();
 })();

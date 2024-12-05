@@ -1,4 +1,4 @@
-import { Thoth } from "@classes/Thoth/server.ts";
+import { Thoth } from "@classes/Thoth/index.ts";
 
 // Define the mixin function
 export function classWithThoth<T extends new (...args: any[]) => {}>(
