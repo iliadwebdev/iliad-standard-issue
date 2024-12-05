@@ -8,7 +8,7 @@ import type {
 } from "./types.ts";
 
 // Classes
-import { Line } from "@classes/Line/class.ts";
+import { LogData } from "@classes/LogData/class.ts";
 import { DOM } from "@classes/DOM/class.ts";
 import LogStore from "@classes/LogStore.ts";
 
@@ -25,6 +25,10 @@ import { LINES } from "./data.ts";
 export class Log {
   // ADDED: Track the child's position under its parent
   public childIndex: number = 0; // will be set by parent when added
+
+  // Render starts as requested because it must be rendered at least once.
+  // Maybe this should be set at the end of the instantiation process?
+  renderRequested: boolean = true;
 
   children: LogStore = new LogStore(this);
   public readonly uid: string;
@@ -79,6 +83,10 @@ export class Log {
     return new LogStore(this, children);
   }
 
+  public toString(): string {
+    return this.data.toString();
+  }
+
   getTreePrefix(): string {
     if (this.parent instanceof DOM) return "";
     const chunks: string[] = [];
@@ -102,8 +110,8 @@ export class Log {
     return false;
   }
 
-  getLine(): Line {
-    return new Line(this.root, {
+  get data(): LogData {
+    return new LogData(this.root, this, {
       namespace: this.root.config.namespace,
       module: this.root.config.module,
       timestamp: `${this.timestamp}`,
@@ -114,28 +122,18 @@ export class Log {
     });
   }
 
-  getLines(): Line[] {
-    const lines: Line[] = [];
+  protected getDataRecursively(): LogData[] {
+    const dataArray: LogData[] = [];
 
-    lines.push(
-      new Line(this.root, {
-        namespace: this.root.config.namespace,
-        module: this.root.config.module,
-        timestamp: `${this.timestamp}`,
-        treePrefix: this.treePrefix,
-        data: this.message,
-        type: this.type,
-        raw: this.raw,
-      }),
-    );
+    dataArray.push(this.data);
 
     if (this.hasChildren) {
       this.children.forEach((child, index) => {
-        lines.push(...child.getLines());
+        dataArray.push(...child.getDataRecursively());
       });
     }
 
-    return lines;
+    return dataArray;
   }
 
   get hasChildren(): boolean {
@@ -158,8 +156,36 @@ export class Log {
   // CHANGED: After adding a child, set the child's childIndex.
   protected addChild(child: Log) {
     this.children.push(child);
-    this.root.update();
+    this.informOfUpdate();
     return child;
+  }
+
+  informOfRerender() {
+    this.renderRequested = false;
+    // This doesn't need to be passed to children,
+    // as they will be updated by the DOM's render method.
+  }
+
+  public update(...args: any[]) {
+    this.arguments_ = args;
+    this.message = util.format(...args);
+
+    this.informOfUpdate();
+  }
+
+  // Need an API for updating the message
+  // public updateType(type: LogType) {}
+  // public logAgain(): void {} // Re-render the log, but as a new log. This will require a call to root.
+  // public $promise() {} // Attach a promise to the log, and update the log when the promise resolves / rejects.
+
+  informOfUpdate() {
+    this.renderRequested = true;
+    this.children.forEach((child, index) => {
+      child.childIndex = index;
+      child.informOfUpdate();
+    });
+
+    this.root.informOfUpdate();
   }
 
   protected createChild<T extends VariantName>(
@@ -180,13 +206,13 @@ export class Log {
     return this.createSibling(options, args);
   }
 
-  public _log(message: string): ThothLog {
+  public _log(...args: any[]): ThothLog {
     const options = createChildOptions("thothLog", {
       parent: this,
       type: "log",
     });
 
-    return this.createChild(options, message);
+    return this.createChild(options, args);
   }
 
   public $log(message: string): PowerLog {

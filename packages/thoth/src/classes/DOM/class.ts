@@ -8,32 +8,49 @@ import type {
 // Classes
 import { SpinnerManager } from "@classes/SpinnerManager/index.ts";
 import { PowerLog, ThothLog, Log } from "@classes/Log/index.ts";
-import { Line } from "@classes/Line/class.ts";
+import { LogData } from "@classes/LogData/class.ts";
+import AverageArray from "@classes/AverageArray.ts";
 import LogStore from "@classes/LogStore.ts";
+
+// Data
+import { domConfig } from "./data.ts";
 
 // Utils
 import { createChildLog, createChildOptions } from "@classes/Log/utils.ts";
 import { Configuration } from "@classes/Configuration/index.ts";
 import patchConsole from "patch-console";
+import * as utils from "@utils";
+import * as $R from "remeda";
+
+function renderLog(fr: number, times: AverageArray) {
+  utils.log(
+    `==============================================\nNEW RENDER FRAME - Frame: ${fr + 1} (avg time: ${times.average()}ms)\n==============================================`,
+  );
+}
 
 export class DOM {
   children: Array<ThothLog> = [];
 
+  // Metrics
+  private renderTimes = new AverageArray(domConfig.RENDER_AVG_SAMPLE_SIZE);
+  private framesRendered: number = 0;
+
   public readonly spinnerManager = SpinnerManager;
+  public readonly uid = domConfig.STATIC_UID;
   public readonly config: Configuration;
   public readonly restore: () => void;
   public readonly parent = this;
-  public readonly uid = "Root";
   public readonly root = this;
   public readonly depth = 0;
 
-  private previousRenderedLines: string[] = [];
   private isCursorHidden: boolean = false;
+  private previousLineIndex: number = 0; // Represents the last line index of the previous render
 
   private renderLoopInterval: NodeJS.Timer | null = null;
-  private framerate: number = 1000 / 60; // 60 FPS
+  private framerate: number = 1000 / domConfig.FRAME_RATE; // 60 FPS
 
   // Render state
+  private fullRenderRequested: boolean = false;
   private renderRequested: boolean = false;
   private rendering: boolean = false;
 
@@ -42,11 +59,11 @@ export class DOM {
 
     // Override console functionality
     this.restore = this.patchConsole();
+    this.hardClearConsole();
     this.hideCursor();
 
     // Mount the DOM
     this.listenForEvents();
-    this.commitExistingLogs();
     this.startRenderLoop();
   }
 
@@ -54,51 +71,11 @@ export class DOM {
     this.framerate = 1000 / framesPerSecond;
   }
 
-  /**
-   * Recursively collect lines from all nodes in a stable order.
-   */
-  private collectLines(): Line[] {
-    const lines: Line[] = [];
-
-    // Recursive function to traverse the tree and collect lines
-    const traverse = (node: DOM | Log) => {
-      // If this is a Log (not the root DOM), add its own line
-      if (node instanceof Log) {
-        lines.push(
-          new Line(this.root, {
-            namespace: this.root.config.namespace,
-            module: this.root.config.module,
-            timestamp: `${node.timestamp}`,
-            treePrefix: node.treePrefix,
-            data: node.message,
-            type: node.type,
-            raw: node.raw,
-          }),
-        );
-      }
-
-      // Then traverse its children in order
-      node.children.forEach((child) => {
-        traverse(child);
-      });
-    };
-
-    // Start traversal from each top-level child
-    for (const child of this.children) {
-      traverse(child);
-    }
-
-    return lines;
-  }
-
   private renderIfNecessary() {
     if (this.renderRequested && !this.rendering) {
       this.rendering = true;
       setImmediate(() => {
         this.render();
-
-        this.renderRequested = false;
-        this.rendering = false;
       });
     }
   }
@@ -115,56 +92,151 @@ export class DOM {
     }
   }
 
+  // ILIAD: TODO: I need to formalize the naming of these methods
+  // inform of update request update update required update request it is gay!
+  private fullRerender() {
+    for (const child of this.children) {
+      child.informOfUpdate();
+    }
+    this.informOfUpdate(true);
+  }
+
+  private hardClearConsole() {
+    process.stdout.write("\x1Bc");
+  }
+
   /**
-   * Render the entire tree by collecting lines in a stable, top-down order.
+   * Recursively collect lines from all nodes in a stable order.
+   */
+  private collectLogData(): LogData[] {
+    const lines: LogData[] = [];
+
+    // Recursive function to traverse the tree and collect lines
+    const traverse = (node: DOM | Log) => {
+      // If this is a Log (not the root DOM), add its own line
+      if (node instanceof Log) {
+        lines.push(node.data);
+      }
+
+      // Then traverse its children in order
+      node.children.forEach((child) => {
+        traverse(child);
+      });
+    };
+
+    // Start traversal from each top-level child
+    for (const child of this.children) {
+      traverse(child);
+    }
+
+    return lines;
+  }
+
+  getTerminalWidth(): number {
+    return process.stdout.columns || 80;
+  }
+
+  getTerminalHeight(): number {
+    return process.stdout.rows - 1 || 24;
+  }
+
+  getTerminalSize(): { width: number; height: number } {
+    return {
+      height: this.getTerminalHeight(),
+      width: this.getTerminalWidth(),
+    };
+  }
+
+  get totalLinesConsumed(): number {
+    return this.collectLogData().reduce((acc, log) => {
+      return acc + log.linesConsumed;
+    }, 0);
+  }
+
+  get deadSpace(): number {
+    return Math.max(this.getTerminalHeight() - this.totalLinesConsumed, 0);
+  }
+
+  /**
+   * Render the entire tree by collecting data in a stable, top-down order.
    */
   private render() {
     this.rendering = true;
 
-    const linesToRender: Line[] = this.collectLines();
+    const full = this.fullRenderRequested;
 
-    const currentRenderedLines = linesToRender
-      .map((line) => line.render())
-      .join("\n")
-      .split("\n");
+    // Metrics
+    const renderStartTime = performance.now();
+    renderLog(this.framesRendered, this.renderTimes);
 
+    // This holds the calculated data for each log node
+    const dataToRender: LogData[] = this.collectLogData();
+
+    // Prepare the buffer. If a full render is requested, clear the console entirely.
+    if (full) this.hardClearConsole();
     let buffer = "";
     buffer += "\x1B[H"; // Move cursor to home position
 
-    currentRenderedLines.forEach((line, index) => {
-      if (this.previousRenderedLines[index] !== line) {
-        buffer += `\x1B[${index + 1};1H`; // Move cursor to line (1-based)
+    let lineIndex = 1; // 1-based index
+
+    dataToRender.forEach((data) => {
+      const linesConsumed = data.linesConsumed;
+
+      // Skip rendering if the data is unchanged
+      rendering: {
+        if (!data.log.renderRequested) break rendering; // Skip rendering if not requested - meaning the data is unchanged
+
+        // This is where we actually render each log.
+        // This method avoids flickering by only updating the lines that have changed.
+        buffer += `\x1B[${lineIndex};1H`; // Move cursor to line (1-based)
         buffer += "\x1B[2K"; // Clear the entire line
-        buffer += line + "\n"; // Write the new line
+        buffer +=
+          data.toString() +
+          ` (c:${linesConsumed}, i:${lineIndex}, h:${this.getTerminalHeight()}, full: ${full})` +
+          "\n"; // Write the new line
+
+        // Inform the log that it has been rendered - probably a better way to this.
+        // Benchmarking will be necessary.
+        data.log.informOfRerender();
       }
+
+      // We need to keep track of the actual number of lines consumed, not just the number of logs.
+      // Each log can consume multiple lines.
+      lineIndex += linesConsumed;
     });
 
     // Clear trailing lines if the new content is shorter
-    if (currentRenderedLines.length < this.previousRenderedLines.length) {
-      for (
-        let i = currentRenderedLines.length;
-        i < this.previousRenderedLines.length;
-        i++
-      ) {
-        buffer += `\x1B[${i + 1};1H`;
-        buffer += "\x1B[2K\n";
-      }
+    // Unsure if this needs to be adjusted on full render
+    for (let i = lineIndex; i < this.previousLineIndex; i++) {
+      buffer += `\x1B[${i + 1};1H\x1B[2K`;
     }
 
-    this.previousRenderedLines = currentRenderedLines;
+    // Store the last line index for the next render
+    this.previousLineIndex = lineIndex;
 
     // Write all updates at once
     process.stdout.write(buffer);
 
     // Move cursor below the last line
-    buffer += `\x1B[${currentRenderedLines.length + 1};1H`;
+    buffer += `\x1B[${lineIndex + 1};1H`;
 
+    // Metrics
+    this.renderTimes.push(performance.now() - renderStartTime);
+    this.framesRendered++;
+
+    // Reset render flags
+    full && (this.fullRenderRequested = false);
+    this.renderRequested = false;
     this.rendering = false;
   }
 
-  public update() {
+  public informOfUpdate(full: boolean = false) {
+    full && (this.fullRenderRequested = true);
     this.renderRequested = true;
   }
+
+  public requestRender = this.informOfUpdate;
+  public requestFullRender = this.fullRerender;
 
   /**
    * Hide the cursor to prevent flickering during updates.
@@ -186,9 +258,8 @@ export class DOM {
 
   private patchConsole() {
     return patchConsole((stream: any, data: any) => {
-      if (data.endsWith("\n")) {
-        data = data.slice(0, -1);
-      }
+      if (data.endsWith("\n")) data = data.slice(0, -1);
+
       const method = this.config.overrideConsole ? "log" : "rawLog";
 
       if (stream === "stdout") {
@@ -198,10 +269,6 @@ export class DOM {
         this[method]("error", data);
       }
     });
-  }
-
-  private commitExistingLogs() {
-    // No-op in this example
   }
 
   // ======================
@@ -217,7 +284,7 @@ export class DOM {
 
   private addChild<T extends Log>(child: T): T {
     this.children.push(child);
-    this.update(); // Re-render the tree
+    this.informOfUpdate(); // Re-render the tree
     return child;
   }
 
@@ -247,6 +314,11 @@ export class DOM {
     process.exit(1);
   }
 
+  private handleResize(): void {
+    // this may need debouncing
+    this.requestFullRender();
+  }
+
   private listenForEvents() {
     const showCursor = () => this.showCursor();
     process.on("exit", showCursor);
@@ -257,7 +329,7 @@ export class DOM {
       this.unmount(err);
     });
     process.stdout.on("resize", () => {
-      this.update();
+      this.handleResize();
     });
   }
 

@@ -16,6 +16,12 @@ export class Configuration implements ThothConfigNormalized {
     this.configObject = u.normalizeConfig(thothConfigObject);
   }
 
+  // Get functions from the config object that are called at different points in the log lifecycle.
+  // ILIAD: TODO: Create lifecycle hooks
+  get bootstrap() {
+    return {};
+  }
+
   get prefix() {
     return this.configObject.prefix;
   }

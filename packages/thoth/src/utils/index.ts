@@ -1,6 +1,9 @@
 export * from "./utils.ts";
 import util from "util";
 
+import path from "path";
+import fs from "fs";
+
 export function _<T extends object[]>(...u: T): T[number] {
   let _u = {} as T[number]; // Ensure _u is typed as the combined type of all input objects
 
@@ -10,7 +13,4 @@ export function _<T extends object[]>(...u: T): T[number] {
 
   return _u;
 }
-
-export function log(...args: any[]): void {
-  process.stdout.write(util.format(...args, "\n"));
-}
+export * from "./debugging.ts";

@@ -1,4 +1,4 @@
-export type LineData = {
+export type LogDataInput = {
   type: "log" | "info" | "warn" | "error" | "debug";
   timestamp: string | null;
   namespace: string | null;

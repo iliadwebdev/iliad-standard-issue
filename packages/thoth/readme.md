@@ -4,6 +4,12 @@ Logging library. Makes logs pretty, standard, project-agnostic. Provides utiliti
 
 ty JJ 🥰
 
+## Time to lock in
+
+New idea is to make the library called console.mog. Wojack puns ensue.
+- Virgin console.log (lame, old, gross) vs chad console.mog (modern, owesome, gorgeous)
+- Tired of boring old console.logs? Time to looksmaxx your console.
+
 
 ## V2 Notes
 
