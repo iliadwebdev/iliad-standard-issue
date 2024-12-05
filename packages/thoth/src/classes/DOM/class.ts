@@ -18,6 +18,7 @@ import { domConfig } from "./data.ts";
 // Utils
 import { createChildLog, createChildOptions } from "@classes/Log/utils.ts";
 import { Configuration } from "@classes/Configuration/index.ts";
+import { createBlessedScreen } from "./utils.ts";
 import patchConsole from "patch-console";
 import * as utils from "@utils";
 import * as $R from "remeda";
@@ -27,7 +28,7 @@ function renderLog(fr: number, times: AverageArray) {
     `==============================================\nNEW RENDER FRAME - Frame: ${fr + 1} (avg time: ${times.average()}ms)\n==============================================`,
   );
 }
-
+const [screen, box] = createBlessedScreen();
 export class DOM {
   children: Array<ThothLog> = [];
 
@@ -42,6 +43,9 @@ export class DOM {
   public readonly parent = this;
   public readonly root = this;
   public readonly depth = 0;
+
+  private readonly screen = screen;
+  private readonly box = box;
 
   private isCursorHidden: boolean = false;
   private previousLineIndex: number = 0; // Represents the last line index of the previous render
@@ -171,54 +175,66 @@ export class DOM {
 
     // This holds the calculated data for each log node
     const dataToRender: LogData[] = this.collectLogData();
+    // process.stdout.write(
+    //   dataToRender.map((data) => data.toString()).join("\n"),
+    // );
+    this.box.setContent(dataToRender.map((data) => data.toString()).join("\n"));
+    // this.box.scrollTo(100);
+    // this.box.setScrollPerc(100);
+    // this.box.setContent(
+    //   "Hello {bold}world{/bold}!\nThis is a test of the emergency broadcast system.",
+    // );
 
-    // Prepare the buffer. If a full render is requested, clear the console entirely.
-    if (full) this.hardClearConsole();
-    let buffer = "";
-    buffer += "\x1B[H"; // Move cursor to home position
+    this.screen.render();
 
-    let lineIndex = 1; // 1-based index
+    utils.log(this.box);
+    // // Prepare the buffer. If a full render is requested, clear the console entirely.
+    // if (full) this.hardClearConsole();
+    // let buffer = "";
+    // buffer += "\x1B[H"; // Move cursor to home position
 
-    dataToRender.forEach((data) => {
-      const linesConsumed = data.linesConsumed;
+    // let lineIndex = 1; // 1-based index
 
-      // Skip rendering if the data is unchanged
-      rendering: {
-        if (!data.log.renderRequested) break rendering; // Skip rendering if not requested - meaning the data is unchanged
+    // dataToRender.forEach((data) => {
+    //   const linesConsumed = data.linesConsumed;
 
-        // This is where we actually render each log.
-        // This method avoids flickering by only updating the lines that have changed.
-        buffer += `\x1B[${lineIndex};1H`; // Move cursor to line (1-based)
-        buffer += "\x1B[2K"; // Clear the entire line
-        buffer +=
-          data.toString() +
-          ` (c:${linesConsumed}, i:${lineIndex}, h:${this.getTerminalHeight()}, full: ${full})` +
-          "\n"; // Write the new line
+    //   // Skip rendering if the data is unchanged
+    //   rendering: {
+    //     if (!data.log.renderRequested) break rendering; // Skip rendering if not requested - meaning the data is unchanged
 
-        // Inform the log that it has been rendered - probably a better way to this.
-        // Benchmarking will be necessary.
-        data.log.informOfRerender();
-      }
+    //     // This is where we actually render each log.
+    //     // This method avoids flickering by only updating the lines that have changed.
+    //     buffer += `\x1B[${lineIndex};1H`; // Move cursor to line (1-based)
+    //     buffer += "\x1B[2K"; // Clear the entire line
+    //     buffer +=
+    //       data.toString() +
+    //       ` (c:${linesConsumed}, i:${lineIndex}, h:${this.getTerminalHeight()}, full: ${full})` +
+    //       "\n"; // Write the new line
 
-      // We need to keep track of the actual number of lines consumed, not just the number of logs.
-      // Each log can consume multiple lines.
-      lineIndex += linesConsumed;
-    });
+    //     // Inform the log that it has been rendered - probably a better way to this.
+    //     // Benchmarking will be necessary.
+    //     data.log.informOfRerender();
+    //   }
 
-    // Clear trailing lines if the new content is shorter
-    // Unsure if this needs to be adjusted on full render
-    for (let i = lineIndex; i < this.previousLineIndex; i++) {
-      buffer += `\x1B[${i + 1};1H\x1B[2K`;
-    }
+    //   // We need to keep track of the actual number of lines consumed, not just the number of logs.
+    //   // Each log can consume multiple lines.
+    //   lineIndex += linesConsumed;
+    // });
 
-    // Store the last line index for the next render
-    this.previousLineIndex = lineIndex;
+    // // Clear trailing lines if the new content is shorter
+    // // Unsure if this needs to be adjusted on full render
+    // for (let i = lineIndex; i < this.previousLineIndex; i++) {
+    //   buffer += `\x1B[${i + 1};1H\x1B[2K`;
+    // }
 
-    // Write all updates at once
-    process.stdout.write(buffer);
+    // // Store the last line index for the next render
+    // this.previousLineIndex = lineIndex;
 
-    // Move cursor below the last line
-    buffer += `\x1B[${lineIndex + 1};1H`;
+    // // Write all updates at once
+    // process.stdout.write(buffer);
+
+    // // Move cursor below the last line
+    // buffer += `\x1B[${lineIndex + 1};1H`;
 
     // Metrics
     this.renderTimes.push(performance.now() - renderStartTime);
@@ -264,9 +280,11 @@ export class DOM {
 
       if (stream === "stdout") {
         this[method]("debug", data);
+        utils.log(data);
       }
       if (stream === "stderr") {
         this[method]("error", data);
+        utils.log(data);
       }
     });
   }
