@@ -24,6 +24,18 @@ import { Configuration } from "@classes/Configuration/index.ts";
 import { memoizeDecorator } from "memoize";
 import patchConsole from "patch-console";
 
+// ===========================================================================
+// DOM RENDERER
+// ===----
+// The original idea was to manipulate the terminal using ANSI escape codes, overwriting existing lines. This would do away with
+// all the unfortunate scroll-jacking and flickering that occurs when you completely overwrite the terminal with new content.
+// Unfortunately, the write-only nature of the terminal makes this difficult (impossible?) to implement. The new approach is to
+// use the smart rendering strategy to render lines that *are* accessible and dumb render the rest. This is a compromise that
+// should produce the same result in the majority of cases - if you're making pretty console.logs, you're probably looking
+// at them. If you're making pretty logs and *not* looking at them, you're probably waiting on something and not actively
+// browsing.
+// ==============================-------------
+
 export class DOM {
   static instance: DOM | null = null;
 

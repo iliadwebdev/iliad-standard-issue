@@ -239,10 +239,11 @@ const thirdMessage = thoth.log("t").$log("testing");
 thoth.log([1, 2, 3, 4]);
 
 let i = 0;
+const n = 10;
 setInterval(() => {
-  // After 3 seconds, quit requesting updates that are out-of-terminal
-  if (i <= 3) {
-    if (i === 3) {
+  // After n seconds, quit requesting updates that are out-of-terminal
+  if (i <= n) {
+    if (i === n) {
       firstMessage.update(
         `First message. Re-rendered ${i + 1} times. Complete!`,
       );
