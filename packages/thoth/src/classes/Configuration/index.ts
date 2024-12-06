@@ -1,8 +1,4 @@
-import {
-  ThothConfigInput,
-  ThothConfigNormalized,
-  ThothConfigStrict,
-} from "./types.ts";
+import { ThothConfigInput, ThothConfigNormalized } from "./types.ts";
 
 // Utils
 import * as u1 from "./utils.ts";
@@ -18,7 +14,7 @@ export class Configuration implements ThothConfigNormalized {
 
   // Get functions from the config object that are called at different points in the log lifecycle.
   // ILIAD: TODO: Create lifecycle hooks
-  get bootstrap() {
+  private get bootstrap() {
     return {};
   }
 
@@ -30,6 +26,7 @@ export class Configuration implements ThothConfigNormalized {
     return this.configObject.typeColors;
   }
 
+  // Perhaps this should be added to LogData?
   get namespace(): string | null {
     const { name, color, fn, enabled } = this.prefix.namespace;
     return enabled ? fn(color(name)) : null;

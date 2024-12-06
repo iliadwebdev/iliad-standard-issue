@@ -11,6 +11,7 @@
     // "moduleResolution": "Node" /* Determine how modules get resolved. */,
     // "module": "ESNext" /* Specify what module code is generated. */,
     "isolatedModules": true,
+    "experimentalDecorators": true,
     "module": "node16",
     "moduleResolution": "node16",
     /* Type Checking */

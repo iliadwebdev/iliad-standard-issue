@@ -173,7 +173,7 @@ export class Thoth {
 
   constructor(thothConfigObject: ThothConfigObject = {}) {
     this.configuration = new Configuration(thothConfigObject);
-    this.DOM = new DOM(this.configuration);
+    this.DOM = DOM.singleton(this.configuration);
   }
 
   log(...args: any[]): ThothLog {
@@ -182,5 +182,10 @@ export class Thoth {
 
   _log(...args: any[]): ThothLog {
     return this.DOM._log(...args);
+  }
+
+  // TESTING
+  public rerender() {
+    this.DOM.requestRender();
   }
 }

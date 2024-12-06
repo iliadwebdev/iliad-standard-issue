@@ -22,6 +22,9 @@ import util from "util";
 // Data
 import { LINES } from "./data.ts";
 
+// FEATURE ADDITION:
+// https://www.npmjs.com/package/terminal-link
+
 export class Log {
   // ADDED: Track the child's position under its parent
   public childIndex: number = 0; // will be set by parent when added
@@ -41,6 +44,8 @@ export class Log {
   message: string = "";
   arguments_: any[];
 
+  logData: LogData;
+
   constructor(options: LogParams, arguments_: any[], arbitraryIndex?: number) {
     this.parent = options.parent;
     this.arguments_ = arguments_;
@@ -50,6 +55,16 @@ export class Log {
     this.message = util.format(...arguments_);
     options.type && (this.type = options.type);
     this.uid = `${this.constructor.name}-${uid()}`;
+
+    this.logData = new LogData(this.root, this, {
+      namespace: this.root.config.namespace,
+      module: this.root.config.module,
+      timestamp: `${this.timestamp}`,
+      treePrefix: this.treePrefix,
+      data: this.message,
+      type: this.type,
+      raw: this.raw,
+    });
   }
 
   protected get siblings(): LogStore {
@@ -67,6 +82,18 @@ export class Log {
 
   protected getSiblingsAfter(): LogStore {
     return this.siblings.afterOwner;
+  }
+
+  protected revalidateData() {
+    this.logData = new LogData(this.root, this, {
+      namespace: this.root.config.namespace,
+      module: this.root.config.module,
+      timestamp: `${this.timestamp}`,
+      treePrefix: this.treePrefix,
+      data: this.message,
+      type: this.type,
+      raw: this.raw,
+    });
   }
 
   // CHANGED: Use childIndex to determine if this is the last child.
@@ -111,15 +138,7 @@ export class Log {
   }
 
   get data(): LogData {
-    return new LogData(this.root, this, {
-      namespace: this.root.config.namespace,
-      module: this.root.config.module,
-      timestamp: `${this.timestamp}`,
-      treePrefix: this.treePrefix,
-      data: this.message,
-      type: this.type,
-      raw: this.raw,
-    });
+    return this.logData;
   }
 
   protected getDataRecursively(): LogData[] {
@@ -179,6 +198,8 @@ export class Log {
   // public $promise() {} // Attach a promise to the log, and update the log when the promise resolves / rejects.
 
   informOfUpdate() {
+    this.revalidateData();
+
     this.renderRequested = true;
     this.children.forEach((child, index) => {
       child.childIndex = index;
