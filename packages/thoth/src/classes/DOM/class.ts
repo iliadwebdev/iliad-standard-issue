@@ -77,13 +77,9 @@ export class DOM {
 
     // Override console functionality
     this.restore = this.patchConsole();
-    this.hardClearConsole();
-    this.hideCursor();
 
     // Mount the DOM
     this.mount();
-    this.listenForEvents();
-    this.startRenderLoop();
   }
 
   public singleton = DOM.singleton;
@@ -112,17 +108,18 @@ export class DOM {
       this.unmount();
       throw new Error("Render loop already started.");
     }
+
     this.renderLoopInterval = setInterval(() => {
       this.renderIfNecessary();
     }, this.framerate);
   }
 
   private stopRenderLoop() {
-    if (!this.renderLoopInterval) {
-      throw new Error("Render loop not started.");
+    if (this.renderLoopInterval) {
+      // I'm not sure if the interval exists after an exit, but I will try to clear it anyway
+      clearInterval(this.renderLoopInterval);
     }
 
-    clearInterval(this.renderLoopInterval);
     this.renderLoopInterval = null;
   }
 
@@ -214,14 +211,19 @@ export class DOM {
   }
 
   private dumbRender(hardClear: boolean = false): void {
-    if (hardClear) this.hardClearConsole();
     const dataToRender = this.collectLogData();
+
+    let buffer = "";
 
     // Is there a way we can buffer this to minimize nonsense?
     for (const data of dataToRender) {
-      this.writeData(data.toString() + "\n");
+      buffer += data.toString() + "\n";
       data.log.informOfRerender();
     }
+
+    // Clear and write as close to each other as possible
+    if (hardClear) this.hardClearConsole();
+    this.writeData(buffer);
   }
 
   /**
@@ -421,7 +423,13 @@ export class DOM {
   // LIFECYCLE METHODS
   // ======----
 
-  private mount() {}
+  private mount() {
+    this.hardClearConsole();
+    this.hideCursor();
+
+    this.listenForEvents();
+    this.startRenderLoop();
+  }
 
   private unmount(err?: Error) {
     this.showCursor();

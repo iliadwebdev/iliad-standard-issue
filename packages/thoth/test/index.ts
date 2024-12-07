@@ -254,4 +254,4 @@ setInterval(() => {
 
   !!i && secondMessage.update(`Second message. Re-rendered ${i} times`);
   i++;
-}, 1000);
+}, 1);
