@@ -1,1 +1,1 @@
-import { Thoth } from "@classes/Thoth/index.ts";
+import { Thoth } from "@classes/MogContext/index.ts";

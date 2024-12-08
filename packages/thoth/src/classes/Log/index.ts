@@ -15,7 +15,6 @@ import LogStore from "@classes/LogStore.ts";
 // Utils
 import { createChildLog, createChildOptions } from "./utils.ts";
 import * as $R from "remeda";
-import chalk from "chalk";
 import { uid } from "uid";
 import util from "util";
 
@@ -218,8 +217,8 @@ export class Log {
     return child;
   }
 
-  public log(...args: any[]): ThothLog {
-    const options = createChildOptions("thothLog", {
+  public log(...args: any[]): MogLog {
+    const options = createChildOptions("mogLog", {
       parent: this,
       type: "log",
     });
@@ -227,8 +226,8 @@ export class Log {
     return this.createSibling(options, args);
   }
 
-  public _log(...args: any[]): ThothLog {
-    const options = createChildOptions("thothLog", {
+  public _log(...args: any[]): MogLog {
+    const options = createChildOptions("mogLog", {
       parent: this,
       type: "log",
     });
@@ -255,13 +254,13 @@ export class Log {
   }
 }
 
-export class ThothLog extends Log {
+export class MogLog extends Log {
   constructor(options: LogParams, arguments_: any[], arbitraryIndex?: number) {
     super(options, arguments_, arbitraryIndex);
   }
 }
 
-export class RawLog extends ThothLog {
+export class RawLog extends MogLog {
   parent: DOM;
 
   constructor(options: LogParams, arguments_: any[], arbitraryIndex?: number) {
@@ -278,7 +277,7 @@ export class RawLog extends ThothLog {
   }
 }
 
-export class PowerLog extends ThothLog {
+export class PowerLog extends MogLog {
   constructor(options: LogParams, arguments_: any[], arbitraryIndex?: number) {
     super(options, arguments_, arbitraryIndex);
   }

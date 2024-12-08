@@ -5,7 +5,7 @@ import {
   ColorFn,
 } from "@types";
 
-export type ThothConfigInput = {
+export type MogContextInput = {
   prefix?: {
     prefixOrder?: StandardPrefix[];
     joinString?: string;
@@ -41,8 +41,8 @@ export type ThothConfigInput = {
 };
 
 import { XOR, Optional } from "@iliad.dev/ts-utils/@types";
+import { MogContext } from "@classes/MogContext/index.ts";
 import { ChalkInstance } from "chalk";
-import { Thoth } from "@classes/Thoth/index.ts";
 
 export type LogTypes<CTS extends LogType[] = never> = {
   debug: LogType;
@@ -140,7 +140,7 @@ export type ThothConfigNormalized = {
   overrideConsole: boolean;
 };
 
-export type LogFn = (chalk: ChalkInstance, ctx?: Thoth) => [...any];
+export type LogFn = (chalk: ChalkInstance, ctx?: MogContext) => [...any];
 export type FnLogGeneric = XOR<[LogFn], [...any]>;
 
 // export type ModuleParam =

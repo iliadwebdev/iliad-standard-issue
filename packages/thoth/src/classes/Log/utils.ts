@@ -4,10 +4,10 @@ import type {
   VariantName,
   LogParams,
 } from "./types.ts";
-import { Log, PowerLog, RawLog, ThothLog } from "./index.ts";
+import { Log, PowerLog, RawLog, MogLog } from "./index.ts";
 import { DOM } from "@classes/DOM/class.ts";
 
-export function createChildOptions<T extends VariantName = "thothLog">(
+export function createChildOptions<T extends VariantName = "mogLog">(
   variant: T,
   logParams: LogParams,
 ): CreateChildOptions<T> {
@@ -35,8 +35,8 @@ export function createChildLog<T extends VariantName>(
       child = new PowerLog(logParams, arguments__);
       break;
     }
-    case "thothLog": {
-      child = new ThothLog(logParams, arguments__);
+    case "mogLog": {
+      child = new MogLog(logParams, arguments__);
       break;
     }
     case "rawLog": {
@@ -44,7 +44,7 @@ export function createChildLog<T extends VariantName>(
       break;
     }
     default: {
-      child = new ThothLog(logParams, arguments__);
+      child = new MogLog(logParams, arguments__);
     }
   }
 

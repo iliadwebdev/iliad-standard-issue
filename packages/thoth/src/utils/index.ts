@@ -17,4 +17,5 @@ export function _<T extends object[]>(...u: T): T[number] {
 
   return _u;
 }
+export * from "./console.mog.ts";
 export * from "./debugging.ts";

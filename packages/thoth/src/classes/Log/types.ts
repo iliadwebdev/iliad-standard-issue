@@ -1,8 +1,8 @@
 import { DOM } from "@classes/DOM/class.ts";
-import { Log, RawLog, PowerLog, ThothLog } from "./index.ts";
+import { Log, RawLog, PowerLog, MogLog } from "./index.ts";
 
 export type LogVariantRegistry = {
-  thothLog: ThothLog;
+  mogLog: MogLog;
   powerLog: PowerLog;
   rawLog: RawLog;
 };
@@ -15,7 +15,7 @@ export type LogParams = {
   type?: LogType;
 };
 
-export type CreateChildOptions<T extends VariantName = "thothLog"> = {
+export type CreateChildOptions<T extends VariantName = "mogLog"> = {
   variant: T;
   logParams: LogParams;
 };

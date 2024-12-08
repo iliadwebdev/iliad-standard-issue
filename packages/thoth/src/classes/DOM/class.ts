@@ -7,7 +7,7 @@ import type {
 
 // Classes
 import { SpinnerManager } from "@classes/SpinnerManager/index.ts";
-import { PowerLog, ThothLog, Log } from "@classes/Log/index.ts";
+import { PowerLog, MogLog, Log } from "@classes/Log/index.ts";
 import { LogData } from "@classes/LogData/class.ts";
 import AverageArray from "@classes/AverageArray.ts";
 import LogStore from "@classes/LogStore.ts";
@@ -54,7 +54,7 @@ export class DOM {
 
   // DOM State
   private isCursorHidden: boolean = false;
-  public children: Array<ThothLog> = [];
+  public children: Array<MogLog> = [];
 
   // Render State - Flags
   private fullRenderRequested: boolean = false;
@@ -502,7 +502,7 @@ export class DOM {
   }
 
   public log(...args: any[]) {
-    const options = createChildOptions("thothLog", {
+    const options = createChildOptions("mogLog", {
       parent: this,
       type: "log",
     });
@@ -513,6 +513,11 @@ export class DOM {
 
   public _log(...args: any[]) {
     return this.log(...args);
+  }
+
+  public clear() {
+    this.children = [];
+    this.informOfUpdate(true);
   }
 
   public $log(message: string = ""): PowerLog {

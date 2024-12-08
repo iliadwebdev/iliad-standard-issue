@@ -1,16 +1,19 @@
-import { Thoth } from "../src/index.ts";
-const thoth = new Thoth({
-  overrideConsole: true,
+import { mog } from "../src/index.ts";
+
+mog(console);
+console.log(process.env);
+
+const topLevel = console.log("this is the top level 👍");
+console.log();
+
+console.table({
+  a: 1,
+  b: 2,
+  c: 3,
+  d: 4,
 });
 
-thoth.log(process.env);
-
-const topLevel = thoth.log("this is the top level 👍");
-topLevel._log("This is an actual child")._log("grandchild").log("grandchild 2");
-topLevel.log("this is a log 1");
-topLevel.log("this is a log 2");
-
-const rootLevel = thoth.log("Root level");
+const rootLevel = console.log("Root level");
 const firstLevel = rootLevel
   ._log("First level 1")
   .log("First level 2")
@@ -25,7 +28,7 @@ const level4 = rootLevel._log("First level 4");
 level4._log("Third level 1").log("Third level 2").log("Third level 3");
 level4.log("First level 5").log("First level 6");
 secondLevel.log("Second level 4").log("Second level 5").log("Second level 6");
-const firstLevel2 = thoth
+const firstLevel2 = console
   ._log("Root Level 2")
   ._log("First Level 1")
   ._log("Second Level 1")
@@ -38,7 +41,8 @@ const firstLevel2 = thoth
   ._log("Eighth Level 1")
   ._log("Ninth Level 1")
   ._log("Tenth Level 1");
-const root = thoth.log("Root Node");
+
+const root = console.log("Root Node");
 const level1 = root
   // .$log("Level 1 - Branch 1")
   .log("Level 1 - Branch 2")
@@ -95,148 +99,148 @@ massiveNode
   ._log("Level 5 - Broad Expansion Deep")
   ._log("Level 6 - Ultimate Depth");
 
-thoth.log([1, 2, 3, 4]);
+console.log([1, 2, 3, 4]);
 const tree = true;
-const firstMessage = thoth.log("First message. This will update!");
+const firstMessage = console.log("First message. This will update!");
 if (tree) {
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "=========================================================================================================================================================================================================================",
   );
 
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
-  thoth.log(
+  console.log(
     "The Tree of liberty must be refreshed from time to time with the blood of patriots and tyrants.",
   );
 }
 
-const secondMessage = thoth.log("Second message. This will update!");
-const thirdMessage = thoth.log("t").$log("testing");
-thoth.log([1, 2, 3, 4]);
+const secondMessage = console.log("Second message. This will update!");
+const thirdMessage = console.log("t").$log("testing");
+console.log([1, 2, 3, 4]);
 
 let i = 0;
 const n = 10;
