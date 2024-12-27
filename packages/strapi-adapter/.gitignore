@@ -1,4 +1,12 @@
+# DEPENDENCIES
 node_modules
-lib
-dist
+
+# DIST
+cjs
+esm
+
+# MONOREPO
 .turbo
+
+# ENVIROMENT VARIABLES
+.env

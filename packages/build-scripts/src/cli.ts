@@ -6,9 +6,9 @@ const script = (name: string) => import(`./scripts/${name}/index.ts`);
 
 switch (command) {
   case "prebuild":
-    await script("prebuild");
+    script("prebuild");
     break;
   default:
     console.error(`Unknown command: ${command}`);
-    process.exit(1);
+  // process.exit(1);
 }

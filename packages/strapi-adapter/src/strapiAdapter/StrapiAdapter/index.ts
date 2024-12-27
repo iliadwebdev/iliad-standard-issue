@@ -1,4 +1,3 @@
-// import thoth from "@thoth";
 // Types
 import { FetchOptions, InitParam } from "openapi-fetch";
 import {

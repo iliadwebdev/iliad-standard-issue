@@ -38,7 +38,6 @@
     "build:watch": "tsup --watch"
   },
   "dependencies": {
-    "@iliad.dev/build-scripts": "*",
     "@types/deasync": "^0.1.5",
     "deasync": "^0.1.30",
     "deepmerge": "^4.3.1",

@@ -1,6 +1,6 @@
 // Classes
 import StrapiInstance from "src/strapiAdapter/StrapiInstance";
-import Utility from "..";
+import Utility from "../Utility";
 
 // Types
 import type { Redirect } from "next/dist/lib/load-custom-routes";

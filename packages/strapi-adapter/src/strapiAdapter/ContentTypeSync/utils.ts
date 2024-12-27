@@ -16,6 +16,24 @@ import {
   ContentTypesResponse,
 } from "./types";
 
+function formatContentTypes(contentTypes: string): string {
+  return contentTypes;
+  return contentTypes
+    .replaceAll(`from "@strapi/strapi"`, `from '@iliad.dev/strapi-adapter'`)
+    .replaceAll(`from '@strapi/strapi'`, `from '@iliad.dev/strapi-adapter'`);
+}
+
+function formatComponents(components: string): string {
+  return components;
+  return components
+    .replaceAll(`from "@strapi/strapi"`, `from '@iliad.dev/strapi-adapter'`)
+    .replaceAll(`from '@strapi/strapi'`, `from '@iliad.dev/strapi-adapter'`);
+}
+
+function formatApi(api: string): string {
+  return api;
+}
+
 function writeContentTypes(
   options: StrictContentTypesSyncOptions,
   data: ContentTypesResponse
@@ -24,16 +42,29 @@ function writeContentTypes(
   const [api, components, contentTypes] = data;
 
   // thoth.log("writing content types");
+  const enc: any = {
+    encoding: "utf8",
+  };
+
   try {
-    fs.writeFileSync(`${outDir}/${names.contentTypes}`, contentTypes, {
-      encoding: "utf8",
-    });
-    fs.writeFileSync(`${outDir}/${names.components}`, components, {
-      encoding: "utf8",
-    });
-    fs.writeFileSync(`${outDir}/${names.api}`, api, {
-      encoding: "utf8",
-    });
+    if (!fs.existsSync(outDir)) {
+      console.warn(
+        `[WARN] strapi-adapter: Directory ${outDir} does not exist. Creating...`
+      );
+      fs.mkdirSync(outDir);
+    }
+
+    if (!contentTypes) throw new Error("Content types not found");
+    const _contentTypes = formatContentTypes(contentTypes);
+    fs.writeFileSync(`${outDir}/${names.contentTypes}`, _contentTypes, enc);
+
+    if (!components) throw new Error("Components not found");
+    const _components = formatComponents(components);
+    fs.writeFileSync(`${outDir}/${names.components}`, _components, enc);
+
+    if (!api) throw new Error("API not found");
+    const _api = formatApi(api);
+    fs.writeFileSync(`${outDir}/${names.api}`, _api, enc);
   } catch (error) {
     console.error("Error writing content types", error);
     return {

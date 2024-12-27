@@ -1,7 +1,6 @@
 import { StrictContentTypesSyncOptions } from "@features";
 import { WarningConfig } from "../StrapiInstance/types";
 import { Hermes } from "@iliad.dev/hermes";
-// import { Thoth } from "@iliad.dev/thoth";
 import Options from "@classes/Options";
 
 // This is the base Feature class that holds information common to all features.

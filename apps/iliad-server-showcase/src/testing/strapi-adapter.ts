@@ -1,4 +1,5 @@
 import { StrapiInstance } from '@iliad.dev/strapi-adapter';
+import { Common } from '@iliad.dev/strapi-adapter/esm/@types';
 
 import { config } from 'dotenv';
 import path from 'path';
@@ -18,32 +19,20 @@ const strapi = new StrapiInstance({
     verboseLogging: false,
   },
   contentTypesSyncOptions: {
+    requestOnSync: true,
     outDir: typesDir,
   },
 });
 
-// await strapi.syncContentTypes();
+// strapi.syncContentTypes();
 
 export const mainStrapiAdapterTest = async () => {
-  const { data: articles, error } = await strapi.getCollection('articles', {
-    filters: {
-      createdAt: {
-        $lte: new Date(),
-      },
-    },
-    populate: {
-      image: {
-        filters: {
-          caption: {
-            $notNull: true,
-          },
-        },
-      },
-    },
-  });
-
+  // strapi.getCollection("events", {
+  // "",
+  // });
+  // strapi.GET("/articles/{id}")
+  // strapi.getEntryBySlug("")
   // https://localhost:1337/api/articles?filters%5BcreatedAt%5D%5B%24lte%5D=2024-12-05T04%3A23%3A02.083Z&populate%5Bimage%5D%5Bfilters%5D%5Bcaption%5D%5B%24notNull%5D=true&pagination%5BpageSize%5D=25&pagination%5Bpage%5D=1
-
   // const { data: event, error } = await strapi.getFullCollection('events', {
   //   populate: {
   //     funders: true,

@@ -1,4 +1,4 @@
-import type { Attribute, Common, Utils } from "@strapi/strapi";
+import type { Attribute, Schema, Common, Utils } from "@strapi/strapi";
 
 // export type SemanticResponse<Expected extends ER, UID extends Common.UID.ContentType> = StandardResponse<APIResponse<UID>> | ErrorResponse;
 type IDProperty = { id: number };
@@ -154,7 +154,8 @@ export type StrapiResponse<T extends Common.UID.ContentType> =
   | APIResponseCollection<T>
   | APIResponse<T>;
 
-export type { Common, Attribute, Utils };
+// Re-exporting so that the consuming project gets the correct types
+export type { Common, Attribute, Utils, Schema };
 
 export type WithPage<T> = T & { page: number };
 export type WithoutPage<T> = Omit<T, "page">;

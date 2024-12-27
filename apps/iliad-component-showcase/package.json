@@ -2,8 +2,8 @@
   "name": "iliad-component-showcase",
   "private": true,
   "scripts": {
-    "predev": "prebuild",
-    "dev": "next dev --turbo",
+    "what?-predev": "prebuild",
+    "dev": "next dev",
     "disabled-build": "next build",
     "disabled-start": "next start",
     "disabled-lint": "next lint"

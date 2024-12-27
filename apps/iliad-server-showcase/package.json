@@ -36,6 +36,7 @@
     "@iliad.dev/strapi-adapter": "*",
     "@iliad.dev/thoth": "*",
     "@iliad.dev/typescript-config": "*",
+    "@strapi/strapi": "^4.25.17",
     "clui": "^0.3.6",
     "dotenv": "^16.4.5",
     "nodemon": "^3.1.7",

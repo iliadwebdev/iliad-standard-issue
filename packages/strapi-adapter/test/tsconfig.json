@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "typeRoots": ["./@types", "../node_modules/@types"],
+    "target": "esnext",
+    "moduleResolution": "Node",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
+    "outDir": "<silly_error>",
+    "paths": {}
+  },
+  "ts-node": {
+    "esm": true /* ... Line to be added ... */
+  },
+  "include": ["./**/*.ts", "./**/*"]
+}

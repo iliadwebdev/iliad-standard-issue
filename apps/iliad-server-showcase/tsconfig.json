@@ -5,7 +5,7 @@
     "outDir": "dist",
     "declaration": true,
     "isolatedModules": false,
-    "typeRoots": ["./src/@types", "./node_modules/@types"],
+    // "typeRoots": ["./src/@types", "./node_modules/@types"],
   },
   "include": ["src", "src/@types"],
   "exclude": ["node_modules"]

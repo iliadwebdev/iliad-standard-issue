@@ -4,6 +4,10 @@ const dts = require("rollup-plugin-dts").default;
 const pkg = require("./package.json");
 const fs = require("fs");
 
+if (!fs.existsSync("dist")) {
+  fs.mkdirSync("dist");
+}
+
 fs.copyFileSync("src/prim-ext.json", "dist/tsconfig.json");
 fs.copyFileSync("src/global.d.ts", "dist/global.d.ts");
 
