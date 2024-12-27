@@ -2,14 +2,6 @@ import Image from "next/image";
 import styles from "./page.module.css";
 
 import { Clamp } from "@iliad.dev/standard-issue";
-import { Thoth } from "@iliad.dev/thoth/client";
-
-const thoth = new Thoth();
-
-thoth.log("testing");
-
-const a = thoth.$log("Waiting for 2 seconds");
-a.update("testing").info("test");
 
 export default function Home() {
   return (

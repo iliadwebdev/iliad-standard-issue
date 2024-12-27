@@ -3,12 +3,6 @@ import styles from "./page.module.css";
 
 import { Clamp } from "@iliad.dev/standard-issue";
 
-import { Hermes } from "@iliad.dev/hermes";
-
-const hermes = new Hermes("test", {});
-hermes.addBaseQuery("https://lego.com/");
-console.log(hermes.fetch(""));
-
 export default function Home() {
   return (
     <div className={styles.page}>

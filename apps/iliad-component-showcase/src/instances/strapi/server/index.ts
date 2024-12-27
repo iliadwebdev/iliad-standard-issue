@@ -16,11 +16,14 @@ const strapi = new StrapiInstance({
     verboseLogging: false,
   },
   contentTypesSyncOptions: {
+    requestOnSync: true,
     outDir: typesDir,
   },
 });
 
-// strapi.
+strapi.syncContentTypes();
+
+// strapi.getCollection("");
 
 export default strapi;
 export { strapi };
