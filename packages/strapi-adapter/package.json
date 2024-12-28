@@ -1,6 +1,6 @@
 {
   "name": "@iliad.dev/strapi-adapter",
-  "version": "0.1.5",
+  "version": "0.2.8",
   "description": "Utility functions to simplify interactions with Strapi backend.",
   "repository": {
     "type": "git",
@@ -24,11 +24,6 @@
       }
     }
   },
-  "files": [
-    "readme.md",
-    "cjs",
-    "esm"
-  ],
   "scripts": {
     "build:cjs": "env NODE_ENV=production tsup && tsup",
     "build:esm": "tsup",
@@ -40,29 +35,19 @@
   },
   "dependencies": {
     "@iliad.dev/hermes": "*",
-    "@iliad.dev/ts-multiclass": "*",
     "@iliad.dev/ts-utils": "*",
     "@strapi/strapi": "4.25.17",
     "@strapi/types": "^5.4.1",
-    "@types/next": "^9.0.0",
-    "deasync": "^0.1.30",
     "deepmerge": "^4.3.1",
-    "esbuild-plugin-babel": "^0.2.3",
-    "multiple-extend": "^0.1.3",
     "openapi-fetch": "^0.13.0",
     "openapi-typescript-helpers": "^0.0.15",
-    "pretty-bytes": "^6.1.1",
     "qs": "^6.13.1",
-    "resolve-tspaths": "^0.8.22",
     "ts-mixer": "^6.0.4",
-    "typescript": "^5.2.2",
-    "typescript-mix": "^3.1.3",
-    "typescript-multiclass": "^0.1.5"
+    "typescript": "^5.2.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@types/deasync": "^0.1.5",
     "@types/qs": "^6.9.15",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",

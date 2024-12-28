@@ -28,13 +28,7 @@ class Hermes {
   }
   // This coerces all responses to Golang style {data, error} responses. Anything else is just AIDS past a certain point of complexity.
   normalizeResponse(promise, extractData = this.hermesOptions.extractData ?? true) {
-    return promise.then((data) => {
-      if (this.verbose) this.log(data);
-      return {
-        data: this.normalizeDataReturn(data, extractData),
-        error: void 0
-      };
-    }).catch((error) => {
+    const handleError = (error) => {
       if (this.verbose) this.error(error);
       if (error.response) {
         return {
@@ -50,6 +44,21 @@ class Hermes {
           }
         };
       }
+    };
+    return promise.then((data) => {
+      if (this.verbose) this.log(data);
+      if (typeof data === "object" && data !== null) {
+        const dataKeys = Object.keys(data);
+        if (dataKeys.includes("data") && dataKeys.includes("error")) {
+          return handleError(data.error);
+        }
+      }
+      return {
+        data: this.normalizeDataReturn(data, extractData),
+        error: void 0
+      };
+    }).catch((error) => {
+      return handleError(error);
     });
   }
   transformVerboseLog(error) {

@@ -23,7 +23,5 @@ const strapi = new StrapiInstance({
 
 strapi.syncContentTypes();
 
-// strapi.getCollection("");
-
 export default strapi;
 export { strapi };

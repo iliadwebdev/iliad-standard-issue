@@ -8,4 +8,12 @@ export { StrapiInstance, StrapiUtils };
 export default StrapiInstance;
 
 // Export types
-export { Schema, Attribute } from "./@types/strapi";
+export {
+  Schema,
+  Attribute,
+  // These will be helpful to allow the user to create content types
+  APIResponseCollectionMetadata,
+  APIResponseCollection,
+  APIResponseData,
+  APIResponse,
+} from "./@types/strapi";

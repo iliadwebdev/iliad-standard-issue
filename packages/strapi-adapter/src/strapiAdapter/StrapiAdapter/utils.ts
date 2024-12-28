@@ -176,7 +176,9 @@ function ensureQuestionMark(query: string) {
 
 export function parseSemanticQuery(query?: QueryStringCollection<any>): object {
   if (!query) return {}; // If no query is passed, return an empty object.
-  if (typeof query !== "string") return query; // If it already an object, return it.
+  if (typeof query !== "string") {
+    return qs.parse(qs.stringify(query));
+  } // If it already an object, return it.
 
   let parsedQuery: object;
 

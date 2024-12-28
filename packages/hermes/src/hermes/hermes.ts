@@ -54,33 +54,47 @@ class Hermes {
     promise: Promise<T>,
     extractData: boolean = this.hermesOptions.extractData ?? true
   ): Promise<StandardResponse<T>> {
+    const handleError = (error: AxiosError) => {
+      if (this.verbose) this.error(error);
+      if (error.response) {
+        // The client received an error ex. (5xx, 5xx)
+        return {
+          data: undefined,
+          error:
+            (error?.response?.data as any)?.error ||
+            (error.response.data as ErrorResponse),
+        };
+      } else {
+        return {
+          data: undefined,
+          error: {
+            code: 0,
+            message: error.message,
+          },
+        };
+      }
+    };
+
     return promise
       .then((data: T) => {
         if (this.verbose) this.log(data);
+
+        // if is object
+        if (typeof data === "object" && data !== null) {
+          const dataKeys = Object.keys(data);
+          if (dataKeys.includes("data") && dataKeys.includes("error")) {
+            // @ts-ignore
+            return handleError(data.error as any);
+          }
+        }
+
         return {
           data: this.normalizeDataReturn(data, extractData),
           error: undefined,
         };
       })
       .catch((error: AxiosError) => {
-        if (this.verbose) this.error(error);
-        if (error.response) {
-          // The client received an error ex. (5xx, 5xx)
-          return {
-            data: undefined,
-            error:
-              (error?.response?.data as any)?.error ||
-              (error.response.data as ErrorResponse),
-          };
-        } else {
-          return {
-            data: undefined,
-            error: {
-              code: 0,
-              message: error.message,
-            },
-          };
-        }
+        return handleError(error);
       });
   }
 

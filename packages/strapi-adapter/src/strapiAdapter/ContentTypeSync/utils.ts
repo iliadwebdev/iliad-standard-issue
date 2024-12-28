@@ -6,7 +6,12 @@ import { defaultContentTypesSyncOptions } from "./data";
 // Utils
 import { Hermes } from "@iliad.dev/hermes";
 import deepmerge from "deepmerge";
-import fs from "fs";
+
+let fs: any;
+
+try {
+  fs = require("fs");
+} catch (error) {}
 
 // Types
 import {
@@ -209,16 +214,16 @@ export function prettyBytes(n: number, options?: Options): string {
   const separator = options.space ? " " : "";
 
   // @ts-ignore
-  if (options.signed && number === 0) {
+  if (options.signed && n === 0) {
     return ` 0${separator}${UNITS[0]}`;
   }
   // @ts-ignore
-  const isNegative = number < 0;
+  const isNegative = n < 0;
   const prefix = isNegative ? "-" : options.signed ? "+" : "";
 
   if (isNegative) {
     // @ts-ignore
-    number = -number;
+    n = -n;
   }
 
   let localeOptions;
@@ -235,7 +240,7 @@ export function prettyBytes(n: number, options?: Options): string {
   }
 
   // @ts-ignore
-  if (number < 1) {
+  if (n < 1) {
     const numberString = toLocaleString(n, options.locale, localeOptions);
     return prefix + numberString + separator + UNITS[0];
   }
@@ -244,18 +249,18 @@ export function prettyBytes(n: number, options?: Options): string {
     Math.floor(
       options.binary
         ? // @ts-ignore
-          Math.log(number) / Math.log(1024)
+          Math.log(n) / Math.log(1024)
         : // @ts-ignore
-          Math.log10(number) / 3
+          Math.log10(n) / 3
     ),
     UNITS.length - 1
   );
   // @ts-ignore
-  number /= (options.binary ? 1024 : 1000) ** exponent;
+  n /= (options.binary ? 1024 : 1000) ** exponent;
 
   if (!localeOptions) {
     // @ts-ignore
-    number = number.toPrecision(3);
+    n = n.toPrecision(3);
   }
 
   const numberString = toLocaleString(Number(n), options.locale, localeOptions);
@@ -267,16 +272,10 @@ export function prettyBytes(n: number, options?: Options): string {
 
 function formatContentTypes(contentTypes: string): string {
   return contentTypes;
-  return contentTypes
-    .replaceAll(`from "@strapi/strapi"`, `from '@iliad.dev/strapi-adapter'`)
-    .replaceAll(`from '@strapi/strapi'`, `from '@iliad.dev/strapi-adapter'`);
 }
 
 function formatComponents(components: string): string {
   return components;
-  return components
-    .replaceAll(`from "@strapi/strapi"`, `from '@iliad.dev/strapi-adapter'`)
-    .replaceAll(`from '@strapi/strapi'`, `from '@iliad.dev/strapi-adapter'`);
 }
 
 function formatApi(api: string): string {
@@ -390,14 +389,21 @@ export function doContentTypesExist({
   names,
 }: StrictContentTypesSyncOptions): boolean {
   console.log(1);
-  if (!fs.existsSync(outDir)) return false;
+  try {
+    if (!fs.existsSync(outDir)) return false;
 
-  const files = fs.readdirSync(outDir);
-  console.log(
-    files.includes(names.contentTypes),
-    files.includes(names.components)
-  );
-  return files.includes(names.contentTypes) && files.includes(names.components);
+    const files = fs.readdirSync(outDir);
+    console.log(
+      files.includes(names.contentTypes),
+      files.includes(names.components)
+    );
+    return (
+      files.includes(names.contentTypes) && files.includes(names.components)
+    );
+  } catch (error) {
+    console.error("Error checking if content types exist", error);
+    return false;
+  }
 }
 
 export function normalizeContentTypesOptions(

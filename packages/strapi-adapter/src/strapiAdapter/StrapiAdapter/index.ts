@@ -413,8 +413,8 @@ class StrapiAdapter extends Feature {
     if (!u.collectionContainsValidData<UID>(data)) {
       // Not certain this state is possible to reach.
       return {
-        data: undefined,
         error: { message: "No entry found for slug", code: 404 },
+        data: undefined,
       };
     }
 
@@ -422,6 +422,29 @@ class StrapiAdapter extends Feature {
       data: { data: data.data?.[0] },
       error: undefined,
     };
+  }
+
+  async getSingle<
+    API extends Names<"singular", "single">,
+    UID extends CTUID = UIDFromName<API>,
+  >(
+    collection: API,
+    query?: CrudQueryFull<UID>,
+    options?: RequestInit
+  ): CRUD.FN<APIResponse<UID>> {
+    const parsedQuery: object = u.mergeQuery(u.parseSemanticQuery(query), {
+      pagination: { pageSize: 25, page: 1 },
+    });
+
+    const url = u.createUrl({
+      endpoint: super.apiEndpoint(collection),
+      query: parsedQuery,
+    });
+
+    return this.normalizedFetch<APIResponse<UID>>(
+      u.normalizeUrl(url),
+      u.wm("get", options)
+    );
   }
 
   async getCollection<
@@ -441,10 +464,12 @@ class StrapiAdapter extends Feature {
       query: parsedQuery,
     });
 
-    return this.normalizedFetch<APIResponseCollection<UID>>(
+    const aaa = await this.normalizedFetch<APIResponseCollection<UID>>(
       u.normalizeUrl(url),
       u.wm("get", options)
     );
+
+    return aaa;
   }
 
   async getFullCollection<

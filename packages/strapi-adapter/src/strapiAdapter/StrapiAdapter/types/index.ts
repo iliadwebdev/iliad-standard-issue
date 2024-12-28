@@ -62,18 +62,22 @@ export type PluralNameToUID = {
     : never]: K;
 };
 
+// TS doesn't recognize plugin content-types as content types because they have the pluginOptions property
+// Not really sure why this is the case, but this is a workaround
+type PluginCt<T> = Omit<T, "pluginOptions">;
+
 export type Names<
   Txt extends "singular" | "plural" | "both",
   Type extends "collection" | "single" | "all",
 > = {
-  [K in keyof Common.Schemas]: Common.Schemas[K] extends (
+  [K in keyof Common.Schemas]: PluginCt<Common.Schemas[K]> extends (
     Type extends "all"
       ? Schema.CollectionType | Schema.SingleType
       : Type extends "collection"
         ? Schema.CollectionType
         : Schema.SingleType
   )
-    ? Common.Schemas[K]["info"][Txt extends "singular"
+    ? PluginCt<Common.Schemas[K]>["info"][Txt extends "singular"
         ? "singularName"
         : Txt extends "plural"
           ? "pluralName"
@@ -82,10 +86,12 @@ export type Names<
 }[keyof Common.Schemas] & {};
 
 export type UIDFromName<N extends string> = {
-  [K in keyof Common.Schemas]: Common.Schemas[K] extends Schema.ContentType
-    ? Common.Schemas[K]["info"]["singularName"] extends N
+  [K in keyof Common.Schemas]: PluginCt<
+    Common.Schemas[K]
+  > extends Schema.ContentType
+    ? PluginCt<Common.Schemas[K]>["info"]["singularName"] extends N
       ? K
-      : Common.Schemas[K]["info"]["pluralName"] extends N
+      : PluginCt<Common.Schemas[K]>["info"]["pluralName"] extends N
         ? K
         : never
     : never;
