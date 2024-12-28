@@ -27,8 +27,6 @@ function prefix(...args: any[]) {
   return [chalk.cyanBright("@iliad.dev/strapi-adapter"), ...args];
 }
 
-import fs from "fs";
-
 export type Options = {
   /**
 	Include plus sign for positive numbers. If the difference is exactly zero a space character will be prepended instead for better alignment.
@@ -415,27 +413,48 @@ export async function downloadContentTypes(
   return { data: null, error: undefined };
 }
 
-export function doContentTypesExist({
-  outDir,
-  names,
-}: StrictContentTypesSyncOptions): boolean {
-  console.log(1);
-  try {
-    if (!fs.existsSync(outDir)) return false;
+// export function doContentTypesExist({
+//   outDir,
+//   names,
+// }: StrictContentTypesSyncOptions): boolean {
+//   console.log(1);
+//   try {
+//     let result: boolean = false;
 
-    const files = fs.readdirSync(outDir);
-    console.log(
-      files.includes(names.contentTypes),
-      files.includes(names.components)
-    );
-    return (
-      files.includes(names.contentTypes) && files.includes(names.components)
-    );
-  } catch (error) {
-    console.error("Error checking if content types exist", error);
-    return false;
-  }
-}
+//     loadFsIfAvailable()
+//       .then((fs) => {
+//         if (!fs) {
+//           result = false;
+//           return;
+//         }
+//         if (!fs.existsSync(outDir)) {
+//           result = false;
+//           return;
+//         }
+
+//         const files = fs.readdirSync(outDir);
+//         console.log(
+//           files.includes(names.contentTypes),
+//           files.includes(names.components)
+//         );
+
+//         result =
+//           files.includes(names.contentTypes) &&
+//           files.includes(names.components);
+//         return;
+//       })
+//       .catch((error) => {
+//         console.error("Error checking if content types exist", error);
+//         result = false;
+//         return;
+//       });
+
+//     return result;
+//   } catch (error) {
+//     console.error("Error checking if content types exist", error);
+//     return false;
+//   }
+// }
 
 export function normalizeContentTypesOptions(
   options: ContentTypesSyncOptions

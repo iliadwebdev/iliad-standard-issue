@@ -11,15 +11,22 @@ import { QueryStringCollection, HttpMethod, CTUID, UpdateData } from "./types";
 import { FetchOptions } from "openapi-fetch";
 
 // Utils
+import deepmerge from "deepmerge";
+import qs from "qs";
 import {
   defaultBodySerializer,
   createFinalURL,
   mergeHeaders,
 } from "openapi-fetch";
 
-import deepmerge from "deepmerge";
-import qs from "qs";
-import { PageNotation } from "./types/params/pagination";
+// Types
+import type { PageNotation } from "./types/params/pagination";
+
+type CreateUrlParams = {
+  baseLocation?: string | URL;
+  endpoint?: string | URL;
+  query?: object | string; // This may need to be strongly typed.
+};
 
 export function normalizeUrl(url: string | number, api: boolean = true) {
   let str = url.toString();
@@ -28,12 +35,6 @@ export function normalizeUrl(url: string | number, api: boolean = true) {
   if (str.startsWith("api/")) return `/${str}`; // idk why this is necessary
   return str.startsWith("/") ? `/api${str}` : `/api/${str}`;
 }
-
-type CreateUrlParams = {
-  baseLocation?: string | URL;
-  endpoint?: string | URL;
-  query?: object | string; // This may need to be strongly typed.
-};
 
 export function createUrl(
   { endpoint, query }: CreateUrlParams,

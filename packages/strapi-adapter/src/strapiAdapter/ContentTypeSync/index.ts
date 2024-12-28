@@ -1,9 +1,9 @@
 // import thoth from "@thoth";
 import {
-  normalizeContentTypesOptions,
+  // normalizeContentTypesOptions,
   requestNewContentTypes,
   downloadContentTypes,
-  doContentTypesExist,
+  // doContentTypesExist,
 } from "./utils";
 
 import { Hermes } from "@iliad.dev/hermes";
@@ -47,12 +47,12 @@ class ContentTypeSync extends Feature {
     return this.hermes;
   }
 
-  get contentTypesExist(): boolean {
-    if (!this.contentTypesSyncOptions) {
-      return false;
-    }
-    return doContentTypesExist(this.contentTypesSyncOptions);
-  }
+  // get contentTypesExist(): boolean {
+  //   if (!this.contentTypesSyncOptions) {
+  //     return false;
+  //   }
+  //   return doContentTypesExist(this.contentTypesSyncOptions);
+  // }
 
   private get contentTypeEndpoint(): string {
     const endpoint = super.apiEndpoint(

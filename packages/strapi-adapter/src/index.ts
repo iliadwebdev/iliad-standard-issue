@@ -16,4 +16,5 @@ export type {
   APIResponseCollection,
   APIResponseData,
   APIResponse,
+  Common,
 } from "./@types/strapi";
