@@ -16,8 +16,10 @@ import {
   createFinalURL,
   mergeHeaders,
 } from "openapi-fetch";
+
 import deepmerge from "deepmerge";
 import qs from "qs";
+import { PageNotation } from "./types/params/pagination";
 
 export function normalizeUrl(url: string | number, api: boolean = true) {
   let str = url.toString();
@@ -174,29 +176,47 @@ function ensureQuestionMark(query: string) {
   return query.startsWith("?") ? query : `?${query}`;
 }
 
+function queryIsString(query?: QueryStringCollection<any>): query is string {
+  return typeof query === "string";
+}
+
 export function parseSemanticQuery(query?: QueryStringCollection<any>): object {
   if (!query) return {}; // If no query is passed, return an empty object.
-  if (typeof query !== "string") {
-    return qs.parse(qs.stringify(query));
-  } // If it already an object, return it.
 
-  let parsedQuery: object;
+  let queryObject: Record<string, any>;
 
-  try {
-    const sanitized = ensureQuestionMark(query);
-    parsedQuery = qs.parse(sanitized);
-  } catch (e) {
-    console.error(
-      "Error parsing query parameter string passed to @iliad.dev/strapi-adapter",
-      {
-        error: e,
-        query,
-      }
-    );
-    throw e;
+  if (queryIsString(query)) {
+    try {
+      const sanitized = ensureQuestionMark(query);
+      queryObject = qs.parse(sanitized);
+    } catch (e) {
+      console.error(
+        "Error parsing query parameter string passed to @iliad.dev/strapi-adapter",
+        {
+          error: e,
+          query,
+        }
+      );
+      throw e;
+    }
+  } else {
+    queryObject = qs.parse(qs.stringify(query));
   }
 
-  return parsedQuery;
+  let {
+    pagination = {
+      pageSize: queryObject?.pageSize,
+      page: queryObject?.page,
+    },
+  } = queryObject;
+
+  delete queryObject.pageSize;
+  delete queryObject.page;
+
+  return {
+    ...queryObject,
+    pagination,
+  };
 }
 
 // Used to disambiguate Collection and Single Type operations
@@ -217,13 +237,36 @@ export function validateApi(api: string): string {
   return api;
 }
 
+// NOTE: Realistically, this is stupid and we should 100% know the type of the pagination object.
+// However, Strapi's types and Strapi's logic are at odds ATM.
+function extractPagination(query: Record<string, any>): PageNotation {
+  let pageSize;
+  let page;
+
+  pageSize = query?.pageSize || query?.pagination?.pageSize;
+  page = query?.page || query?.pagination?.page;
+
+  return {
+    pageSize,
+    page,
+  };
+}
+
 export function mergeQuery<T extends QueryStringCollection<any>>(
   query: T = {} as T,
-  additional: object
+  additional: Record<string, any> = {}
 ): T {
-  const queryObject = parseSemanticQuery(query);
+  const queryObject: any = parseSemanticQuery(query);
 
-  return deepmerge(queryObject, additional) as T;
+  // Silliness, not type-safe
+  const queryPagination = extractPagination(queryObject);
+  const additionalPagination = extractPagination(additional);
+  const pagination = deepmerge(additionalPagination, queryPagination);
+
+  return deepmerge(queryObject, {
+    ...additional,
+    pagination,
+  } as any) as T;
 }
 
 export function indexArrayFromMeta(

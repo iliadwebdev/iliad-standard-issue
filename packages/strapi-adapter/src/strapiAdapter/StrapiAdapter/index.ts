@@ -36,6 +36,9 @@ import * as u from "./utils";
 
 class StrapiAdapter extends Feature {
   client: ContextClient = "fetch"; // I should probably change this to fetch, given that most of the time this is being use in Next.js.
+  private pagination = {
+    pagination: { pageSize: 25, page: 1 },
+  };
 
   constructor(options: Options) {
     super(options);
@@ -432,9 +435,10 @@ class StrapiAdapter extends Feature {
     query?: CrudQueryFull<UID>,
     options?: RequestInit
   ): CRUD.FN<APIResponse<UID>> {
-    const parsedQuery: object = u.mergeQuery(u.parseSemanticQuery(query), {
-      pagination: { pageSize: 25, page: 1 },
-    });
+    const parsedQuery: object = u.mergeQuery(
+      u.parseSemanticQuery(query),
+      this.pagination
+    );
 
     const url = u.createUrl({
       endpoint: super.apiEndpoint(collection),
@@ -455,21 +459,20 @@ class StrapiAdapter extends Feature {
     query?: CrudQueryFull<UID>,
     options?: RequestInit
   ): CRUD.FN<APIResponseCollection<UID>> {
-    const parsedQuery: object = u.mergeQuery(u.parseSemanticQuery(query), {
-      pagination: { pageSize: 25, page: 1 },
-    });
+    const parsedQuery: object = u.mergeQuery(
+      u.parseSemanticQuery(query),
+      this.pagination
+    );
 
     const url = u.createUrl({
       endpoint: super.apiEndpoint(collection),
       query: parsedQuery,
     });
 
-    const aaa = await this.normalizedFetch<APIResponseCollection<UID>>(
+    return this.normalizedFetch<APIResponseCollection<UID>>(
       u.normalizeUrl(url),
       u.wm("get", options)
     );
-
-    return aaa;
   }
 
   async getFullCollection<
@@ -483,9 +486,7 @@ class StrapiAdapter extends Feature {
     const cEntries: WithPage<APIResponseData<UID>>[] = [];
     let meta: APIResponseCollectionMetadata;
 
-    const initialQuery = u.mergeQuery(query, {
-      pagination: { pageSize: 25, page: 1 },
-    });
+    const initialQuery = u.mergeQuery(query, this.pagination);
 
     fetchFirstPage: {
       let { data: firstPage, error } = await this.find(

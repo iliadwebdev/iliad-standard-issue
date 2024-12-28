@@ -6,12 +6,7 @@ import { defaultContentTypesSyncOptions } from "./data";
 // Utils
 import { Hermes } from "@iliad.dev/hermes";
 import deepmerge from "deepmerge";
-
-let fs: any;
-
-try {
-  fs = require("fs");
-} catch (error) {}
+import chalk from "chalk";
 
 // Types
 import {
@@ -19,6 +14,20 @@ import {
   ContentTypesSyncOptions,
   ContentTypesResponse,
 } from "./types";
+
+async function loadFsIfAvailable(): Promise<undefined | typeof import("fs")> {
+  try {
+    return import("fs");
+  } catch (error) {
+    return undefined;
+  }
+}
+
+function prefix(...args: any[]) {
+  return [chalk.cyanBright("@iliad.dev/strapi-adapter"), ...args];
+}
+
+import fs from "fs";
 
 export type Options = {
   /**
@@ -282,37 +291,50 @@ function formatApi(api: string): string {
   return api;
 }
 
-function writeContentTypes(
+async function writeContentTypes(
   options: StrictContentTypesSyncOptions,
   data: ContentTypesResponse
-): StandardResponse<string> {
+): Promise<StandardResponse<string>> {
   const { outDir, names } = options;
   const [api, components, contentTypes] = data;
+
+  const fs = await loadFsIfAvailable();
 
   // thoth.log("writing content types");
   const enc: any = {
     encoding: "utf8",
   };
 
+  if (!fs) {
+    // This shouldn't fail the operation, but it should be noted. Error will report later.
+    return {
+      data: undefined,
+      error: {
+        message: "ENOFS",
+        code: 0,
+      },
+    };
+  }
+
   try {
-    if (!fs.existsSync(outDir)) {
+    if (!fs?.existsSync(outDir)) {
       console.warn(
         `[WARN] strapi-adapter: Directory ${outDir} does not exist. Creating...`
       );
-      fs.mkdirSync(outDir);
+      fs?.mkdirSync(outDir);
     }
 
     if (!contentTypes) throw new Error("Content types not found");
     const _contentTypes = formatContentTypes(contentTypes);
-    fs.writeFileSync(`${outDir}/${names.contentTypes}`, _contentTypes, enc);
+    fs?.writeFileSync(`${outDir}/${names.contentTypes}`, _contentTypes, enc);
 
     if (!components) throw new Error("Components not found");
     const _components = formatComponents(components);
-    fs.writeFileSync(`${outDir}/${names.components}`, _components, enc);
+    fs?.writeFileSync(`${outDir}/${names.components}`, _components, enc);
 
     if (!api) throw new Error("API not found");
     const _api = formatApi(api);
-    fs.writeFileSync(`${outDir}/${names.api}`, _api, enc);
+    fs?.writeFileSync(`${outDir}/${names.api}`, _api, enc);
   } catch (error) {
     console.error("Error writing content types", error);
     return {
@@ -365,7 +387,7 @@ export async function downloadContentTypes(
     return { error: $1error, data: undefined };
   }
 
-  const { data: diskSize, error: $2error } = writeContentTypes(
+  const { data: diskSize, error: $2error } = await writeContentTypes(
     options,
     $1data.data
   );
@@ -373,14 +395,23 @@ export async function downloadContentTypes(
     // msg.fail("Error writing content types");
     // msg._error($2error);
 
-    return { error: $2error, data: undefined };
+    if ($2error?.message === "ENOFS") {
+      console.warn(
+        ...prefix(
+          `${chalk.yellow("Warning: ")}Content types were downloaded but could not be written to disk, as the fs module was not found.\nAre you running ${chalk.yellow("syncContentTypes")}${chalk.white("()")} in a browser environment?`
+        )
+      );
+    } else {
+      return { error: $2error, data: undefined };
+    }
+  } else {
+    const ts = (performance.now() - start).toFixed(2);
+    console.log(
+      ...prefix(
+        `Content types downloaded and written to disk (${chalk.yellowBright(diskSize)}) in ${chalk.yellowBright(ts + "ms")}`
+      )
+    );
   }
-
-  const ts = (performance.now() - start).toFixed(2);
-  console.log(
-    `Content types downloaded and written to disk (${diskSize}) in ${ts}ms`
-  );
-
   return { data: null, error: undefined };
 }
 

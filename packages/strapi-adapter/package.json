@@ -1,6 +1,6 @@
 {
   "name": "@iliad.dev/strapi-adapter",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Utility functions to simplify interactions with Strapi backend.",
   "repository": {
     "type": "git",
@@ -30,14 +30,14 @@
     "build": "tsup && env NODE_ENV=production tsup && tsup",
     "dev": "tsx --watch test",
     "lint": "tsc",
-    "test": "rollup -c && node test/index.ts",
-    "test-": "node test/index.ts"
+    "test": "node test/index.ts"
   },
   "dependencies": {
     "@iliad.dev/hermes": "*",
     "@iliad.dev/ts-utils": "*",
     "@strapi/strapi": "4.25.17",
     "@strapi/types": "^5.4.1",
+    "chalk": "^5.4.1",
     "deepmerge": "^4.3.1",
     "openapi-fetch": "^0.13.0",
     "openapi-typescript-helpers": "^0.0.15",
