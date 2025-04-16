@@ -96,9 +96,6 @@ declare global {
 
   export type IntRange<F extends number, T extends number> = Exclude<IUtils.Enumerate<T>, IUtils.Enumerate<F>>;
 
-  // @ts-ignore
-  export type BinaryPermutations<N extends number> = N extends 0 ? "" : PrependBit<BinaryPermutations<Decrement<N>>>;
-
   // STRING UTILITIES
   // ================
   export type StartsWith<T extends string, C extends string = ""> = T extends `${C}${string}` ? T : never;

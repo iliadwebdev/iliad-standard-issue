@@ -40,8 +40,7 @@ type Recursive_OptionalFieldsOf<T> = T extends object ? {
 } : T;
 type NumericalRange<F extends number, T extends number> = IntRange<F, T>;
 type IntRange<F extends number, T extends number> = Exclude<IUtils.Enumerate<T>, IUtils.Enumerate<F>>;
-type BinaryPermutations<N extends number> = N extends 0 ? "" : PrependBit<BinaryPermutations<Decrement<N>>>;
 type StartsWith<T extends string, C extends string = ""> = T extends `${C}${string}` ? T : never;
 type EndsWith<T extends string, C extends string = ""> = T extends `${string}${C}` ? T : never;
 
-export type { BinaryPermutations, DefaultParams, EndsWith, ErrorResponse, Falsable, FalsyPart, IntRange, Legacy_Recursive_Required, LiteralUnion, NamedTuple, NotFalsy, Nullable, NumericalRange, OR, Optional, OptionalFieldsOf, PickOptional, Recursive_OptionalFieldsOf, Recursive_Required, StandardResponse, StartsWith, Without };
+export type { DefaultParams, EndsWith, ErrorResponse, Falsable, FalsyPart, IntRange, Legacy_Recursive_Required, LiteralUnion, NamedTuple, NotFalsy, Nullable, NumericalRange, OR, Optional, OptionalFieldsOf, PickOptional, Recursive_OptionalFieldsOf, Recursive_Required, StandardResponse, StartsWith, Without };

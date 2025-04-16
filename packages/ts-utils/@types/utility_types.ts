@@ -79,12 +79,6 @@ export type IntRange<F extends number, T extends number> = Exclude<
   IUtils.Enumerate<F>
 >;
 
-// @ts-ignore
-export type BinaryPermutations<N extends number> = N extends 0
-  ? ""
-  : // @ts-ignore
-    PrependBit<BinaryPermutations<Decrement<N>>>;
-
 // STRING UTILITIES
 // ================
 
