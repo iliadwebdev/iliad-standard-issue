@@ -550,5 +550,5 @@ class StrapiAdapter extends Feature {
 }
 
 export default StrapiAdapter;
-export { StrapiAdapter };
+export { StrapiAdapter, StrapiAdapter as AtlasAdapter };
 export * from "./types";

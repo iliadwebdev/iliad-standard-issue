@@ -1,5 +1,5 @@
-export { extendsType } from './typeguards/index.cjs';
-export { extendsString, isString } from './typeguards/isString.cjs';
+export { extendsType } from './typeguards/index.mjs';
+export { extendsString, isString } from './typeguards/isString.mjs';
 
 /**
  * Merges the provided object with the default values, ensuring that all fields

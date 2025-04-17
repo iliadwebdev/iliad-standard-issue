@@ -1,7 +1,8 @@
 {
-  "name": "@iliad.dev/strapi-adapter",
+  "name": "@iliad.dev/atlas-adapter",
   "version": "0.2.11",
-  "description": "Utility functions to simplify interactions with Strapi backend.",
+  "description": "Utility functions to simplify interactions with Atlas backend.",
+  "private": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/iliadwebdev/iliad-standard-issue"

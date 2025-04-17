@@ -1,4 +1,4 @@
-import { IUtils } from './internalUtils.cjs';
+import { IUtils } from './internalUtils.mjs';
 import { XOR } from 'ts-xor';
 
 // === Utility Types ===

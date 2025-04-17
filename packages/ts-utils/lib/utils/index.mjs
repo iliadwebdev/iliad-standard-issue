@@ -1,8 +1,8 @@
-"use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _createStarExport(obj) { Object.keys(obj) .filter((key) => key !== "default" && key !== "__esModule") .forEach((key) => { if (exports.hasOwnProperty(key)) { return; } Object.defineProperty(exports, key, {enumerable: true, configurable: true, get: () => obj[key]}); }); }require('@iliad.dev/primitive-extensions');
-var _deepmergets = require('deepmerge-ts');
-var _typeguards = require('./typeguards'); _createStarExport(_typeguards);
+import "@iliad.dev/primitive-extensions";
+import { deepmerge } from "deepmerge-ts";
+export * from "./typeguards";
 function mergeDefaults(obj, defaults) {
-  return _deepmergets.deepmerge.call(void 0, defaults, obj || {});
+  return deepmerge(defaults, obj || {});
 }
 function isError(error, data = {}) {
   return !!error;
@@ -42,9 +42,9 @@ function preferentialArrayMerge(prefer = "target", unique = false) {
     return unique ? Array.unique(penultimate) : penultimate;
   };
 }
-
-
-
-
-
-exports.isError = isError; exports.mergeDefaults = mergeDefaults; exports.preferentialArrayMerge = preferentialArrayMerge; exports.uniqueArrayMerge = uniqueArrayMerge;
+export {
+  isError,
+  mergeDefaults,
+  preferentialArrayMerge,
+  uniqueArrayMerge
+};

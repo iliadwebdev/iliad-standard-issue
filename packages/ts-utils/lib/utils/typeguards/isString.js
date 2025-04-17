@@ -1,11 +1,11 @@
-function isString(value) {
+"use strict";Object.defineProperty(exports, "__esModule", {value: true});function isString(value) {
   return typeof value === "string";
 }
 function extendsString(value) {
   return value;
 }
-export {
-  isString as default,
-  extendsString,
-  isString
-};
+
+
+
+
+exports.default = isString; exports.extendsString = extendsString; exports.isString = isString;
