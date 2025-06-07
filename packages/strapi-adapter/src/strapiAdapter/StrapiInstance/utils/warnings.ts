@@ -1,10 +1,5 @@
 import { ContextClient } from "@types";
-import {
-  PopulatedStrapiInstanceParams,
-  WarningConfig,
-  WarningKeys,
-  WarningFn,
-} from "../types";
+import { WarningConfig, WarningKeys, WarningFn } from "../types";
 import Options from "@classes/Options";
 
 function warningConfigToBool(key: WarningKeys, config: WarningConfig): boolean {

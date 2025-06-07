@@ -11,6 +11,7 @@ import type {
   StrapiDataObject,
   StrapiResponseType,
 } from "../@types/adapter";
+import { ErrorResponse } from "@iliad.dev/ts-utils";
 
 import type {
   Common,

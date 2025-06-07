@@ -2,6 +2,7 @@
 import { HermesOptions } from "@iliad.dev/hermes";
 import { StrapiInstanceParams } from "./types";
 import { defaultContentTypesSyncOptions } from "../ContentTypeSync/data";
+import { DefaultParams } from "@iliad.dev/ts-utils";
 
 export const defaultHermesOptions: DefaultParams<HermesOptions> = {
   originLocation: undefined,

@@ -1,4 +1,4 @@
-// import "@iliad.dev/ts-utils/@types";
+// import "@iliad.dev/ts-utils";
 
 export * from "./ContentTypeSync";
 export * from "./Authentication";

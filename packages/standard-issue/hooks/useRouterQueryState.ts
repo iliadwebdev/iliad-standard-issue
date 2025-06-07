@@ -1,4 +1,4 @@
-import { XOR } from "@iliad.dev/ts-utils/@types";
+import { XOR } from "@iliad.dev/ts-utils";
 
 import { Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/router";

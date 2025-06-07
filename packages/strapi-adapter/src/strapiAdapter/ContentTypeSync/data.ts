@@ -1,4 +1,5 @@
 import { ContentTypesSyncOptions } from "./types";
+import { Recursive_OptionalFieldsOf } from "@iliad.dev/ts-utils";
 
 export const defaultContentTypesSyncOptions: Recursive_OptionalFieldsOf<ContentTypesSyncOptions> =
   {

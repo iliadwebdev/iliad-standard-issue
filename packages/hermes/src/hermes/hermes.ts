@@ -1,7 +1,8 @@
-// import "@iliad.dev/ts-utils/@types";
+// import "@iliad.dev/ts-utils";
 
 // Dependencies
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
+import { StandardResponse } from "@iliad.dev/ts-utils";
 import { parse, stringify } from "qs";
 import merge from "deepmerge";
 

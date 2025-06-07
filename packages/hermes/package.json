@@ -1,20 +1,23 @@
 {
   "name": "@iliad.dev/hermes",
-  "version": "0.0.19",
+  "version": "0.1.52",
   "description": "Normalizes responses from Axios and Fetch for use in Next.js projects.",
-  "main": "lib/index.cjs",
-  "module": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "files": [
-    "lib",
     "dist"
   ],
   "scripts": {
     "ts-types": "tsc",
-    "build:dev": "rimraf lib && tsup --watch",
-    "build": "rimraf dist && env NODE_ENV=production tsup",
-    "build:prod": "rimraf dist && env NODE_ENV=production tsup",
+    "build": "rimraf dist && tsup",
     "build:watch": "tsup --watch"
   },
   "repository": {

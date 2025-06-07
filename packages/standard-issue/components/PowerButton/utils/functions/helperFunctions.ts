@@ -1,4 +1,4 @@
-import { BinaryPermutations } from "@iliad.dev/ts-utils/@types";
+import { BinaryPermutations } from "@iliad.dev/ts-utils";
 
 import type { Variants, PowerButtonProps } from "../../index";
 import type {

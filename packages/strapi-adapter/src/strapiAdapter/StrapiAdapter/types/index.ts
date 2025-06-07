@@ -4,7 +4,7 @@ import {
   StartsWith,
   NamedTuple,
   XOR,
-} from "@iliad.dev/ts-utils/@types";
+} from "@iliad.dev/ts-utils";
 import { Hermes } from "@iliad.dev/hermes";
 import { Schema } from "@strapi/strapi";
 import { Params } from "./params";
@@ -214,6 +214,7 @@ declare namespace CRUD {
   > = NamedTuple<
     [
       collection: API,
+      id: string | number,
       data: UpdateData<UID>["data"],
       query?: Omit<UpdateData<UID>, "data">,
       options?: RequestInit,
@@ -226,7 +227,6 @@ declare namespace CRUD {
   > = NamedTuple<
     [
       collection: API,
-      id: string | number,
       data: UpdateData<UID>["data"],
       query?: Omit<UpdateData<UID>, "data">,
       options?: RequestInit,

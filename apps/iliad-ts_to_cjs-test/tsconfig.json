@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "module": "CommonJS",
+    "target": "ES2019",
+    "lib": ["ES2020"],
+
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "strict": false,
+
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "noImplicitThis": true,
+    "noEmitOnError": true,
+    "outDir": "./dist/server",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@atlas-core/server/*": ["../../../core/server/*"],
+      "@atlas-core/server": ["../../../core/server"]
+    }
+  },
+
+  "include": ["@types/*.d.ts", "src", "server/**/*.json"],
+
+  "exclude": ["node_modules/", "dist", "admin/", "**/*.test.ts"]
+}

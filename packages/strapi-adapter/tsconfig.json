@@ -33,18 +33,6 @@
     }
   },
 
-  "exclude": [
-    // "!node_modules/@iliad.dev/ts-utils/@types/**/*",
-    "rollup.config.js",
-    "node_modules/*",
-    "dist",
-    "lib",
-    "test"
-  ],
-  "include": [
-    // "node_modules/@iliad.dev/ts-utils/@types/**/*",
-    "src/@types/**/*",
-    "src/**/*"
-    // For testing
-  ]
+  "exclude": ["rollup.config.js", "node_modules/*", "dist", "lib", "test"],
+  "include": ["src/@types/**/*", "src/**/*"]
 }

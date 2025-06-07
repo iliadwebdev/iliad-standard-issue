@@ -227,6 +227,7 @@ export function isSingleOverload(
   return !(typeof idOrData === "number" || typeof idOrData === "string");
 }
 
+// Determines whether or not the overloaded function is being called with an ID
 export function overrideHasId<T extends any[] = any[]>(args: any[]): args is T {
   if (typeof args[1] === "number") return true;
   if (typeof args[1] === "string") return true;

@@ -1,0 +1,19 @@
+{
+  "name": "iliad-ts_to_cjs-test",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "develop": "tsup --watch",
+    "start:dev": "nodemon dist/index.js --watch",
+    "build": "tsup"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@esbuild-plugins/tsconfig-paths": "^0.1.2",
+    "@iliad.dev/ts-utils": "*",
+    "@iliad.dev/hermes": "*",
+    "nodemon": "^3.1.9"
+  }
+}

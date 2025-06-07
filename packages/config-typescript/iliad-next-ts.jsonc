@@ -110,7 +110,7 @@
     "**/*.ts",
     "**/*.tsx",
     "src/@types/**/*",
-    "node_modules/@iliad.dev/ts-utils/@types",
+    "node_modules/@iliad.dev/ts-utils",
     "node_modules/@iliad.dev/primitive-extensions",
   ],
   "exclude": ["node_modules"],

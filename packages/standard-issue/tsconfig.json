@@ -8,7 +8,7 @@
   },
   // "exclude": ["node_modules", "dist", "lib"],
   "include": [
-    "node_modules/@iliad.dev/ts-utils/@types",
+    "node_modules/@iliad.dev/ts-utils",
     "@types/**/*.d.ts",
 
     "@types",

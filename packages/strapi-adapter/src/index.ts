@@ -1,4 +1,4 @@
-// import "@iliad.dev/ts-utils/@types";
+// import "@iliad.dev/ts-utils";
 import "./@types/strapi";
 
 import StrapiInstance from "./strapiAdapter/StrapiInstance";

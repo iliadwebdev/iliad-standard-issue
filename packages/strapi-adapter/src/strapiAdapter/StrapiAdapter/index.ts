@@ -20,11 +20,7 @@ import {
   CRUD,
   REST,
 } from "./types";
-import {
-  StandardResponse,
-  ErrorResponse,
-  XOR,
-} from "@iliad.dev/ts-utils/@types";
+import { StandardResponse, ErrorResponse, XOR } from "@iliad.dev/ts-utils";
 
 // Classes
 import Options from "@classes/Options";
@@ -279,14 +275,14 @@ class StrapiAdapter extends Feature {
     >
   ): Promise<StandardResponse<APIResponseData<UID>>> {
     if (u.overrideHasId(args)) {
-      // Collection-based update
-      return this.updateCollection(
-        ...(args as CRUD.CollectionUpdateParams<API, UID>)
-      );
+      // Single-type update
+      return this.updateSingle(...(args as CRUD.SingleUpdateParams<API, UID>));
     }
 
-    // Single-type update
-    return this.updateSingle(...(args as CRUD.SingleUpdateParams<API, UID>));
+    // Collection-based update
+    return this.updateCollection(
+      ...(args as CRUD.CollectionUpdateParams<API, UID>)
+    );
   }
 
   // Create an entry in a collection. Not applicable to single types.
@@ -309,8 +305,9 @@ class StrapiAdapter extends Feature {
     );
   }
 
-  // Private implementation of the update method, when updating a single type.
-  private async updateSingle<
+  // Private implementation of the update method, when updating a collection.
+
+  private async updateCollection<
     API extends Names<"singular", "single">,
     UID extends CTUID = UIDFromName<API>,
   >(
@@ -335,8 +332,8 @@ class StrapiAdapter extends Feature {
     );
   }
 
-  // Private implementation of the update method, when updating a collection.
-  private async updateCollection<
+  // Private implementation of the update method, when updating a single type.
+  private async updateSingle<
     API extends Names<"plural", "collection">,
     UID extends CTUID = UIDFromName<API>,
   >(
@@ -354,7 +351,7 @@ class StrapiAdapter extends Feature {
     // Collection types are updated with POST requests.
     return this.normalizedFetch<APIResponseData<UID>>(
       u.normalizeUrl(url),
-      u.wm("post", {
+      u.wm("put", {
         ...options,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data }),

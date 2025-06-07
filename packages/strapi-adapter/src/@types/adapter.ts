@@ -1,5 +1,4 @@
 import type {
-  APIResponseCollectionMetadata,
   APIResponseCollection,
   APIResponseData,
   StrapiResponse,

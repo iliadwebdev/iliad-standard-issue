@@ -1,4 +1,5 @@
 // import thoth from "@thoth";
+import { StandardResponse } from "@iliad.dev/ts-utils";
 
 // Data
 import { defaultContentTypesSyncOptions } from "./data";

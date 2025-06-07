@@ -1,21 +1,17 @@
 {
   "compilerOptions": {
-    /* Language and Environment */
-    "target": "ESNext" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
-    /* Modules */
-    "module": "ESNext" /* Specify what module code is generated. */,
-    "moduleResolution": "Node" /* Determine how modules get resolved. */,
-    "noEmit": true /* Disable emitting files from a compilation. */,
-    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
-    "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
-    /* Type Checking */
-    "strict": true /* Enable all strict type-checking options. */,
-    "noUncheckedIndexedAccess": true /* Add 'undefined' to a type when accessed using an index. */,
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */,
-    "outDir": "lib" /* Redirect output structure to the directory. */,
+    "target": "ES2019",
+    "module": "ESNext",
+    "declaration": true,
+    "declarationMap": true,
+    "declarationDir": "dist/types",
+    "outDir": "dist/esm",
     "rootDir": "src",
-    "declaration": true
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
-  "include": ["src", "src/@types/**/*", "../globals.d.ts"],
-  "exclude": ["node_modules", "dist", "lib", "@types"]
+  "include": ["src/**/*"]
 }

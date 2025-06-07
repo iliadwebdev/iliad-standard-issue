@@ -1,3 +1,4 @@
+import { Legacy_Recursive_Required } from "@iliad.dev/ts-utils";
 // All types specific to the Strapi Instance will live here, for now.
 import type { StringLike, ContextClient } from "@types";
 import type { HermesOptions } from "@iliad.dev/hermes";

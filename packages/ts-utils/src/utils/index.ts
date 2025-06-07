@@ -1,6 +1,10 @@
-import "@iliad.dev/primitive-extensions";
 import { deepmerge } from "deepmerge-ts";
-import deasync from "deasync";
+import {
+  Legacy_Recursive_Required,
+  Recursive_OptionalFieldsOf,
+  Recursive_Required,
+  ErrorResponse,
+} from "../types";
 
 export * from "./typeguards"; // Type guard functions
 
@@ -77,6 +81,6 @@ export function preferentialArrayMerge<T extends Array<any> = any[]>(
       penultimate = prefer === "target" ? (target as T) : (source as T);
     }
 
-    return (unique ? Array.unique(penultimate) : penultimate) as T;
+    return (unique ? [...new Set(...penultimate)] : penultimate) as T;
   };
 }

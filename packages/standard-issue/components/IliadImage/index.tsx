@@ -1,4 +1,4 @@
-import { XOR } from "@iliad.dev/ts-utils/@types";
+import { XOR } from "@iliad.dev/ts-utils";
 
 // Styles
 import styles from "./iliad-image.module.scss";

@@ -1,6 +1,7 @@
 import { FeatureParams } from "../Feature/types";
 import Feature from "../Feature";
 import Options from "@classes/Options";
+import { ErrorResponse } from "@iliad.dev/ts-utils";
 
 class Authentication extends Feature {
   constructor(options: Options) {

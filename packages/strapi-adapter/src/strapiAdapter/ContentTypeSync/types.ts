@@ -1,3 +1,4 @@
+import { Legacy_Recursive_Required } from "@iliad.dev/ts-utils";
 export type ContentTypesResponse = Array<string>;
 
 export type ContentTypesSyncOptions = {

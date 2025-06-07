@@ -7,6 +7,7 @@ import {
 } from "./utils";
 
 import { Hermes } from "@iliad.dev/hermes";
+import { StandardResponse } from "@iliad.dev/ts-utils";
 
 import {
   StrictContentTypesSyncOptions,

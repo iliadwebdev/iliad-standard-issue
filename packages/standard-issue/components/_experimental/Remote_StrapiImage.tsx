@@ -1,5 +1,5 @@
 "use server";
-import "@iliad.dev/ts-utils/@types";
+import "@iliad.dev/ts-utils";
 
 // Components
 import { StrapiImage } from "../IliadImage";
